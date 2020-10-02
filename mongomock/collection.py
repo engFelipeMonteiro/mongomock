@@ -44,10 +44,12 @@ except ImportError:
 from sentinels import NOTHING
 from six import iteritems
 from six import iterkeys
+from six import raise_from
 from six import string_types
 from six import text_type
 
 
+import mongomock  # Used for utcnow - please see https://github.com/mongomock/mongomock#utcnow
 from mongomock import aggregate
 from mongomock import ConfigurationError, DuplicateKeyError, BulkWriteError
 from mongomock.filtering import filter_applies
@@ -56,6 +58,7 @@ from mongomock.filtering import resolve_key
 from mongomock.filtering import resolve_sort_key
 from mongomock import helpers
 from mongomock import InvalidOperation
+from mongomock.not_implemented import raise_for_feature as raise_not_implemented
 from mongomock import ObjectId
 from mongomock import OperationFailure
 from mongomock.read_concern import ReadConcern
@@ -207,15 +210,20 @@ def _combine_projection_spec(projection_fields_spec):
     tmp_spec = OrderedDict()
     for f, v in iteritems(projection_fields_spec):
         if '.' not in f:
-            if isinstance(tmp_spec.get(f), dict) and not v:
-                raise NotImplementedError(
-                    'Mongomock does not support overriding excluding projection: %s' %
-                    projection_fields_spec)
+            if isinstance(tmp_spec.get(f), dict):
+                if not v:
+                    raise NotImplementedError(
+                        'Mongomock does not support overriding excluding projection: %s' %
+                        projection_fields_spec)
+                raise OperationFailure('Path collision at %s' % f)
             tmp_spec[f] = v
         else:
             split_field = f.split('.', 1)
             base_field, new_field = tuple(split_field)
             if not isinstance(tmp_spec.get(base_field), dict):
+                if base_field in tmp_spec:
+                    raise OperationFailure(
+                        'Path collision at %s remaining portion %s' % (f, new_field))
                 tmp_spec[base_field] = OrderedDict()
             tmp_spec[base_field][new_field] = v
 
@@ -462,7 +470,7 @@ class Collection(object):
 
     def _insert(self, data, session=None, ordered=True):
         if session:
-            raise NotImplementedError('Mongomock does not handle sessions yet')
+            raise_not_implemented('session', 'Mongomock does not handle sessions yet')
         if not isinstance(data, Mapping):
             results = []
             write_errors = []
@@ -586,7 +594,7 @@ class Collection(object):
     def _update(self, spec, document, upsert=False, manipulate=False,
                 multi=False, check_keys=False, hint=None, session=None, **kwargs):
         if session:
-            raise NotImplementedError('Mongomock does not handle sessions yet')
+            raise_not_implemented('session', 'Mongomock does not handle sessions yet')
         if hint:
             raise NotImplementedError(
                 'The hint argument of update is valid but has not been implemented in '
@@ -745,7 +753,7 @@ class Collection(object):
                                         arr.remove(obj)
                                         continue
 
-                                    if filter_applies({field: value}, {field: obj}):
+                                    if filter_applies({'field': value}, {'field': obj}):
                                         arr.remove(obj)
                             else:
                                 for obj in arr_copy:
@@ -988,11 +996,14 @@ class Collection(object):
              no_cursor_timeout=False, cursor_type=None, sort=None,
              allow_partial_results=False, oplog_replay=False, modifiers=None,
              batch_size=0, manipulate=True, collation=None, session=None,
-             max_time_ms=None):
+             max_time_ms=None, **kwargs):
         spec = filter
         if spec is None:
             spec = {}
         validate_is_mapping('filter', spec)
+        for kwarg, value in iteritems(kwargs):
+            if value:
+                raise OperationFailure("Unrecognized field '%s'" % kwarg)
         return Cursor(self, spec, sort, projection, skip, limit,
                       collation=collation).max_time_ms(max_time_ms)
 
@@ -1165,6 +1176,12 @@ class Collection(object):
     def _update_document_fields_positional(self, doc, fields, spec, updater,
                                            subdocument=None):
         """Implements the $set behavior on an existing document"""
+        #for '$' and '$[]' operators
+        #'$': _IS_POSITIONAL =True
+        #'$[]': _IS_POSITIONAL =True and _IS_ALL_POSITIONAL = True
+        _IS_POSITIONAL =False
+        _IS_ALL_POSITIONAL = False
+        list_doc = []
         for k, v in iteritems(fields):
             if '$' in k:
 
@@ -1181,6 +1198,17 @@ class Collection(object):
                                     break
                             continue
 
+                        if part == '$[]':
+                            from copy import deepcopy
+                            _IS_POSITIONAL , _IS_ALL_POSITIONAL = True, True
+                            #
+                            #subspec = subspec.get('$elemMatch', subspec)
+                            # for itemList in current_doc:
+                            #     if filter_applies(subspec, itemList):
+                            #         current_doc = itemList
+                            #         break
+                            continue
+
                         new_spec = {}
                         for el in subspec:
                             if el.startswith(part):
@@ -1190,16 +1218,54 @@ class Collection(object):
                                 else:
                                     new_spec = subspec[el]
                         subspec = new_spec
-                        current_doc = current_doc[part]
+                        
+                        if _IS_ALL_POSITIONAL == False:
+                            current_doc = current_doc[part]
+                        else:
+                            list_doc = current_doc
+                            
+                            
 
                     subdocument = current_doc
                     if (field_name_parts[-1] == '$' and
                             isinstance(subdocument, list)):
-                        for i, doc in enumerate(subdocument):
-                            if filter_applies(subspec, doc):
+                        for i, document in enumerate(current_doc):
+                            if filter_applies(subspec, document):
                                 subdocument[i] = v
                                 break
                         continue
+                    elif _IS_ALL_POSITIONAL == True:
+                        # index_name = field_name_parts.index('$[]')
+                        # _IS_POSICIONAL = True
+                        # _IS_ALL_POSICIONAL = True
+                        # for count, i in enumerate(doc):
+                        #     list_docs.append(i)
+                        #     for J in field_name_parts[index_name+1:]:
+                                 
+                        #         if J == last_name:
+                        #             updater(i, last_name, field_value)
+                        #         else:
+                        #             import pdb; pdb.set_trace()
+                        #             list_docs[count] = list_docs[count][J]
+                        # break
+
+                        list_docs = []
+                        part_index = field_name_parts.index(part)
+                        current_copy = deepcopy(current_doc)
+                        for count, documentList in enumerate(current_copy):
+                            list_docs.append(documentList)
+                            current_doc = deepcopy(documentList)
+                            for i in field_name_parts[part_index:]:
+                                if i == field_name_parts[-1]:
+                                    updater(list_docs[count], field_name_parts[-1], v)
+                                    self._update_document_single_field(doc, k, v, updater)
+                                else:
+                                    list_docs[count] = list_docs[count][i]
+                            #import pdb; pdb.set_trace()
+                            
+                            
+                        break
+                        
 
                 updater(subdocument, field_name_parts[-1], v)
                 continue
@@ -1220,27 +1286,52 @@ class Collection(object):
 
     def _update_document_single_field(self, doc, field_name, field_value, updater):
         field_name_parts = field_name.split('.')
+        doc_len = len(doc)
+        _IS_POSICIONAL = False
+        _IS_ALL_POSICIONAL = False
+        last_name = field_name_parts[-1]
+        list_docs = []
         for part in field_name_parts[:-1]:
             if isinstance(doc, list):
                 try:
                     if part == '$':
                         doc = doc[0]
+                    elif part == '$[]':
+                        index_name = field_name_parts.index('$[]')
+                        _IS_POSICIONAL = True
+                        _IS_ALL_POSICIONAL = True
+                        for count, i in enumerate(doc):
+                            list_docs.append(i)
+                            for J in field_name_parts[index_name+1:]:
+                                 
+                                if J == last_name:
+                                    updater(list_docs[count], last_name, field_value)
+                                else:
+                                    #import pdb; pdb.set_trace()
+                                    list_docs[count] = list_docs[count][J]
+                        return
+
                     else:
                         doc = doc[int(part)]
                     continue
                 except ValueError:
-                    pass
+                    #doc = doc[part]
+                    import pdb; pdb.set_trace()
             elif isinstance(doc, dict):
                 if updater is _unset_updater and part not in doc:
                     # If the parent doesn't exists, so does it child.
                     return
+                elif (part == last_name and _IS_ALL_POSICIONAL):
+                    import pdb; pdb.set_trace()
+                    print("oi")
+
                 doc = doc.setdefault(part, {})
             else:
                 return
         field_name = field_name_parts[-1]
         updater(doc, field_name, field_value)
 
-    def _iter_documents(self, filter=None):
+    def _iter_documents(self, filter):
         # Validate the filter even if no documents can be returned.
         if self._store.is_empty:
             filter_applies(filter, {})
@@ -1296,7 +1387,7 @@ class Collection(object):
                          upsert=False, sort=None,
                          return_document=ReturnDocument.BEFORE, session=None, **kwargs):
         if session:
-            raise NotImplementedError('Mongomock does not handle sessions yet')
+            raise_not_implemented('session', 'Mongomock does not handle sessions yet')
         remove = kwargs.get('remove', False)
         if kwargs.get('new', False) and remove:
             # message from mongodb
@@ -1351,11 +1442,12 @@ class Collection(object):
                 'The hint argument of delete is valid but has not been implemented in '
                 'mongomock yet')
         if collation:
-            raise NotImplementedError(
+            raise_not_implemented(
+                'collation',
                 'The collation argument of delete is valid but has not been '
                 'implemented in mongomock yet')
         if session:
-            raise NotImplementedError('Mongomock does not handle sessions yet')
+            raise_not_implemented('session', 'Mongomock does not handle sessions yet')
         filter = helpers.patch_datetime_awareness_in_document(filter)
         if filter is None:
             filter = {}
@@ -1393,18 +1485,20 @@ class Collection(object):
             '$nearSphere must be replaced by $geoWithin with $centerSphere',
             DeprecationWarning, stacklevel=2)
         if kwargs.pop('session', None):
-            raise NotImplementedError('Mongomock does not handle sessions yet')
+            raise_not_implemented('session', 'Mongomock does not handle sessions yet')
         if filter is None:
             return len(self._store)
-        return len(list(self._iter_documents(filter)))
+        spec = helpers.patch_datetime_awareness_in_document(filter)
+        return len(list(self._iter_documents(spec)))
 
     def count_documents(self, filter, **kwargs):
         if kwargs.pop('collation', None):
-            raise NotImplementedError(
+            raise_not_implemented(
+                'collation',
                 'The collation argument of count_documents is valid but has not been '
                 'implemented in mongomock yet')
         if kwargs.pop('session', None):
-            raise NotImplementedError('Mongomock does not handle sessions yet')
+            raise_not_implemented('session', 'Mongomock does not handle sessions yet')
         skip = kwargs.pop('skip', 0)
         if 'limit' in kwargs:
             limit = kwargs.pop('limit')
@@ -1419,24 +1513,23 @@ class Collection(object):
         if unknown_kwargs:
             raise OperationFailure("unrecognized field '%s'" % unknown_kwargs.pop())
 
-        doc_num = len(list(self._iter_documents(filter)))
+        spec = helpers.patch_datetime_awareness_in_document(filter)
+        doc_num = len(list(self._iter_documents(spec)))
         count = max(doc_num - skip, 0)
         return count if limit is None else min(count, limit)
 
     def estimated_document_count(self, **kwargs):
         if kwargs.pop('session', None):
             raise ConfigurationError('estimated_document_count does not support sessions')
-        # Only some kwargs are recognized by this method, however the others
-        # are ignored silently by pymongo.
-        fwd_kwargs = {
-            k: v for k, v in iteritems(kwargs)
-            if k in {'skip', 'limit', 'maxTimeMS', 'hint'}
-        }
-        return self.count_documents({}, **fwd_kwargs)
+        unknown_kwargs = set(kwargs) - {'skip', 'limit', 'maxTimeMS', 'hint'}
+        if unknown_kwargs:
+            raise OperationFailure(
+                "BSON field 'count.%s' is an unknown field." % list(unknown_kwargs)[0])
+        return self.count_documents({}, **kwargs)
 
     def drop(self, session=None):
         if session:
-            raise NotImplementedError('Mongomock does not handle sessions yet')
+            raise_not_implemented('session', 'Mongomock does not handle sessions yet')
         self.database.drop_collection(self.name)
 
     def ensure_index(self, key_or_list, cache_for=300, **kwargs):
@@ -1444,9 +1537,7 @@ class Collection(object):
 
     def create_index(self, key_or_list, cache_for=300, session=None, **kwargs):
         if session:
-            raise NotImplementedError('Mongomock does not handle sessions yet')
-        if 'expireAfterSeconds' in kwargs:
-            raise NotImplementedError('Mongomock does not handle TTL index yet')
+            raise_not_implemented('session', 'Mongomock does not handle sessions yet')
         index_list = helpers.create_index_list(key_or_list)
         is_unique = kwargs.pop('unique', False)
         is_sparse = kwargs.pop('sparse', False)
@@ -1455,10 +1546,18 @@ class Collection(object):
         index_dict = {'key': index_list}
         if is_sparse:
             index_dict['sparse'] = True
+        if is_unique:
+            index_dict['unique'] = True
+        if 'expireAfterSeconds' in kwargs and kwargs['expireAfterSeconds'] is not None:
+            index_dict['expireAfterSeconds'] = kwargs.pop('expireAfterSeconds')
+
+        existing_index = self._store.indexes.get(index_name)
+        if existing_index and index_dict != existing_index:
+            raise OperationFailure(
+                'Index with name: %s already exists with different options' % index_name)
 
         # Check that documents already verify the uniquess of this new index.
         if is_unique:
-            index_dict['unique'] = True
             indexed = set()
             indexed_list = []
             for doc in self._store.documents:
@@ -1477,13 +1576,13 @@ class Collection(object):
                     if index in indexed:
                         raise DuplicateKeyError('E11000 Duplicate Key Error', 11000)
                     indexed.add(index)
-                except TypeError:
+                except TypeError as err:
                     # index is not hashable.
                     if index in indexed_list:
-                        raise DuplicateKeyError('E11000 Duplicate Key Error', 11000)
+                        raise_from(DuplicateKeyError('E11000 Duplicate Key Error', 11000), err)
                     indexed_list.append(index)
 
-        self._store.indexes[index_name] = index_dict
+        self._store.create_index(index_name, index_dict)
 
         return index_name
 
@@ -1492,10 +1591,12 @@ class Collection(object):
             if not isinstance(index, IndexModel):
                 raise TypeError(
                     '%s is not an instance of pymongo.operations.IndexModel' % index)
+
         return [
             self.create_index(
                 index.document['key'].items(),
                 session=session,
+                expireAfterSeconds=index.document.get('expireAfterSeconds'),
                 unique=index.document.get('unique', False),
                 sparse=index.document.get('sparse', False),
                 name=index.document.get('name'))
@@ -1504,24 +1605,24 @@ class Collection(object):
 
     def drop_index(self, index_or_name, session=None):
         if session:
-            raise NotImplementedError('Mongomock does not handle sessions yet')
+            raise_not_implemented('session', 'Mongomock does not handle sessions yet')
         if isinstance(index_or_name, list):
             name = helpers.gen_index_name(index_or_name)
         else:
             name = index_or_name
         try:
-            del self._store.indexes[name]
-        except KeyError:
-            raise OperationFailure('index not found with name [%s]' % name)
+            self._store.drop_index(name)
+        except KeyError as err:
+            raise_from(OperationFailure('index not found with name [%s]' % name), err)
 
     def drop_indexes(self, session=None):
         if session:
-            raise NotImplementedError('Mongomock does not handle sessions yet')
+            raise_not_implemented('session', 'Mongomock does not handle sessions yet')
         self._store.indexes = {}
 
     def reindex(self, session=None):
         if session:
-            raise NotImplementedError('Mongomock does not handle sessions yet')
+            raise_not_implemented('session', 'Mongomock does not handle sessions yet')
 
     def _list_all_indexes(self):
         if not self._store.is_created:
@@ -1532,20 +1633,19 @@ class Collection(object):
 
     def list_indexes(self, session=None):
         if session:
-            raise NotImplementedError('Mongomock does not handle sessions yet')
+            raise_not_implemented('session', 'Mongomock does not handle sessions yet')
         for name, information in self._list_all_indexes():
             yield dict(
                 information,
                 key=dict(information['key']),
                 name=name,
-                v=2,
-                ns=self.full_name)
+                v=2)
 
     def index_information(self, session=None):
         if session:
-            raise NotImplementedError('Mongomock does not handle sessions yet')
+            raise_not_implemented('session', 'Mongomock does not handle sessions yet')
         return {
-            name: dict(index, v=2, ns=self.full_name)
+            name: dict(index, v=2)
             for name, index in self._list_all_indexes()
         }
 
@@ -1557,7 +1657,7 @@ class Collection(object):
                 "Use 'pip install pyexecjs pymongo' to support Map-Reduce mock."
             )
         if session:
-            raise NotImplementedError('Mongomock does not handle sessions yet')
+            raise_not_implemented('session', 'Mongomock does not handle sessions yet')
         if limit == 0:
             limit = None
         start_time = _get_perf_counter()
@@ -1654,7 +1754,7 @@ class Collection(object):
 
     def distinct(self, key, filter=None, session=None):
         if session:
-            raise NotImplementedError('Mongomock does not handle sessions yet')
+            raise_not_implemented('session', 'Mongomock does not handle sessions yet')
         return self.find(filter).distinct(key)
 
     def group(self, key, condition, initial, reduce, finalize=None):
@@ -1750,7 +1850,7 @@ class Collection(object):
 
     def rename(self, new_name, session=None, **kwargs):
         if session:
-            raise NotImplementedError('Mongomock does not handle sessions yet')
+            raise_not_implemented('session', 'Mongomock does not handle sessions yet')
         return self.database.rename_collection(self.name, new_name, **kwargs)
 
     def bulk_write(self, requests, ordered=True, bypass_document_validation=False, session=None):
@@ -1759,7 +1859,8 @@ class Collection(object):
                 'Skipping document validation is a valid MongoDB operation;'
                 ' however Mongomock does not support it yet.')
         if session:
-            raise NotImplementedError(
+            raise_not_implemented(
+                'session',
                 'Sessions are valid in MongoDB 3.6 and newer; however Mongomock'
                 ' does not support them yet.')
         bulk = BulkOperationBuilder(self, ordered=ordered)
@@ -1834,8 +1935,8 @@ class Cursor(object):
             doc = self._compute_results(with_limit_and_skip=True)[self._emitted]
             self._emitted += 1
             return doc
-        except IndexError:
-            raise StopIteration()
+        except IndexError as err:
+            raise_from(StopIteration(), err)
 
     next = __next__
 
@@ -1882,7 +1983,7 @@ class Cursor(object):
 
     def distinct(self, key, session=None):
         if session:
-            raise NotImplementedError('Mongomock does not handle sessions yet')
+            raise_not_implemented('session', 'Mongomock does not handle sessions yet')
         if not isinstance(key, string_types):
             raise TypeError('cursor.distinct key must be a string')
         unique = set()
@@ -1957,7 +2058,7 @@ def _set_updater(doc, field_name, value):
         BSON.encode({field_name: value}, check_keys=True)
     if isinstance(doc, dict):
         doc[field_name] = value
-    if isinstance(doc, list):
+    if isinstance(doc, list) and type(field_name) != str:
         field_index = int(field_name)
         if field_index < 0:
             raise WriteError('Negative index provided')
@@ -1965,7 +2066,11 @@ def _set_updater(doc, field_name, value):
         if len_diff > 0:
             doc += [None] * len_diff
         doc[field_index] = value
-
+    if isinstance(doc, list) and type(field_name) == str:
+        for k,v in enumerate(doc):
+            import pdb; pdb.set_trace()
+            doc[k][field_name] = value
+    
 
 def _unset_updater(doc, field_name, value):
     if isinstance(doc, dict):
@@ -2031,9 +2136,11 @@ def _pop_from_list(list_instance, mongo_pop_value):
 def _current_date_updater(doc, field_name, value):
     if isinstance(doc, dict):
         if value == {'$type': 'timestamp'}:
+            # TODO(juannyg): get_current_timestamp should also be using helpers utcnow,
+            # as it currently using time.time internally
             doc[field_name] = helpers.get_current_timestamp()
         else:
-            doc[field_name] = datetime.utcnow()
+            doc[field_name] = mongomock.utcnow()
 
 
 _updaters = {
