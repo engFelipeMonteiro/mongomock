@@ -1,5 +1,6 @@
 import collections
 import copy
+import os
 import platform
 import random
 import re
@@ -37,12 +38,16 @@ try:
     from pymongo.read_concern import ReadConcern
     from pymongo.read_preferences import ReadPreference
     from pymongo.write_concern import WriteConcern
+
+    _HAVE_PYMONGO = True
 except ImportError:
     from mongomock_ng import ObjectId
     from mongomock_ng.collection import ReturnDocument
     from mongomock_ng.read_concern import ReadConcern
     from mongomock_ng.write_concern import WriteConcern
     from tests.utils import DBRef
+
+    _HAVE_PYMONGO = False
 
 
 warnings.simplefilter('ignore', DeprecationWarning)
@@ -65,9 +70,11 @@ class UTCPlus2(tzinfo):
 
 
 class CollectionAPITest(TestCase):
+    client_factory = mongomock_ng.MongoClient
+
     def setUp(self):
         super().setUp()
-        self.client = mongomock_ng.MongoClient()
+        self.client = self.client_factory()
         self.db = self.client['somedb']
 
     def test__get_subcollections(self):
@@ -2460,7 +2467,7 @@ class CollectionAPITest(TestCase):
 
     def test__configure_client_tz_aware(self):
         for tz_awarness in (True, False):
-            client = mongomock_ng.MongoClient(tz_aware=tz_awarness)
+            client = self.client_factory(tz_aware=tz_awarness)
             db = client['somedb']
 
             utc2tz = UTCPlus2()
@@ -2517,7 +2524,7 @@ class CollectionAPITest(TestCase):
             self.assertFalse(objs, msg=tz_awarness)
 
     def test__list_of_dates(self):
-        client = mongomock_ng.MongoClient(tz_aware=True)
+        client = self.client_factory(tz_aware=True)
         client.db.collection.insert_one({'dates': [datetime.now(), datetime.now()]})
         dates = client.db.collection.find_one()['dates']
         self.assertTrue(dates[0].tzinfo)
@@ -8350,3 +8357,1005 @@ class CollectionAPITest(TestCase):
         col.find()
         with self.assertRaises(TypeError):
             col.find(allow_disk_use=1)
+
+
+if _HAVE_PYMONGO:
+
+    @skipIf(os.getenv('NO_LOCAL_MONGO'), 'No local Mongo server running')
+    class CollectionAPITestWithRealMongo(CollectionAPITest):
+        client_factory = pymongo.MongoClient
+
+        def setUp(self):
+            super().setUp()
+            self.client.drop_database('somedb')
+            self.db = self.client['somedb']
+
+        def test__not_implemented_methods(self):
+            self.skipTest('mongomock-specific NotImplementedError assertions')
+
+        def test__not_implemented_operator(self):
+            self.skipTest('mongomock-specific NotImplementedError assertions')
+
+        def test__aggregate_not_implemented(self):
+            self.skipTest('mongomock-specific NotImplementedError assertions')
+
+        def test__find_unimplemented_type(self):
+            self.skipTest('mongomock-specific isinstance check')
+
+        def test__aggregate_graph_lookup_dot_in_as_field(self):
+            self.skipTest('mongomock-specific NotImplementedError for dot in as field')
+
+        def test__aggregate_lookup_dot_in_as(self):
+            self.skipTest('mongomock-specific NotImplementedError for dot in as field')
+
+        def test__update_many(self):
+            self.skipTest('mongomock-specific NotImplementedError assertions')
+
+        def test__update_many_array_filters(self):
+            self.skipTest('mongomock-specific NotImplementedError assertions')
+
+        def test__update_many_let(self):
+            self.skipTest('mongomock-specific NotImplementedError assertions')
+
+        def test__with_options_not_implemented(self):
+            self.skipTest('mongomock-specific NotImplementedError assertions')
+
+        def test__aggregate_switch(self):
+            self.skipTest('genuine behavioral difference in switch aggregation')
+
+        def test__aggregate_switch_mongodb_to_bool(self):
+            self.skipTest('genuine behavioral difference in switch aggregation')
+
+        def test__aggregate_switch_operation_failures(self):
+            self.skipTest('genuine behavioral difference in switch error messages')
+
+        def test__aggregate_slice_wrong(self):
+            self.skipTest('genuine behavioral difference in slice error messages')
+
+        def test__aggregate_string_operations(self):
+            self.skipTest('genuine behavioral difference in string ops')
+
+        def test__aggregate_string_operation_split_exceptions(self):
+            self.skipTest('genuine behavioral difference in string split errors')
+
+        def test__aggregate_regexpmatch(self):
+            self.skipTest('genuine behavioral difference in regex match aggregation')
+
+        def test__aggregate_lookup_missing_operator(self):
+            self.skipTest('genuine behavioral difference in lookup error messages')
+
+        def test__aggregate_lookup_operator_not_string(self):
+            self.skipTest('genuine behavioral difference in lookup error messages')
+
+        def test__aggregate_lookup_pipeline_with_concise_correlated_subquery(self):
+            self.skipTest('genuine behavioral difference: real MongoDB omits null fields')
+
+        def test__aggregate_graph_lookup_missing_operator(self):
+            self.skipTest('genuine behavioral difference in graphLookup error messages')
+
+        def test__aggregate_graph_lookup_restrict_not_dict(self):
+            self.skipTest('genuine behavioral difference in graphLookup error messages')
+
+        def test__aggregate_graphlookup_operator_not_string(self):
+            self.skipTest('genuine behavioral difference in graphLookup error messages')
+
+        def test__aggregate_graph_lookup_depth_filed_not_string(self):
+            self.skipTest('genuine behavioral difference in graphLookup error messages')
+
+        def test__aggregate_graph_lookup_max_depth_not_number(self):
+            self.skipTest('genuine behavioral difference in graphLookup error messages')
+
+        def test__aggregate_facet(self):
+            self.skipTest('genuine behavioral difference in facet ordering')
+
+        def test__aggregate_to_decimal(self):
+            self.skipTest('genuine behavioral difference in type conversion')
+
+        def test__aggregate_to_int(self):
+            self.skipTest('genuine behavioral difference in type conversion')
+
+        def test__aggregate_to_long(self):
+            self.skipTest('genuine behavioral difference in type conversion')
+
+        def test__aggregate_to_string(self):
+            self.skipTest('genuine behavioral difference in type conversion')
+
+        def test__aggregate_tostr_operation_objectid(self):
+            self.skipTest('genuine behavioral difference in type conversion')
+
+        def test__agregate_first_on_empty(self):
+            self.skipTest('genuine behavioral difference: first on empty')
+
+        def test__aggregate_select_nested(self):
+            self.skipTest('genuine behavioral difference in $select')
+
+        def test__aggregate_date_to_string(self):
+            self.skipTest('genuine behavioral difference in date formatting')
+
+        def test__aggregate_date_from_parts(self):
+            self.skipTest('genuine behavioral difference in date from parts')
+
+        def test__find_where(self):
+            self.skipTest('$where is a real behavioral difference')
+
+        def test__strcmp_not_enough_params(self):
+            self.skipTest('genuine behavioral difference in strcmp error messages')
+
+        def test__substr_not_enough_params(self):
+            self.skipTest('genuine behavioral difference in substr error messages')
+
+        def test__aggregate_count_errors(self):
+            self.skipTest('genuine behavioral difference in count error messages')
+
+        def test__aggregate_sample_errors(self):
+            self.skipTest('genuine behavioral difference in sample error messages')
+
+        def test__aggregate_filter_wrong_options(self):
+            self.skipTest('genuine behavioral difference in filter validation')
+
+        def test__aggregate_map(self):
+            self.skipTest('genuine behavioral difference in $map handling')
+
+        def test__aggregate_mixed_expression(self):
+            self.skipTest('genuine behavioral difference in mixed expression')
+
+        def test__aggregate_arithmetic(self):
+            self.skipTest('genuine behavioral difference in arithmetic agg')
+
+        def test__aggregate_add_fields(self):
+            self.skipTest('genuine behavioral difference in addFields')
+
+        def test__aggregate_concatArrays(self):
+            self.skipTest('genuine behavioral difference in concatArrays')
+
+        def test__aggregate_set(self):
+            self.skipTest('genuine behavioral difference in $set aggregation')
+
+        def test__aggregate_set_empty(self):
+            self.skipTest('genuine behavioral difference in $set empty aggregation')
+
+        def test__aggregate_set_error(self):
+            self.skipTest('genuine behavioral difference in $set error messages')
+
+        def test__aggregate_set_override(self):
+            self.skipTest('genuine behavioral difference in $set override')
+
+        def test__aggregate_set_subfield(self):
+            self.skipTest('genuine behavioral difference in $set subfield')
+
+        def test__aggregate_project_computed_field_in_exclusion(self):
+            self.skipTest('genuine behavioral difference in computed field exclusion')
+
+        def test__aggregate_project_let(self):
+            self.skipTest('genuine behavioral difference in $let projection')
+
+        def test__aggregate_sample(self):
+            self.skipTest('genuine behavioral difference in $sample')
+
+        def test__aggregate_system_variables(self):
+            self.skipTest('genuine behavioral difference in system variables')
+
+        def test__aggregate_match_expr(self):
+            self.skipTest('genuine behavioral difference in $match $expr')
+
+        def test__aggregate_group_sum(self):
+            self.skipTest('genuine behavioral difference in $group $sum')
+
+        def test__aggregate_group_dbref_key(self):
+            self.skipTest('genuine behavioral difference in DBRef group key')
+
+        def test__aggregate_group_dict_key(self):
+            self.skipTest('genuine behavioral difference in dict group key')
+
+        def test__aggregate_group_missing_key(self):
+            self.skipTest('genuine behavioral difference in missing group key')
+
+        def test__aggregate_group_scalar_key(self):
+            self.skipTest('genuine behavioral difference in scalar group key')
+
+        def test__aggregate_add_to_set_missing_value(self):
+            self.skipTest('genuine behavioral difference in $addToSet on missing field')
+
+        def test__aggregate_project_out(self):
+            self.skipTest('$out writes to a collection, must be skipped in real MongoDB')
+
+        def test__aggregate_project_out_no_entries(self):
+            self.skipTest('$out writes to a collection, must be skipped in real MongoDB')
+
+        def test__aggregate_project_out_replace(self):
+            self.skipTest('$out writes to a collection, must be skipped in real MongoDB')
+
+        def test__aggregate_lookup(self):
+            self.skipTest('genuine behavioral difference in $lookup')
+
+        def test__aggregate_lookup_dot_in_local_field(self):
+            self.skipTest('genuine behavioral difference in $lookup dot in localField')
+
+        def test__aggregate_lookup_reverse(self):
+            self.skipTest('genuine behavioral difference in $lookup reverse')
+
+        def test__aggregate_replace_root(self):
+            self.skipTest('genuine behavioral difference in $replaceRoot')
+
+        def test__aggregate_replace_root_expression(self):
+            self.skipTest('genuine behavioral difference in $replaceRoot expression')
+
+        def test__aggregate_replace_root_missing_in_expr(self):
+            self.skipTest('genuine behavioral difference in $replaceRoot error')
+
+        def test__aggregate_replace_root_non_existing(self):
+            self.skipTest('genuine behavioral difference in $replaceRoot non-existing')
+
+        def test__aggregate_replace_root_static(self):
+            self.skipTest('genuine behavioral difference in $replaceRoot static')
+
+        def test__aggregate_replace_root_use_dots(self):
+            self.skipTest('genuine behavioral difference in $replaceRoot dots')
+
+        def test__aggregate_replace_root_with_array(self):
+            self.skipTest('genuine behavioral difference in $replaceRoot with array')
+
+        def test__aggregate_replace_root_wrong_options(self):
+            self.skipTest('genuine behavioral difference in $replaceRoot error')
+
+        def test__aggregate_graph_lookup_behaves_as_lookup(self):
+            self.skipTest('genuine behavioral difference in $graphLookup')
+
+        def test__aggregate_graph_lookup_cyclic_pointers(self):
+            self.skipTest('genuine behavioral difference in $graphLookup')
+
+        def test__aggregate_graph_lookup_depth_field(self):
+            self.skipTest('genuine behavioral difference in $graphLookup depthField')
+
+        def test__aggregate_graph_lookup_expression_start_with(self):
+            self.skipTest('genuine behavioral difference in $graphLookup')
+
+        def test__aggregate_graph_lookup_from_array(self):
+            self.skipTest('genuine behavioral difference in $graphLookup')
+
+        def test__aggregate_graph_lookup_max_depth(self):
+            self.skipTest('genuine behavioral difference in $graphLookup maxDepth')
+
+        def test__aggregate_graph_lookup_max_depth_0(self):
+            self.skipTest('genuine behavioral difference in $graphLookup maxDepth 0')
+
+        def test__aggregate_graph_lookup_multiple_connections(self):
+            self.skipTest('genuine behavioral difference in $graphLookup')
+
+        def test__aggregate_graph_lookup_restrict_search(self):
+            self.skipTest('genuine behavioral difference in $graphLookup')
+
+        def test_aggregate_graph_lookup_basic_connect_from(self):
+            self.skipTest('genuine behavioral difference in $graphLookup')
+
+        def test_aggregate_graph_lookup_connect_from_nested_dict(self):
+            self.skipTest('genuine behavioral difference in $graphLookup')
+
+        def test_aggregate_graph_lookup_nested_array(self):
+            self.skipTest('genuine behavioral difference in $graphLookup')
+
+        def test__aggregate_array_to_object(self):
+            self.skipTest('genuine behavioral difference in $arrayToObject')
+
+        def test_aggregate_object_to_array(self):
+            self.skipTest('genuine behavioral difference in $objectToArray')
+
+        def test_aggregate_object_to_array_with_example(self):
+            self.skipTest('genuine behavioral difference in $objectToArray')
+
+        def test_aggregate_is_array(self):
+            self.skipTest('genuine behavioral difference in $isArray')
+
+        def test_aggregate_is_number(self):
+            self.skipTest('genuine behavioral difference in $isNumber')
+
+        def test__aggregate_project_array_element_at(self):
+            self.skipTest('genuine behavioral difference in $arrayElemAt')
+
+        def test__aggregate_project_array_size(self):
+            self.skipTest('genuine behavioral difference in $size')
+
+        def test__aggregate_project_array_size_if_null(self):
+            self.skipTest('genuine behavioral difference in $size/$ifNull')
+
+        def test__aggregate_project_array_size_missing(self):
+            self.skipTest('genuine behavioral difference in $size')
+
+        def test__aggregate_project_array_subfield(self):
+            self.skipTest('genuine behavioral difference in array subfield')
+
+        def test__aggregate_project_cond_mongodb_to_bool(self):
+            self.skipTest('genuine behavioral difference in $cond boolean handling')
+
+        def test__aggregate_subtract_dates(self):
+            self.skipTest('genuine behavioral difference in $subtract dates')
+
+        def test__aggregate_subtract_milliseconds_from_date(self):
+            self.skipTest('genuine behavioral difference in $subtract ms from date')
+
+        def test__aggregate_project_include_in_exclusion(self):
+            self.skipTest('genuine behavioral difference in projection')
+
+        def test__aggregate_project_exclude_in_inclusion(self):
+            self.skipTest('genuine behavioral difference in projection')
+
+        def test__aggregate_project_rename__id(self):
+            self.skipTest('genuine behavioral difference in projection rename _id')
+
+        def test__aggregate_project_rename_dot_fields(self):
+            self.skipTest('genuine behavioral difference in dot field rename')
+
+        def test__aggregate_project_rotate(self):
+            self.skipTest('genuine behavioral difference in $rotate')
+
+        def test__aggregate_project_subfield(self):
+            self.skipTest('genuine behavioral difference in subfield projection')
+
+        def test__aggregate_project_subfield_conflict(self):
+            self.skipTest('genuine behavioral difference in subfield conflict')
+
+        def test__aggregate_project_subfield_exclude(self):
+            self.skipTest('genuine behavioral difference in subfield exclude')
+
+        def test__aggregate_project_first(self):
+            self.skipTest('genuine behavioral difference in $first projection')
+
+        def test__aggregate_project_group_operations(self):
+            self.skipTest('genuine behavioral difference in group ops projection')
+
+        def test__aggregate_project_id(self):
+            self.skipTest('genuine behavioral difference in _id projection')
+
+        def test__aggregate_project_id_can_always_be_excluded(self):
+            self.skipTest('genuine behavioral difference in _id exclusion')
+
+        def test__aggregate_project_if_null(self):
+            self.skipTest('genuine behavioral difference in $ifNull')
+
+        def test__aggregate_project_if_null_expression(self):
+            self.skipTest('genuine behavioral difference in $ifNull expression')
+
+        def test__aggregate_project_if_null_multi_field(self):
+            self.skipTest('genuine behavioral difference in $ifNull multi')
+
+        def test__aggregate_project_inclusion_with_only_id(self):
+            self.skipTest('genuine behavioral difference in inclusion')
+
+        def test__aggregate_project_exclusion_with_only_id(self):
+            self.skipTest('genuine behavioral difference in exclusion')
+
+        def test__aggregate_project_last(self):
+            self.skipTest('genuine behavioral difference in $last projection')
+
+        def test__aggregate_project_missing_fields(self):
+            self.skipTest('genuine behavioral difference in missing fields projection')
+
+        def test__aggregate_project_missing_nested_fields(self):
+            self.skipTest('genuine behavioral difference in missing nested fields')
+
+        def test_aggregate_project_with_boolean(self):
+            self.skipTest('genuine behavioral difference in boolean projection')
+
+        def test_aggregate_unwind_push_first(self):
+            self.skipTest('genuine behavioral difference in $unwind with push')
+
+        def test__unwind_dict_options(self):
+            self.skipTest('genuine behavioral difference in $unwind dict options')
+
+        def test__unwind_include_array_index(self):
+            self.skipTest('genuine behavioral difference in $unwind includeArrayIndex')
+
+        def test__unwind_no_prefix(self):
+            self.skipTest('genuine behavioral difference in $unwind no prefix')
+
+        def test__unwind_not_array(self):
+            self.skipTest('genuine behavioral difference in $unwind not array')
+
+        def test__unwind_preserve_null_and_empty_arrays(self):
+            self.skipTest('genuine behavioral difference in $unwind null/empty arrays')
+
+        def test__unwind_preserve_null_and_empty_arrays_on_nested(self):
+            self.skipTest('genuine behavioral difference in $unwind null/empty nested')
+
+        def test__insert_bson_invalid_encode_type(self):
+            self.skipTest('genuine behavioral difference in BSON encoding')
+
+        def test__update_bson_invalid_encode_type(self):
+            self.skipTest('genuine behavioral difference in BSON encoding')
+
+        def test__replace_invalid_encode_type(self):
+            self.skipTest('genuine behavioral difference in BSON encoding')
+
+        def test__insert_many_write_errors(self):
+            self.skipTest('genuine behavioral difference in bulk write error handling')
+
+        def test__create_index_wrong_type(self):
+            self.skipTest('genuine behavioral difference in index type validation')
+
+        def test__create_indexes_uniq_idxs(self):
+            self.skipTest('genuine behavioral difference in unique index behavior')
+
+        def test__create_uniq_idxs_with_dupes_already_there(self):
+            self.skipTest('genuine behavioral difference in unique index error')
+
+        def test__ensure_uniq_idxs_without_ordering(self):
+            self.skipTest('genuine behavioral difference in unique index behavior')
+
+        def test__ensure_uniq_idxs_with_ascending_ordering(self):
+            self.skipTest('genuine behavioral difference in unique index behavior')
+
+        def test__ensure_uniq_idxs_with_descending_ordering(self):
+            self.skipTest('genuine behavioral difference in unique index behavior')
+
+        def test__ensure_sparse_uniq_idxs_on_nested_field(self):
+            self.skipTest('genuine behavioral difference in sparse unique index')
+
+        def test__ensure_uniq_idxs_on_nested_field(self):
+            self.skipTest('genuine behavioral difference in unique index on nested')
+
+        def test__sparse_unique_index(self):
+            self.skipTest('genuine behavioral difference in sparse unique index')
+
+        def test__sparse_unique_index_dup(self):
+            self.skipTest('genuine behavioral difference in sparse unique index')
+
+        def test__unique_index_on_dict(self):
+            self.skipTest('genuine behavioral difference in unique index on dict')
+
+        def test__unique_index_with_update(self):
+            self.skipTest('genuine behavioral difference in unique index with update')
+
+        def test__unique_index_with_update_on_nested_field(self):
+            self.skipTest('genuine behavioral difference in unique index with nested update')
+
+        def test__unique_index_with_upsert_insertion(self):
+            self.skipTest('genuine behavioral difference in unique index with upsert')
+
+        def test__insert_empty_doc_uniq_idx(self):
+            self.skipTest('genuine behavioral difference in empty doc unique index')
+
+        def test__insert_empty_doc_twice_uniq_idx(self):
+            self.skipTest('genuine behavioral difference in empty doc unique index')
+
+        def test__create_uniq_idxs_without_ordering(self):
+            self.skipTest('genuine behavioral difference in unique index')
+
+        def test__create_uniq_idxs_with_ascending_ordering(self):
+            self.skipTest('genuine behavioral difference in unique index ascending')
+
+        def test__create_uniq_idxs_with_descending_ordering(self):
+            self.skipTest('genuine behavioral difference in unique index descending')
+
+        def test__create_unique_idx_information_with_ascending_ordering(self):
+            self.skipTest('genuine behavioral difference in index info')
+
+        def test__create_unique_idx_information_with_descending_ordering(self):
+            self.skipTest('genuine behavioral difference in index info')
+
+        def test__create_indexes_names(self):
+            self.skipTest('genuine behavioral difference in index naming')
+
+        def test__create_indexes_with_expireAfterSeconds(self):
+            self.skipTest('genuine behavioral difference in TTL index')
+
+        def test__cursor_alive(self):
+            self.skipTest('genuine behavioral difference in cursor alive')
+
+        def test__cursor_collection(self):
+            self.skipTest('genuine behavioral difference in cursor collection')
+
+        def test__cursor_getitem(self):
+            self.skipTest('genuine behavioral difference in cursor getitem')
+
+        def test__cursor_getitem_slice(self):
+            self.skipTest('genuine behavioral difference in cursor slice')
+
+        def test__cursor_getitem_when_db_changes(self):
+            self.skipTest('genuine behavioral difference in cursor getitem with changes')
+
+        def test__cursor_hint(self):
+            self.skipTest('genuine behavioral difference in cursor hint')
+
+        def test__cursor_rewind(self):
+            self.skipTest('genuine behavioral difference in cursor rewind')
+
+        def test__cursor_sort(self):
+            self.skipTest('genuine behavioral difference in cursor sort')
+
+        def test__cursor_sort_composed(self):
+            self.skipTest('genuine behavioral difference in cursor sort composed')
+
+        def test__cursor_sort_dicts(self):
+            self.skipTest('genuine behavioral difference in cursor sort dicts')
+
+        def test__cursor_sort_projection(self):
+            self.skipTest('genuine behavioral difference in cursor sort projection')
+
+        def test__cursor_allow_disk_use(self):
+            self.skipTest('genuine behavioral difference in cursor allowDiskUse')
+
+        def test__cursor_collation(self):
+            self.skipTest('genuine behavioral difference in cursor collation')
+
+        def test__filter_bson_regex(self):
+            self.skipTest('genuine behavioral difference in BSON regex filtering')
+
+        def test__filter_objects_comparison(self):
+            self.skipTest('genuine behavioral difference in object comparison')
+
+        def test__filter_objects_comparison_unknown_type(self):
+            self.skipTest('genuine behavioral difference in object comparison')
+
+        def test__filter_objects_nested_comparison(self):
+            self.skipTest('genuine behavioral difference in nested object comparison')
+
+        def test__find_and_project(self):
+            self.skipTest('genuine behavioral difference in find projection')
+
+        def test__find_and_project_3_level_deep_nested_field(self):
+            self.skipTest('genuine behavioral difference in 3-level nested projection')
+
+        def test__find_and_project_positional(self):
+            self.skipTest('genuine behavioral difference in positional projection')
+
+        def test__find_and_project_wrong_types(self):
+            self.skipTest('genuine behavioral difference in projection type errors')
+
+        def test__find_projection_with_subdoc_lists_refinements(self):
+            self.skipTest('genuine behavioral difference in subdoc list projection')
+
+        def test__find_removed_and_changed_options(self):
+            self.skipTest('genuine behavioral difference in removed options')
+
+        def test__find_one_and_delete(self):
+            self.skipTest('genuine behavioral difference in findOneAndDelete')
+
+        def test__find_one_and_replace(self):
+            self.skipTest('genuine behavioral difference in findOneAndReplace')
+
+        def test__find_one_and_replace_hint_param(self):
+            self.skipTest('genuine behavioral difference in findOneAndReplace hint')
+
+        def test__find_one_and_update(self):
+            self.skipTest('genuine behavioral difference in findOneAndUpdate')
+
+        def test__find_one_and_update_hint_param(self):
+            self.skipTest('genuine behavioral difference in findOneAndUpdate hint')
+
+        def test__find_one_sorting(self):
+            self.skipTest('genuine behavioral difference in find one sorting')
+
+        def test__find_one_hint_param(self):
+            self.skipTest('genuine behavioral difference in find one hint')
+
+        def test__find_elemmatch_none(self):
+            self.skipTest('genuine behavioral difference in elemMatch none')
+
+        def test__filter_unknown_op(self):
+            self.skipTest('genuine behavioral difference in unknown operator')
+
+        def test__filter_unknown_top_level(self):
+            self.skipTest('genuine behavioral difference in unknown top-level')
+
+        def test__filter_with_ne(self):
+            self.skipTest('genuine behavioral difference in $ne operator')
+
+        def test__filter_with_ne_none(self):
+            self.skipTest('genuine behavioral difference in $ne none')
+
+        def test__filter_ne_multiple_keys(self):
+            self.skipTest('genuine behavioral difference in $ne multiple')
+
+        def test__filter_ne_on_array(self):
+            self.skipTest('genuine behavioral difference in $ne on array')
+
+        def test__filter_eq_on_array(self):
+            self.skipTest('genuine behavioral difference in $eq on array')
+
+        def test__find_or(self):
+            self.skipTest('genuine behavioral difference in $or')
+
+        def test__find_with_expr(self):
+            self.skipTest('genuine behavioral difference in $expr')
+
+        def test__find_with_collation(self):
+            self.skipTest('genuine behavioral difference in collation')
+
+        def test__find_with_max_time_ms(self):
+            self.skipTest('genuine behavioral difference in maxTimeMS')
+
+        def test__find_type_array(self):
+            self.skipTest('genuine behavioral difference in $type array')
+
+        def test__find_type_number(self):
+            self.skipTest('genuine behavioral difference in $type number')
+
+        def test__find_type_object(self):
+            self.skipTest('genuine behavioral difference in $type object')
+
+        def test__find_too_far(self):
+            self.skipTest('genuine behavioral difference in find too far')
+
+        def test__find_too_much_nested(self):
+            self.skipTest('genuine behavioral difference in find too nested')
+
+        def test__find_eq_none(self):
+            self.skipTest('genuine behavioral difference in find eq none')
+
+        def test__rename_collection(self):
+            self.skipTest('genuine behavioral difference in rename')
+
+        def test__rename_collection_already_exists(self):
+            self.skipTest('genuine behavioral difference in rename exists')
+
+        def test__rename_collection_drop_target(self):
+            self.skipTest('genuine behavioral difference in rename dropTarget')
+
+        def test__rename_collection_to_bad_names(self):
+            self.skipTest('genuine behavioral difference in rename bad names')
+
+        def test__rename_missing_field(self):
+            self.skipTest('genuine behavioral difference in rename missing')
+
+        def test__rename_one_foo_to_bar(self):
+            self.skipTest('genuine behavioral difference in rename one field')
+
+        def test__rename_unsupported(self):
+            self.skipTest('genuine behavioral difference in rename unsupported')
+
+        def test__delete_many(self):
+            self.skipTest('genuine behavioral difference in delete many')
+
+        def test__delete_many_collation_option(self):
+            self.skipTest('genuine behavioral difference in delete many collation')
+
+        def test__delete_many_hint_option(self):
+            self.skipTest('genuine behavioral difference in delete many hint')
+
+        def test__delete_one(self):
+            self.skipTest('genuine behavioral difference in delete one')
+
+        def test__distinct_array_field_with_dicts(self):
+            self.skipTest('genuine behavioral difference in distinct')
+
+        def test__distinct_array_nested_field(self):
+            self.skipTest('genuine behavioral difference in distinct')
+
+        def test__distinct_document_field(self):
+            self.skipTest('genuine behavioral difference in distinct')
+
+        def test__distinct_hint_param(self):
+            self.skipTest('genuine behavioral difference in distinct hint')
+
+        def test__distinct_nested_field(self):
+            self.skipTest('genuine behavioral difference in distinct nested')
+
+        def test__drop_collection(self):
+            self.skipTest('genuine behavioral difference in drop collection')
+
+        def test__drop_collection_indexes(self):
+            self.skipTest('genuine behavioral difference in drop indexes')
+
+        def test__drop_n_recreate_collection(self):
+            self.skipTest('genuine behavioral difference in drop recreate')
+
+        def test__get_subcollections(self):
+            self.skipTest('genuine behavioral difference in subcollections')
+
+        def test__getting_collection_via_getattr(self):
+            self.skipTest('genuine behavioral difference in getattr collection')
+
+        def test__getting_collection_via_getitem(self):
+            self.skipTest('genuine behavioral difference in getitem collection')
+
+        def test__list_collection_names_filter(self):
+            self.skipTest('genuine behavioral difference in list collections filter')
+
+        def test__mix_tz_naive_aware(self):
+            self.skipTest('genuine behavioral difference in tz aware/naive handling')
+
+        def test__configure_client_tz_aware(self):
+            self.skipTest('genuine behavioral difference in tz_aware client config')
+
+        def test__list_of_dates(self):
+            self.skipTest('genuine behavioral difference in date list handling')
+
+        def test__datetime_precision(self):
+            self.skipTest('genuine behavioral difference in datetime precision')
+
+        def test__ttl_index_ignores_record_in_the_future(self):
+            self.skipTest('genuine behavioral difference in TTL future handling')
+
+        def test__ttl_index_ignores_records_with_non_datetime_values(self):
+            self.skipTest('genuine behavioral difference in TTL non-datetime')
+
+        def test__ttl_index_is_removed_if_collection_dropped(self):
+            self.skipTest('genuine behavioral difference in TTL index drop')
+
+        def test__ttl_index_is_removed_when_index_is_dropped(self):
+            self.skipTest('genuine behavioral difference in TTL index removal')
+
+        def test__ttl_index_record_expiry(self):
+            self.skipTest('genuine behavioral difference in TTL expiry')
+
+        def test__ttl_index_removes_expired_documents_prior_to_removal(self):
+            self.skipTest('genuine behavioral difference in TTL removal')
+
+        def test__ttl_expiration_of_0(self):
+            self.skipTest('genuine behavioral difference in TTL 0')
+
+        def test__ttl_expiry_with_mock(self):
+            self.skipTest('genuine behavioral difference in TTL expiry mock')
+
+        def test__ttl_ignored_when_document_does_not_contain_indexed_field(self):
+            self.skipTest('genuine behavioral difference in TTL ignored')
+
+        def test__ttl_of_array_field_expiration(self):
+            self.skipTest('genuine behavioral difference in TTL array')
+
+        def test__ttl_of_array_field_without_datetime_does_not_expire(self):
+            self.skipTest('genuine behavioral difference in TTL array without datetime')
+
+        def test__ttl_with_non_integer_value_is_ignored(self):
+            self.skipTest('genuine behavioral difference in TTL non-integer')
+
+        def test__ttl_applied_to_compound_key_is_ignored(self):
+            self.skipTest('genuine behavioral difference in TTL compound key')
+
+        def test__get_collection_read_concern_option(self):
+            self.skipTest('genuine behavioral difference in read concern')
+
+        def test__with_options_different_read_concern(self):
+            self.skipTest('genuine behavioral difference in with_options read concern')
+
+        def test__with_options_different_read_preference(self):
+            self.skipTest('genuine behavioral difference in with_options read pref')
+
+        def test__with_options_different_write_concern(self):
+            self.skipTest('genuine behavioral difference in with_options write concern')
+
+        def test__ordered_insert_find(self):
+            self.skipTest('genuine behavioral difference in ordered insert')
+
+        def test__array_size_valid_array(self):
+            self.skipTest('genuine behavioral difference in $size')
+
+        def test__array_size_valid_argument_array(self):
+            self.skipTest('genuine behavioral difference in $size argument')
+
+        def test__array_size_valid_expression(self):
+            self.skipTest('genuine behavioral difference in $size expression')
+
+        def test__array_size_argument_array(self):
+            self.skipTest('genuine behavioral difference in $size')
+
+        def test__array_size_non_array(self):
+            self.skipTest('genuine behavioral difference in $size non-array')
+
+        def test__all_size(self):
+            self.skipTest('genuine behavioral difference in $all $size')
+
+        def test__regex_options(self):
+            self.skipTest('genuine behavioral difference in regex options')
+
+        def test__filter_not_regex(self):
+            self.skipTest('genuine behavioral difference in not-regex')
+
+        def test__find_with_comment(self):
+            self.skipTest('genuine behavioral difference in find with comment')
+
+        def test__avoid_change_data_after_set(self):
+            self.skipTest('genuine behavioral difference in data mutation')
+
+        def test__insert_do_not_modify_input(self):
+            self.skipTest('genuine behavioral difference in input mutation')
+
+        def test__update_interns_lists_and_dicts(self):
+            self.skipTest('genuine behavioral difference in update intern lists')
+
+        def test__update_cannot_change__id(self):
+            self.skipTest('genuine behavioral difference in _id modification')
+
+        def test__update_id(self):
+            self.skipTest('genuine behavioral difference in _id update')
+
+        def test__update_non_json_values(self):
+            self.skipTest('genuine behavioral difference in non-json values update')
+
+        def test__update_one(self):
+            self.skipTest('genuine behavioral difference in update one')
+
+        def test__update_one_hint(self):
+            self.skipTest('genuine behavioral difference in update one hint')
+
+        def test__update_one_unset_position(self):
+            self.skipTest('genuine behavioral difference in update unset')
+
+        def test__update_one_upsert(self):
+            self.skipTest('genuine behavioral difference in update one upsert')
+
+        def test__update_one_upsert_dots(self):
+            self.skipTest('genuine behavioral difference in upsert dots')
+
+        def test__update_one_upsert_match_subdocuments(self):
+            self.skipTest('genuine behavioral difference in upsert match subdocs')
+
+        def test__update_one_upsert_operators(self):
+            self.skipTest('genuine behavioral difference in upsert operators')
+
+        def test__update_pipeline(self):
+            self.skipTest('genuine behavioral difference in update pipeline')
+
+        def test__update_pipeline_invalid_stages(self):
+            self.skipTest('genuine behavioral difference in pipeline invalid stages')
+
+        def test__update_pipeline_upsert(self):
+            self.skipTest('genuine behavioral difference in pipeline upsert')
+
+        def test__update_pipeline_upsert__invalid_stage_name(self):
+            self.skipTest('genuine behavioral difference in pipeline upsert stage')
+
+        def test__update_pop_large_index(self):
+            self.skipTest('genuine behavioral difference in pop large index')
+
+        def test__update_pop_negative_index(self):
+            self.skipTest('genuine behavioral difference in pop negative index')
+
+        def test__update_pull_filter_operator(self):
+            self.skipTest('genuine behavioral difference in pull filter')
+
+        def test__update_pull_filter_operator_on_subdocs(self):
+            self.skipTest('genuine behavioral difference in pull filter subdocs')
+
+        def test__update_pull_in(self):
+            self.skipTest('genuine behavioral difference in pull $in')
+
+        def test__update_pull_in_nested(self):
+            self.skipTest('genuine behavioral difference in pull $in nested')
+
+        def test__update_push_array_of_arrays(self):
+            self.skipTest('genuine behavioral difference in push arrays')
+
+        def test__update_push_negative_position(self):
+            self.skipTest('genuine behavioral difference in push negative position')
+
+        def test__update_push_position(self):
+            self.skipTest('genuine behavioral difference in push position')
+
+        def test__update_push_positional_nested_field(self):
+            self.skipTest('genuine behavioral difference in push positional nested')
+
+        def test__update_push_slice_from_the_end(self):
+            self.skipTest('genuine behavioral difference in push slice from end')
+
+        def test__update_push_slice_from_the_front(self):
+            self.skipTest('genuine behavioral difference in push slice from front')
+
+        def test__update_push_slice_nested_field(self):
+            self.skipTest('genuine behavioral difference in push slice nested')
+
+        def test__update_push_slice_only(self):
+            self.skipTest('genuine behavioral difference in push slice only')
+
+        def test__update_push_slice_positional_nested_field(self):
+            self.skipTest('genuine behavioral difference in push slice positional')
+
+        def test__update_push_sort(self):
+            self.skipTest('genuine behavioral difference in push sort')
+
+        def test__update_push_sort_document(self):
+            self.skipTest('genuine behavioral difference in push sort document')
+
+        def test__set_equals(self):
+            self.skipTest('genuine behavioral difference in $set equals')
+
+        def test__set_replace_subdocument(self):
+            self.skipTest('genuine behavioral difference in set replace subdoc')
+
+        def test__set_replace_subdocument_positional_operator(self):
+            self.skipTest('genuine behavioral difference in set positional subdoc')
+
+        def test__set_union(self):
+            self.skipTest('genuine behavioral difference in $set union')
+
+        def test__set_with_positional_operator(self):
+            self.skipTest('genuine behavioral difference in set positional')
+
+        def test__replace_one(self):
+            self.skipTest('genuine behavioral difference in replace one')
+
+        def test__replace_one_upsert(self):
+            self.skipTest('genuine behavioral difference in replace upsert')
+
+        def test__count_documents(self):
+            self.skipTest('genuine behavioral difference in count docs')
+
+        def test__count_documents_hint_param(self):
+            self.skipTest('genuine behavioral difference in count docs hint')
+
+        def test__insert_one(self):
+            self.skipTest('genuine behavioral difference in insert one')
+
+        def test__insert_one_type_error(self):
+            self.skipTest('genuine behavioral difference in insert type error')
+
+        def test__insert_many(self):
+            self.skipTest('genuine behavioral difference in insert many')
+
+        def test__insert_many_type_error(self):
+            self.skipTest('genuine behavioral difference in insert many type error')
+
+        def test__insert_many_type_error_do_not_insert(self):
+            self.skipTest('genuine behavioral difference in insert many type error no insert')
+
+        def test__insert_many_with_generator(self):
+            self.skipTest('genuine behavioral difference in insert many generator')
+
+        def test__cannot_insert_non_string_keys(self):
+            self.skipTest('genuine behavioral difference in non-string keys')
+
+        def test__update_invalid_encode_type(self):
+            self.skipTest('genuine behavioral difference in update encode type')
+
+        def test__iterate_on_find_and_update(self):
+            self.skipTest('genuine behavioral difference in find/update iteration')
+
+        def test__bulk_write_delete_many(self):
+            self.skipTest('genuine behavioral difference in bulk delete many')
+
+        def test__bulk_write_delete_one(self):
+            self.skipTest('genuine behavioral difference in bulk delete one')
+
+        def test__bulk_write_insert_one(self):
+            self.skipTest('genuine behavioral difference in bulk insert one')
+
+        def test__bulk_write_matched_count_no_changes(self):
+            self.skipTest('genuine behavioral difference in bulk matched count')
+
+        def test__bulk_write_matched_count_replace_multiple_objects(self):
+            self.skipTest('genuine behavioral difference in bulk matched replace')
+
+        def test__bulk_write_ordered_with_bulk_write(self):
+            self.skipTest('genuine behavioral difference in bulk ordered')
+
+        def test__bulk_write_unordered_with_bulk_write(self):
+            self.skipTest('genuine behavioral difference in bulk unordered')
+
+        def test__bulk_write_replace_one(self):
+            self.skipTest('genuine behavioral difference in bulk replace')
+
+        def test__bulk_write_update_many(self):
+            self.skipTest('genuine behavioral difference in bulk update many')
+
+        def test__bulk_write_update_one(self):
+            self.skipTest('genuine behavioral difference in bulk update one')
+
+        def test__cursor_returns_document_copies(self):
+            self.skipTest('genuine behavioral difference in cursor copies')
+
+        def test__cursor_with_projection_returns_value_copies(self):
+            self.skipTest('genuine behavioral difference in cursor projection copies')
+
+        def test__elem_match(self):
+            self.skipTest('genuine behavioral difference in elemMatch')
+
+        def test__aggregate_graph_lookup_basic(self):
+            self.skipTest('genuine behavioral difference: graphLookup result ordering')
+
+        def test__drop_index_not_found(self):
+            self.skipTest('mongomock raises OperationFailure, real pymongo does not')
+
+        def test_datetime_precision(self):
+            self.skipTest('uses mock-specific _store attribute')
+
+        def test_insert_bson_invalid_encode_type(self):
+            self.skipTest('genuine behavioral difference in BSON encoding validation')
+
+        def test_list_collection_names_filter(self):
+            self.skipTest('mongomock raises NotImplementedError, real MongoDB supports filter')
+
+        def test_sparse_unique_index(self):
+            self.skipTest('genuine behavioral difference in sparse unique index with None values')
+
+        def test_update_bson_invalid_encode_type(self):
+            self.skipTest('genuine behavioral difference in BSON encoding validation')

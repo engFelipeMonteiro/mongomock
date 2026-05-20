@@ -31,10 +31,14 @@ try:
     from pymongo import MongoClient as PymongoClient
     from pymongo import read_concern
     from pymongo.read_preferences import ReadPreference
+
+    _HAVE_PYMONGO = True
 except ImportError:
     from mongomock_ng import read_concern
     from mongomock_ng.object_id import ObjectId
     from tests.utils import DBRef
+
+    _HAVE_PYMONGO = False
 
 try:
     import execjs
@@ -91,9 +95,11 @@ class InterfaceTest(TestCase):
 
 
 class DatabaseGettingTest(TestCase):
+    client_factory = mongomock_ng.MongoClient
+
     def setUp(self):
         super().setUp()
-        self.client = mongomock_ng.MongoClient()
+        self.client = self.client_factory()
 
     @skipIf(not helpers.HAVE_PYMONGO, 'pymongo not installed')
     def test__get_database_read_concern(self):
@@ -5199,9 +5205,12 @@ class MongoClientSortSkipLimitTest(_CollectionComparisonTest):
 
 
 class InsertedDocumentTest(TestCase):
+    client_factory = mongomock_ng.MongoClient
+
     def setUp(self):
         super().setUp()
-        self.collection = mongomock_ng.MongoClient().db.collection
+        self.client = self.client_factory()
+        self.collection = self.client.db.collection
         self.data = {'a': 1, 'b': [1, 2, 3], 'c': {'d': 4}}
         self.orig_data = copy.deepcopy(self.data)
         self.object_id = self.collection.insert_one(self.data).inserted_id
@@ -5291,3 +5300,48 @@ class DatabaseTest(_CollectionComparisonTest):
             return
 
         self.cmp.do.collection_names()
+
+
+if _HAVE_PYMONGO:
+
+    @skipIf(os.getenv('NO_LOCAL_MONGO'), 'No local Mongo server running')
+    class DatabaseGettingTestWithRealMongo(DatabaseGettingTest):
+        client_factory = pymongo.MongoClient
+
+        def setUp(self):
+            super().setUp()
+            self.client.drop_database('a')
+            self.client.drop_database('somedb')
+
+        def test__getting_database_via_getattr(self):
+            self.skipTest('mock-specific assertIsInstance(db, Database)')
+
+        def test__getting_database_via_getitem(self):
+            self.skipTest('mock-specific assertIsInstance(db, Database)')
+
+        def test__alive(self):
+            self.skipTest('alive() is mock-specific')
+
+        def test__getting_default_database_valid(self):
+            self.skipTest('mock-specific assertIsInstance(db, Database)')
+
+        def test__getting_default_database_invalid(self):
+            self.skipTest('mock-specific ConfigurationError assertions')
+
+        def test__dereference(self):
+            self.skipTest('dereference removed in pymongo 4+')
+
+        def test__drop_database_system_collection(self):
+            self.skipTest('real MongoDB rejects writes to system.* namespaces')
+
+    @skipIf(os.getenv('NO_LOCAL_MONGO'), 'No local Mongo server running')
+    class InsertedDocumentTestWithRealMongo(InsertedDocumentTest):
+        client_factory = pymongo.MongoClient
+
+        def setUp(self):
+            self.client = self.client_factory()
+            self.client.drop_database('db')
+            self.collection = self.client.db.collection
+            self.data = {'a': 1, 'b': [1, 2, 3], 'c': {'d': 4}}
+            self.orig_data = copy.deepcopy(self.data)
+            self.object_id = self.collection.insert_one(self.data).inserted_id

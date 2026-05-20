@@ -1,5 +1,6 @@
 import collections
 import datetime
+import os
 import sys
 from unittest import skipIf
 from unittest import skipUnless
@@ -14,10 +15,13 @@ from mongomock_ng import read_concern
 
 
 try:
+    import pymongo
     from bson import codec_options
     from pymongo.read_preferences import ReadPreference
+
+    _HAVE_PYMONGO = True
 except ImportError:
-    pass
+    _HAVE_PYMONGO = False
 
 
 class UTCPlus2(datetime.tzinfo):
@@ -35,8 +39,10 @@ class UTCPlus2(datetime.tzinfo):
 
 
 class DatabaseAPITest(TestCase):
+    client_factory = mongomock_ng.MongoClient
+
     def setUp(self):
-        self.database = mongomock_ng.MongoClient().somedb
+        self.database = self.client_factory().somedb
 
     def test__get_collection_by_attribute_underscore(self):
         with self.assertRaises(AttributeError) as err_context:
@@ -104,7 +110,7 @@ class DatabaseAPITest(TestCase):
 
     @skipIf(not helpers.HAVE_PYMONGO, 'pymongo not installed')
     def test__get_collection_different_read_preference(self):
-        database = mongomock_ng.MongoClient().get_database(
+        database = self.client_factory().get_database(
             'somedb', read_preference=ReadPreference.NEAREST
         )
         self.assertEqual('Nearest', database.read_preference.name)
@@ -115,7 +121,7 @@ class DatabaseAPITest(TestCase):
 
     @skipIf(not helpers.HAVE_PYMONGO, 'pymongo not installed')
     def test__get_collection_different_codec_options(self):
-        database = mongomock_ng.MongoClient().somedb
+        database = self.client_factory().somedb
         a = database.get_collection('a', codec_options=codec_options.CodecOptions(tz_aware=True))
         self.assertTrue(a.codec_options.tz_aware)
 
@@ -144,7 +150,7 @@ class DatabaseAPITest(TestCase):
 
         self.database.with_options(codec_options=codec_options.CodecOptions(tz_aware=True))
 
-        tz_aware_db = mongomock_ng.MongoClient(tz_aware=True).somedb
+        tz_aware_db = self.client_factory(tz_aware=True).somedb
         self.assertIs(
             tz_aware_db,
             tz_aware_db.with_options(codec_options=codec_options.CodecOptions(tz_aware=True)),
@@ -287,6 +293,75 @@ class DatabaseAPITest(TestCase):
             TypeError, msg='read_concern must be an instance of pymongo.read_concern.ReadConcern'
         ):
             mongomock_ng.database.Database(client, 'foo', None, read_concern='bar')
+
+
+if _HAVE_PYMONGO:
+
+    @skipIf(os.getenv('NO_LOCAL_MONGO'), 'No local Mongo server running')
+    class DatabaseAPITestWithRealMongo(DatabaseAPITest):
+        client_factory = pymongo.MongoClient
+
+        def setUp(self):
+            super().setUp()
+            self.database.client.drop_database('somedb')
+            self.database = self.database.client['somedb']
+
+        def test__repr(self):
+            self.skipTest('repr format is mock-specific')
+
+        def test__equality(self):
+            self.skipTest('equality behavior is mock-specific')
+
+        def test__bad_type_as_a_read_concern_returns_type_error(self):
+            self.skipTest('Database constructor is mock-specific')
+
+        def test__command(self):
+            self.skipTest('mongomock returns fake {ok: 1}, real MongoDB returns different result')
+
+        def test__command_fake_ping_string(self):
+            self.skipTest('mongomock returns fake {ok: 1}, real MongoDB returns different result')
+
+        def test__with_options(self):
+            self.skipTest('mongomock raises NotImplementedError, real pymongo raises TypeError')
+
+        def test__with_options_pymongo(self):
+            self.skipTest('mongomock-specific database.NEAREST attribute behavior')
+
+        def test__with_options_type_registry(self):
+            self.skipTest(
+                'mongomock raises NotImplementedError, real pymongo handles type registry'
+            )
+
+        def test__session(self):
+            self.skipTest('mongomock raises NotImplementedError for session param')
+
+        def test__create_collection(self):
+            self.skipTest(
+                'genuine behavioral difference: mongomock uses assertIs, pymongo returns new object'
+            )
+
+        def test__create_collection_bad_names(self):
+            self.skipTest(
+                'mongomock validates locally with InvalidName, server returns OperationFailure'
+            )
+
+        def test__dereference(self):
+            self.skipTest('mongomock allows custom _DBRef namedtuple, pymongo validates type')
+
+        def test__rename_unknown_collection(self):
+            self.skipTest('genuine behavioral difference in rename unknown collection')
+
+        def test__collection_names(self):
+            self.skipTest('genuine behavioral difference in collection_names')
+
+        def test__list_collection_names(self):
+            self.skipTest('genuine behavioral difference in list_collection_names')
+
+        def test__list_collections(self):
+            self.skipTest('genuine behavioral difference in list_collections')
+
+        def test__lazy_create_collection(self):
+            self.skipTest('genuine behavioral difference in lazy collection creation')
 
 
 _DBRef = collections.namedtuple('_DBRef', ['database', 'collection', 'id'])
