@@ -8891,6 +8891,220 @@ class CollectionAPITest(TestCase):
             self.db.collection.aggregate([{'$project': {'a': {'$dateToString': '10'}}}])
 
     @skipIf(not helpers.HAVE_PYMONGO, 'pymongo not installed')
+    @skipIf(version.parse('5.0') > SERVER_VERSION, '$dateAdd is not supported prior to MongoDB 5.0')
+    def test__aggregate_date_add_and_subtract(self):
+        collection = self.db.collection
+        start = datetime(2022, 11, 6, 20, 4, 1, 123000)
+        collection.insert_one({})
+
+        actual = list(
+            collection.aggregate(
+                [
+                    {
+                        '$addFields': {
+                            'add_month': {
+                                '$dateAdd': {'startDate': start, 'unit': 'month', 'amount': 1}
+                            },
+                            'add_quarter': {
+                                '$dateAdd': {'startDate': start, 'unit': 'quarter', 'amount': 1}
+                            },
+                            'subtract_hour': {
+                                '$dateSubtract': {
+                                    'startDate': start,
+                                    'unit': 'hour',
+                                    'amount': 2,
+                                }
+                            },
+                        }
+                    },
+                    {'$project': {'_id': 0}},
+                ]
+            )
+        )
+
+        self.assertEqual(
+            [
+                {
+                    'add_month': datetime(2022, 12, 6, 20, 4, 1, 123000),
+                    'add_quarter': datetime(2023, 2, 6, 20, 4, 1, 123000),
+                    'subtract_hour': datetime(2022, 11, 6, 18, 4, 1, 123000),
+                }
+            ],
+            actual,
+        )
+
+        with self.assertRaises(mongomock_ng.OperationFailure):
+            list(
+                collection.aggregate(
+                    [
+                        {
+                            '$addFields': {
+                                'bad': {
+                                    '$dateAdd': {
+                                        'startDate': start,
+                                        'unit': 'day',
+                                        'amount': 1.5,
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                )
+            )
+
+    @skipIf(not helpers.HAVE_PYMONGO, 'pymongo not installed')
+    @skipIf(
+        version.parse('5.0') > SERVER_VERSION,
+        '$dateDiff is not supported prior to MongoDB 5.0',
+    )
+    def test__aggregate_date_diff(self):
+        collection = self.db.collection
+        collection.insert_one({})
+        start = datetime(2022, 11, 7, 12, 54, 32, 543000)
+
+        actual = list(
+            collection.aggregate(
+                [
+                    {
+                        '$addFields': {
+                            'milliseconds': {
+                                '$dateDiff': {
+                                    'startDate': start,
+                                    'endDate': start + timedelta(milliseconds=123),
+                                    'unit': 'millisecond',
+                                }
+                            },
+                            'hours': {
+                                '$dateDiff': {
+                                    'startDate': start,
+                                    'endDate': start + timedelta(hours=56),
+                                    'unit': 'hour',
+                                }
+                            },
+                            'quarters': {
+                                '$dateDiff': {
+                                    'startDate': start,
+                                    'endDate': datetime(2023, 5, 7, 12, 54, 32, 543000),
+                                    'unit': 'quarter',
+                                }
+                            },
+                        }
+                    },
+                    {'$project': {'_id': 0}},
+                ]
+            )
+        )
+
+        self.assertEqual([{'milliseconds': 123, 'hours': 56, 'quarters': 2}], actual)
+
+        with self.assertRaises(NotImplementedError):
+            list(
+                collection.aggregate(
+                    [
+                        {
+                            '$addFields': {
+                                'weeks': {
+                                    '$dateDiff': {
+                                        'startDate': start,
+                                        'endDate': start + timedelta(days=14),
+                                        'unit': 'week',
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                )
+            )
+
+    @skipIf(not helpers.HAVE_PYMONGO, 'pymongo not installed')
+    @skipIf(
+        version.parse('5.0') > SERVER_VERSION,
+        '$dateTrunc is not supported prior to MongoDB 5.0',
+    )
+    def test__aggregate_date_trunc(self):
+        collection = self.db.collection
+        collection.insert_one({'start_date': datetime(2011, 11, 4, 15, 6, 7, 890123)})
+
+        actual = list(
+            collection.aggregate(
+                [
+                    {
+                        '$addFields': {
+                            'day': {'$dateTrunc': {'date': '$start_date', 'unit': 'day'}},
+                            'month': {'$dateTrunc': {'date': '$start_date', 'unit': 'month'}},
+                            'year': {'$dateTrunc': {'date': '$start_date', 'unit': 'year'}},
+                        }
+                    },
+                    {'$project': {'_id': 0, 'start_date': 0}},
+                ]
+            )
+        )
+
+        self.assertEqual(
+            [
+                {
+                    'day': datetime(2011, 11, 4, 0, 0),
+                    'month': datetime(2011, 11, 1, 0, 0),
+                    'year': datetime(2011, 1, 1, 0, 0),
+                }
+            ],
+            actual,
+        )
+
+    @skipIf(not helpers.HAVE_PYMONGO, 'pymongo not installed')
+    def test__aggregate_date_from_string(self):
+        collection = self.db.collection
+        collection.insert_one({})
+
+        actual = list(
+            collection.aggregate(
+                [
+                    {
+                        '$addFields': {
+                            'parsed': {'$dateFromString': {'dateString': '2023-01-15T10:30:00Z'}},
+                            'on_null': {
+                                '$dateFromString': {'dateString': None, 'onNull': 'missing'}
+                            },
+                            'on_error': {
+                                '$dateFromString': {'dateString': 'not-a-date', 'onError': 'bad'}
+                            },
+                        }
+                    },
+                    {'$project': {'_id': 0}},
+                ]
+            )
+        )
+
+        self.assertEqual(
+            [
+                {
+                    'parsed': datetime(2023, 1, 15, 10, 30, 0),
+                    'on_null': 'missing',
+                    'on_error': 'bad',
+                }
+            ],
+            actual,
+        )
+
+        with self.assertRaises(NotImplementedError):
+            list(
+                collection.aggregate(
+                    [
+                        {
+                            '$addFields': {
+                                'parsed': {
+                                    '$dateFromString': {
+                                        'dateString': '2023-01-15',
+                                        'format': '%Y-%m-%d',
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                )
+            )
+
+    @skipIf(not helpers.HAVE_PYMONGO, 'pymongo not installed')
     def test__aggregate_date_from_parts(self):
         collection = self.db.collection
         collection.insert_one(
