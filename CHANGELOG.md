@@ -7,8 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [7.4.1] - 2026-05-21
 ### Changed
 - Drop Python 3.14 from test matrix and classifiers — not yet stable, incompatible with runtime dependencies
+- Add pymongo 4.12.0 and 4.14.0 to hatch-test matrix for broader compatibility coverage
 
 ### Fixed
+- TTL document expiry no longer crashes on Python 3.13 — normalize naive datetimes to UTC-aware before subtraction in `_value_meets_expiry` (store.py)
+- Replace deprecated `datetime.utcfromtimestamp` with `datetime.fromtimestamp(..., tz=timezone.utc)` in aggregation `$convert` to date handlers (aggregate.py)
+- Replace deprecated `datetime.utcnow()` with `datetime.now(timezone.utc).replace(tzinfo=None)` in helpers and test suite
+- Fix hatch-test matrix so environment `hatch-test.*-4.11.0` correctly installs `pymongo==4.11.0` (missing `if` clause)
 - `find()` projection no longer mutates original document data (mongomock#692 — closes #191)
 - `$in` operator correctly handles empty-list values (mongomock#795 — closes #184)
 - `$slice` aggregation operator evaluates arguments as expressions (mongomock#819 — closes #178)
