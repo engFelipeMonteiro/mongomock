@@ -10,7 +10,7 @@ EXECJS_RUNTIME = "node"
 
 [envs.hatch-test.overrides]
 matrix.pymongo.extra-dependencies = [
-  { value = "pymongo==4.11.0", if = ["4"]},
+  { value = "pymongo==4.11.0", if = ["4", "4.11.0"]},
   { value = "pymongo", if = ["latest"]},
 ]
 
