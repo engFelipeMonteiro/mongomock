@@ -9,6 +9,7 @@ import uuid
 import warnings
 from datetime import datetime
 from datetime import timedelta
+from datetime import timezone
 from datetime import tzinfo
 from unittest import mock
 from unittest import skipIf
@@ -1613,7 +1614,9 @@ class CollectionAPITest(TestCase):
 
     def test__ttl_index_ignores_record_in_the_future(self):
         self.db.collection.create_index([('value', 1)], expireAfterSeconds=0)
-        self.db.collection.insert_one({'value': datetime.utcnow() + timedelta(seconds=100)})
+        self.db.collection.insert_one(
+            {'value': datetime.now(timezone.utc).replace(tzinfo=None) + timedelta(seconds=100)}
+        )
         self.assertEqual(self.db.collection.count_documents({}), 1)
 
     def test__ttl_index_ignores_records_with_non_datetime_values(self):
@@ -1623,33 +1626,45 @@ class CollectionAPITest(TestCase):
 
     def test__ttl_index_record_expiry(self):
         self.db.collection.create_index([('value', 1)], expireAfterSeconds=5)
-        self.db.collection.insert_one({'value': datetime.utcnow() - timedelta(seconds=5)})
+        self.db.collection.insert_one(
+            {'value': datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(seconds=5)}
+        )
         self.assertEqual(self.db.collection.count_documents({}), 0)
 
     def test__ttl_expiration_of_0(self):
         self.db.collection.create_index([('value', 1)], expireAfterSeconds=0)
-        self.db.collection.insert_one({'value': datetime.utcnow()})
+        self.db.collection.insert_one({'value': datetime.now(timezone.utc).replace(tzinfo=None)})
         self.assertEqual(self.db.collection.count_documents({}), 0)
 
     def test__ttl_with_non_integer_value_is_ignored(self):
         self.db.collection.create_index([('value', 1)], expireAfterSeconds='a')
-        self.db.collection.insert_one({'value': datetime.utcnow()})
+        self.db.collection.insert_one({'value': datetime.now(timezone.utc).replace(tzinfo=None)})
         self.assertEqual(self.db.collection.count_documents({}), 1)
 
     def test__ttl_applied_to_compound_key_is_ignored(self):
         self.db.collection.create_index([('field1', 1), ('field2', 1)], expireAfterSeconds=0)
-        self.db.collection.insert_one({'field1': datetime.utcnow(), 'field2': 'val2'})
+        self.db.collection.insert_one(
+            {'field1': datetime.now(timezone.utc).replace(tzinfo=None), 'field2': 'val2'}
+        )
         self.assertEqual(self.db.collection.count_documents({}), 1)
 
     def test__ttl_ignored_when_document_does_not_contain_indexed_field(self):
         self.db.collection.create_index([('value', 1)], expireAfterSeconds=0)
-        self.db.collection.insert_one({'other_value': datetime.utcnow()})
+        self.db.collection.insert_one(
+            {'other_value': datetime.now(timezone.utc).replace(tzinfo=None)}
+        )
         self.assertEqual(self.db.collection.count_documents({}), 1)
 
     def test__ttl_of_array_field_expiration(self):
         self.db.collection.create_index([('value', 1)], expireAfterSeconds=5)
         self.db.collection.insert_one(
-            {'value': ['a', 'b', datetime.utcnow() + timedelta(seconds=100)]}
+            {
+                'value': [
+                    'a',
+                    'b',
+                    datetime.now(timezone.utc).replace(tzinfo=None) + timedelta(seconds=100),
+                ]
+            }
         )
         self.assertEqual(self.db.collection.count_documents({}), 1)
 
@@ -1660,8 +1675,8 @@ class CollectionAPITest(TestCase):
                 'value': [
                     'a',
                     'b',
-                    datetime.utcnow() - timedelta(seconds=5),
-                    datetime.utcnow() + timedelta(seconds=100),
+                    datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(seconds=5),
+                    datetime.now(timezone.utc).replace(tzinfo=None) + timedelta(seconds=100),
                 ]
             }
         )
@@ -1673,7 +1688,7 @@ class CollectionAPITest(TestCase):
         self.assertEqual(self.db.collection.count_documents({}), 1)
 
     def test__ttl_expiry_with_mock(self):
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc).replace(tzinfo=None)
         self.db.collection.create_index([('value', 1)], expireAfterSeconds=100)
         self.db.collection.insert_one({'value': now + timedelta(seconds=100)})
         self.assertEqual(self.db.collection.count_documents({}), 1)
@@ -1684,25 +1699,25 @@ class CollectionAPITest(TestCase):
 
     def test__ttl_index_is_removed_if_collection_dropped(self):
         self.db.collection.create_index([('value', 1)], expireAfterSeconds=0)
-        self.db.collection.insert_one({'value': datetime.utcnow()})
+        self.db.collection.insert_one({'value': datetime.now(timezone.utc).replace(tzinfo=None)})
         self.assertEqual(self.db.collection.count_documents({}), 0)
 
         self.db.collection.drop()
-        self.db.collection.insert_one({'value': datetime.utcnow()})
+        self.db.collection.insert_one({'value': datetime.now(timezone.utc).replace(tzinfo=None)})
         self.assertEqual(self.db.collection.count_documents({}), 1)
 
     def test__ttl_index_is_removed_when_index_is_dropped(self):
         self.db.collection.create_index([('value', 1)], expireAfterSeconds=0)
-        self.db.collection.insert_one({'value': datetime.utcnow()})
+        self.db.collection.insert_one({'value': datetime.now(timezone.utc).replace(tzinfo=None)})
         self.assertEqual(self.db.collection.count_documents({}), 0)
 
         self.db.collection.drop_index('value_1')
-        self.db.collection.insert_one({'value': datetime.utcnow()})
+        self.db.collection.insert_one({'value': datetime.now(timezone.utc).replace(tzinfo=None)})
         self.assertEqual(self.db.collection.count_documents({}), 1)
 
     def test__ttl_index_removes_expired_documents_prior_to_removal(self):
         self.db.collection.create_index([('value', 1)], expireAfterSeconds=0)
-        self.db.collection.insert_one({'value': datetime.utcnow()})
+        self.db.collection.insert_one({'value': datetime.now(timezone.utc).replace(tzinfo=None)})
 
         self.db.collection.drop_index('value_1')
         self.assertEqual(self.db.collection.count_documents({}), 0)
@@ -1715,7 +1730,9 @@ class CollectionAPITest(TestCase):
         index_names = self.db.collection.create_indexes(indexes)
         self.assertEqual(1, len(index_names))
 
-        self.db.collection.insert_one({'value': datetime.utcnow() - timedelta(seconds=5)})
+        self.db.collection.insert_one(
+            {'value': datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(seconds=5)}
+        )
         self.assertEqual(self.db.collection.count_documents({}), 0)
 
     def test__create_indexes_wrong_type(self):

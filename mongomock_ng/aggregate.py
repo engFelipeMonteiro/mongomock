@@ -1106,7 +1106,9 @@ class _Parser:
         if isinstance(parsed, datetime.datetime):
             return parsed
         if isinstance(parsed, (int, float)):
-            return datetime.datetime.fromtimestamp(parsed / 1000.0, tz=datetime.timezone.utc)
+            return datetime.datetime.fromtimestamp(
+                parsed / 1000.0, tz=datetime.timezone.utc
+            ).replace(tzinfo=None)
         if isinstance(parsed, str):
             s = parsed.replace('Z', '+00:00') if parsed.endswith('Z') else parsed
             try:

@@ -9,6 +9,7 @@ from collections.abc import Iterable
 from collections.abc import Mapping
 from datetime import datetime
 from datetime import timedelta
+from datetime import timezone
 from datetime import tzinfo
 from typing import Any
 from typing import Optional
@@ -116,7 +117,7 @@ def utcnow():
         from datetime import UTC
 
         return datetime.now(UTC)
-    return datetime.utcnow()
+    return datetime.now(timezone.utc).replace(tzinfo=None)
 
 
 def print_deprecation_warning(old_param_name, new_param_name):
