@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [7.4.1] - 2026-05-21
+### Changed
+- Drop Python 3.14 from test matrix and classifiers — not yet stable, incompatible with runtime dependencies
+
 ### Fixed
 - `find()` projection no longer mutates original document data (mongomock#692 — closes #191)
 - `$in` operator correctly handles empty-list values (mongomock#795 — closes #184)
