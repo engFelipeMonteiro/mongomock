@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `$setWindowFields`: `$sum`/`$avg`/`$min`/`$max`/`$first`/`$last`/`$push`/`$addToSet`/`$count`/`$documentNumber`/`$rank`/`$denseRank` + `window` bounds (mongomock#821 — closes #176)
 - `$fill`: `method` (locf/linear), `sortBy`, `partitionByFields` support (mongomock#892 — closes #160)
 
+### Changed
+- Version now defined statically in `mongomock_ng/__version__.py` (single source of truth), replacing dynamic `hatch-vcs` — closes #197
+- Tag creation automated via `tag-on-merge` workflow on PR merge to `develop`, replacing manual `make release`
+
 ## [7.1.0] - 2026-05-20
 ### Added
 - `CLAUDE.md` with token-efficiency techniques for opencode (opencode instructions)
