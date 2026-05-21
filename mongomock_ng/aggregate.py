@@ -980,7 +980,7 @@ class _Parser:
                     f'Failed to parse string to decimal'
                 ) from err
         elif isinstance(parsed, datetime.datetime):
-            epoch = datetime.datetime.utcfromtimestamp(0)
+            epoch = datetime.datetime(1970, 1, 1)
             string_micro_seconds = str((parsed - epoch).total_seconds() * 1000).split('.', 1)[0]
             decimal_value = decimal128.Decimal128(string_micro_seconds)
         else:
@@ -1106,7 +1106,7 @@ class _Parser:
         if isinstance(parsed, datetime.datetime):
             return parsed
         if isinstance(parsed, (int, float)):
-            return datetime.datetime.utcfromtimestamp(parsed / 1000.0)
+            return datetime.datetime.fromtimestamp(parsed / 1000.0, tz=datetime.timezone.utc)
         if isinstance(parsed, str):
             s = parsed.replace('Z', '+00:00') if parsed.endswith('Z') else parsed
             try:

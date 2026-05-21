@@ -8429,7 +8429,7 @@ class CollectionAPITest(TestCase):
                 'str_negative_number': '-23',
                 'str_decimal_number': '1.99',
                 'str_not_numeric': '123a123',
-                'datetime': datetime.utcfromtimestamp(0),
+                'datetime': datetime(1970, 1, 1),
             }
         )
         actual = collection.aggregate(
