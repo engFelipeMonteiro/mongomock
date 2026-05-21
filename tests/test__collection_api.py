@@ -39,6 +39,7 @@ try:
     from pymongo.write_concern import WriteConcern
 except ImportError:
     from mongomock_ng import ObjectId
+    from mongomock_ng.collection import Collation
     from mongomock_ng.collection import ReturnDocument
     from mongomock_ng.read_concern import ReadConcern
     from mongomock_ng.write_concern import WriteConcern
@@ -109,10 +110,16 @@ class CollectionAPITest(TestCase):
         next(cursor)
         self.assertFalse(cursor.alive)
 
-    def test__cursor_collation(self):
+    def test__cursor_collation_directly_in_find(self):
         self.db.collection.insert_one({'foo': 'bar'})
-        cursor = self.db.collection.find(collation='fr')
-        self.assertEqual('fr', cursor.collation)
+        cursor = self.db.collection.find(collation={'locale': 'fr'})
+        self.assertEqual('fr', cursor._collation.get('locale'))
+
+    def test__cursor__collation(self):
+        cursor = self.db.collection.find()
+        collation = Collation(locale='en_US', strength=1)
+        cursor.collation(collation)
+        self.assertEqual(cursor._collation.get('strength'), 1)
 
     def test__drop_collection(self):
         self.db.create_collection('a')
@@ -492,7 +499,7 @@ class CollectionAPITest(TestCase):
                 self.db.collection.count_documents({}, **error_kwarg)
 
         with self.assertRaises(NotImplementedError):
-            self.db.collection.count_documents({}, collation='fr')
+            self.db.collection.count_documents({}, collation={'locale': 'fr'})
 
         with self.assertRaises(mongomock_ng.OperationFailure):
             self.db.collection.count_documents('unique')
@@ -2344,6 +2351,37 @@ class CollectionAPITest(TestCase):
         with self.assertRaises(mongomock_ng.OperationFailure):
             self.db.collection.find_one({'a': {'$in': 'not a list'}})
 
+    def test__find_in_by_empty_list(self):
+        sample_dicts = [{'key': 1}, {'key': []}, {'key': ''}, {'key': []}]
+        self.db.collection.insert_many(sample_dicts)
+        filter_by = [[]]
+        returned_document = self.db.collection.find_one({'key': {'$in': filter_by}})
+        self.assertTrue(returned_document)
+
+    def test__find_one_immutable_data_projection(self):
+        collection = self.db.collection
+        collection.insert_one({'_id': 1, 'years': {'last_job': 2010}})
+        item = collection.find_one({'_id': 1}, projection={'years': True})
+        item['years']['last_job'] = 2021
+        item_2 = collection.find_one({'_id': 1})
+        self.assertEqual(item_2['years']['last_job'], 2010)
+
+    def test__find_many_immutable_data_projection(self):
+        collection = self.db.collection
+        collection.insert_one({'_id': 1, 'a': 'it', 'years': {'it': {'last_job': 2011}}})
+        collection.insert_one({'_id': 2, 'a': 'it', 'years': {'it': {'last_job': 2012}}})
+        items = collection.find({'a': 'it'}, projection={'years': True})
+        for item in items:
+            item['years']['it']['last_job'] = 2021
+        items_2 = list(collection.find({'a': 'it'}, projection={'years': True}))
+        self.assertEqual(
+            items_2,
+            [
+                {'_id': 1, 'years': {'it': {'last_job': 2011}}},
+                {'_id': 2, 'years': {'it': {'last_job': 2012}}},
+            ],
+        )
+
     def test__with_options(self):
         self.db.collection.with_options(read_preference=None)
         self.db.collection.with_options(write_concern=self.db.collection.write_concern)
@@ -2657,6 +2695,17 @@ class CollectionAPITest(TestCase):
         self.assertEqual([2, 1, 3], [doc['_id'] for doc in coll.find().sort((('a', 1), ('b', 1)))])
         self.assertEqual([1, 2, 3], [doc['_id'] for doc in coll.find().sort((('a', 1), ('b', -1)))])
         self.assertEqual([2, 3, 1], [doc['_id'] for doc in coll.find().sort((('b', 1), ('a', 1)))])
+
+    def test__cursor_sort_list_of_field_names(self):
+        col = self.db.create_collection('sort_list_of_fields')
+        col.insert_many(
+            [
+                {'a': 2, 'b': 2},
+                {'a': 1, 'b': 3},
+                {'a': 1, 'b': 1},
+            ]
+        )
+        self.assertEqual([1, 3, 2], [doc['b'] for doc in col.find(sort=['a', 'b'])])
 
     def test__cursor_sort_projection(self):
         col = self.db.col
@@ -7773,6 +7822,20 @@ class CollectionAPITest(TestCase):
             last_five,
             list(collection.aggregate([{'$project': {'slice': {'$slice': ['$items', -5, 5]}}}])),
         )
+        self.assertEqual(
+            last_five,
+            list(
+                collection.aggregate(
+                    [
+                        {
+                            '$project': {
+                                'slice': {'$slice': ['$items', {'$add': [2, 3]}, {'$add': [1, 4]}]}
+                            }
+                        }
+                    ]
+                )
+            ),
+        )
 
     def test__aggregate_slice_wrong(self):
         # inserts an item otherwise the slice is not even evaluated
@@ -7800,6 +7863,63 @@ class CollectionAPITest(TestCase):
         for option in options:
             with self.assertRaises(mongomock_ng.OperationFailure, msg=option):
                 self.db.collection.aggregate([{'$project': {'slice': {'$slice': option}}}])
+
+    def test__aggregate_redact(self):
+        self.db.a.insert_many(
+            [
+                {'_id': 1, 'a': 1, 'b': 2},
+                {'_id': 2, 'a': 3, 'b': 4},
+                {'_id': 3, 'a': 5, 'b': 6},
+                {'_id': 4, 'a': 7, 'b': 8},
+                {'_id': 5, 'a': 9, 'b': 10},
+            ]
+        )
+        actual = self.db.a.aggregate(
+            [
+                {
+                    '$redact': {
+                        '$cond': {'if': {'$lt': ['$a', 5]}, 'then': '$$KEEP', 'else': '$$PRUNE'}
+                    }
+                }
+            ]
+        )
+        self.assertEqual([{'_id': 1, 'a': 1, 'b': 2}, {'_id': 2, 'a': 3, 'b': 4}], list(actual))
+
+    def test__aggregate_redact_descend_nested_document(self):
+        self.db.a.insert_one(
+            {
+                '_id': 1,
+                'a': 1,
+                'b': {'a': 4, 'b': {'a': 10, 'c': 'xyz'}},
+                'c': 'xyz',
+                'd': [{'a': 1, 'b': 2}, {'a': 8, 'b': 3}, {'b': 4}],
+                'e': ['a', 'b', 'c'],
+            }
+        )
+        actual = self.db.a.aggregate(
+            [
+                {
+                    '$redact': {
+                        '$cond': {'if': {'$lt': ['$a', 5]}, 'then': '$$DESCEND', 'else': '$$PRUNE'}
+                    }
+                }
+            ]
+        )
+        self.assertEqual(
+            [
+                {
+                    '_id': 1,
+                    'a': 1,
+                    'b': {'a': 4, 'b': None},
+                    'c': 'xyz',
+                    'd': [
+                        {'a': 1, 'b': 2},
+                    ],
+                    'e': ['a', 'b', 'c'],
+                }
+            ],
+            list(actual),
+        )
 
     def test__write_concern(self):
         self.assertEqual({}, self.db.collection.write_concern.document)
