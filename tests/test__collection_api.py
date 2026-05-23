@@ -10443,3 +10443,43 @@ class CollectionAPITest(TestCase):
         col.find()
         with self.assertRaises(TypeError):
             col.find(allow_disk_use=1)
+
+    def test__aggregate_immutable_output(self):
+        collection = self.db.collection
+        collection.insert_one({'_id': 1, 'a': {'b': 1}})
+        docs = list(collection.aggregate([{'$match': {'_id': 1}}]))
+        docs[0]['a']['b'] = 999
+        docs_2 = list(collection.aggregate([{'$match': {'_id': 1}}]))
+        self.assertEqual(docs_2[0]['a']['b'], 1)
+
+    def test__find_dot_notation_nested_arrays(self):
+        collection = self.db.collection
+        collection.insert_one({'_id': 1, 'arr': [[1, 2], [3, 4]]})
+        collection.insert_one({'_id': 2, 'arr': [[5, 6], [7, 8]]})
+        actual = list(collection.find({'arr.0.0': 1}, projection=['_id']))
+        self.assertEqual([{'_id': 1}], actual)
+
+    def test__find_one_and_update_nested_projection(self):
+        collection = self.db.collection
+        collection.insert_one({'_id': 1, 'a': {'b': 1, 'c': 2}})
+        doc = collection.find_one_and_update(
+            {'_id': 1}, {'$set': {'a.b': 3}}, projection={'a.b': 1}
+        )
+        self.assertIn('a', doc)
+        self.assertEqual(doc['a']['b'], 1)
+
+    def test__find_one_and_replace_nested_projection(self):
+        collection = self.db.collection
+        collection.insert_one({'_id': 1, 'a': {'b': 1, 'c': 2}})
+        doc = collection.find_one_and_replace(
+            {'_id': 1}, {'a': {'b': 10, 'c': 20}}, projection={'a.b': 1}
+        )
+        self.assertIn('a', doc)
+        self.assertEqual(doc['a']['b'], 1)
+
+    def test__find_one_and_delete_nested_projection(self):
+        collection = self.db.collection
+        collection.insert_one({'_id': 1, 'a': {'b': 1, 'c': 2}})
+        doc = collection.find_one_and_delete({'_id': 1}, projection={'a.b': 1})
+        self.assertIn('a', doc)
+        self.assertEqual(doc['a']['b'], 1)
