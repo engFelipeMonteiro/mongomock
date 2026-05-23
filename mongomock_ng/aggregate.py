@@ -57,6 +57,10 @@ _RE_TYPES: tuple[type[Any], ...] = (
 _random = random.Random()  # noqa: S311
 
 
+def _is_nat(value: Any) -> bool:
+    return type(value).__name__ == 'NaTType'
+
+
 group_operators = [
     '$addToSet',
     '$avg',
@@ -118,9 +122,19 @@ binary_bitwise_operators = {
 unary_bitwise_operators = {
     '$bitNot',
 }
+binary_bitwise_operators = {
+    '$bitAnd',
+    '$bitOr',
+    '$bitXor',
+}
+unary_bitwise_operators = {
+    '$bitNot',
+}
 arithmetic_operators = (
     unary_arithmetic_operators
     | binary_arithmetic_operators
+    | binary_bitwise_operators
+    | unary_bitwise_operators
     | binary_bitwise_operators
     | unary_bitwise_operators
     | {
@@ -471,9 +485,11 @@ def _parse_and_execute_trim(operator, values, parser):
     if not isinstance(input_str, str):
         raise OperationFailure(
             f'${operator} requires input to be of type string, got {type(input_str).__name__}'
+            f'${operator} requires input to be of type string, got {type(input_str).__name__}'
         )
     if chars is not None and not isinstance(chars, str):
         raise OperationFailure(
+            f'${operator} requires chars to be of type string, got {type(chars).__name__}'
             f'${operator} requires chars to be of type string, got {type(chars).__name__}'
         )
     strip_chars = chars if chars else None
@@ -482,6 +498,20 @@ def _parse_and_execute_trim(operator, values, parser):
     if operator == '$ltrim':
         return input_str.lstrip(strip_chars)
     return input_str.rstrip(strip_chars)
+
+
+def _std_dev_pop_operation(values):
+    values_list = [v for v in values if isinstance(v, numbers.Number)]
+    if not values_list:
+        return None
+    return statistics.pstdev(values_list)
+
+
+def _std_dev_samp_operation(values):
+    values_list = [v for v in values if isinstance(v, numbers.Number)]
+    if len(values_list) < 2:
+        return None
+    return statistics.stdev(values_list)
 
 
 def _std_dev_pop_operation(values):
@@ -514,6 +544,8 @@ _GROUPING_OPERATOR_MAP = {
     '$max': lambda values: _group_operation(values, max),
     '$first': lambda values: values[0] if values else None,
     '$last': lambda values: values[-1] if values else None,
+    '$stdDevPop': _std_dev_pop_operation,
+    '$stdDevSamp': _std_dev_samp_operation,
     '$stdDevPop': _std_dev_pop_operation,
     '$stdDevSamp': _std_dev_samp_operation,
 }
@@ -663,63 +695,60 @@ class _Parser:
             f' in Mongomock-ng.'
         )
 
-    def _handle_unary_arithmetic(self, operator, values):
-        try:
-            number = self.parse(values)
-        except KeyError:
-            return None
-        if number is None:
-            return None
-        if not isinstance(number, numbers.Number):
-            raise OperationFailure(
-                f"Parameter to {operator} must evaluate to a number, got '{type(number)}'"
-            )
-        if operator == '$abs':
-            return abs(number)
-        if operator == '$ceil':
-            return math.ceil(number)
-        if operator == '$exp':
+    def _handle_arithmetic_operator(self, operator, values):
+        if operator in unary_arithmetic_operators | unary_bitwise_operators:
             try:
-                return math.exp(number)
-            except OverflowError as e:
-                raise OperationFailure(str(e)) from e
-        if operator == '$floor':
-            return math.floor(number)
-        if operator == '$ln':
-            return math.log(number)
-        if operator == '$log10':
-            return math.log10(number)
-        if operator == '$sqrt':
-            return math.sqrt(number)
-        if operator == '$trunc':
-            return math.trunc(number)
-        if operator == '$bitNot':
-            if not isinstance(number, int):
+                number = self.parse(values)
+            except KeyError:
+                return None
+            if number is None:
+                return None
+            if not isinstance(number, numbers.Number):
                 raise OperationFailure(
-                    f'Parameter to {operator} must evaluate to an integer, '
-                    f"got '{type(number).__name__}'"
+                    f"Parameter to {operator} must evaluate to a number, got '{type(number)}'"
                 )
-            return ~number
-        return None
+            if operator == '$abs':
+                return abs(number)
+            if operator == '$ceil':
+                return math.ceil(number)
+            if operator == '$exp':
+                return math.exp(number)
+            if operator == '$floor':
+                return math.floor(number)
+            if operator == '$ln':
+                return math.log(number)
+            if operator == '$log10':
+                return math.log10(number)
+            if operator == '$sqrt':
+                return math.sqrt(number)
+            if operator == '$trunc':
+                return math.trunc(number)
+            if operator == '$bitNot':
+                if not isinstance(number, int):
+                    raise OperationFailure(
+                        f'Parameter to {operator} must evaluate to an integer, '
+                        f"got '{type(number).__name__}'"
+                    )
+                return ~number
 
-    def _handle_binary_arithmetic(self, operator, values):
-        if not isinstance(values, (tuple, list)):
-            raise OperationFailure(
-                f"Parameter to {operator} must evaluate to a list, got '{type(values)}'"
+        if operator in binary_arithmetic_operators | binary_bitwise_operators:
+            if not isinstance(values, (tuple, list)):
+                raise OperationFailure(
+                    f"Parameter to {operator} must evaluate to a list, got '{type(values)}'"
+                )
+
+            supports_optional_number_2 = (
+                operator in binary_arithmetic_operators_with_optional_second_number
             )
-
-        supports_optional_number_2 = (
-            operator in binary_arithmetic_operators_with_optional_second_number
-        )
-        if operator in binary_bitwise_operators:
-            if len(values) != 2:
-                raise OperationFailure(f'{operator} must have only 2 parameters')
-        elif supports_optional_number_2:
-            if len(values) not in [1, 2]:
-                raise OperationFailure(f'{operator} must have 1 or 2 parameters')
-        else:
-            if len(values) != 2:
-                raise OperationFailure(f'{operator} must have only 2 parameters')
+            if operator in binary_bitwise_operators:
+                if len(values) != 2:
+                    raise OperationFailure(f'{operator} must have only 2 parameters')
+            elif supports_optional_number_2:
+                if len(values) not in [1, 2]:
+                    raise OperationFailure(f'{operator} must have 1 or 2 parameters')
+            else:
+                if len(values) != 2:
+                    raise OperationFailure(f'{operator} must have only 2 parameters')
 
         number_0, number_1, *_ = list(self.parse_many(values)) + [None] * 2
         if number_0 is None or (number_1 is None and not supports_optional_number_2):
@@ -760,14 +789,6 @@ class _Parser:
                 return number_0 | number_1
             if operator == '$bitXor':
                 return number_0 ^ number_1
-        return None
-
-    def _handle_arithmetic_operator(self, operator, values):
-        if operator in unary_arithmetic_operators | unary_bitwise_operators:
-            return self._handle_unary_arithmetic(operator, values)
-
-        if operator in binary_arithmetic_operators | binary_bitwise_operators:
-            return self._handle_binary_arithmetic(operator, values)
 
         assert isinstance(
             values, (tuple, list)
@@ -982,6 +1003,9 @@ class _Parser:
         else:
             out_value = self.parse(values)
 
+        if _is_nat(out_value):
+            return None
+
         if operator == '$dayOfYear':
             return out_value.timetuple().tm_yday
         if operator == '$dayOfMonth':
@@ -1031,6 +1055,8 @@ class _Parser:
                     '$dateToString operator, it is currently not implemented '
                     ' in Mongomock-ng.'
                 )
+            if _is_nat(out_value['date']):
+                return None
             return out_value['date'].strftime(out_value['format'])
         if operator == '$dateFromParts':
             if not isinstance(out_value, dict):
@@ -1845,6 +1871,7 @@ class _Parser:
                 field_name = self.parse(values.get('field', ''))
                 if not isinstance(field_name, str):
                     raise OperationFailure(
+                        f'$getField requires field to be a string, got {type(field_name).__name__}'
                         f'$getField requires field to be a string, got {type(field_name).__name__}'
                     )
                 field_name = field_name.lstrip('$')
