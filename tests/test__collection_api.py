@@ -5989,6 +5989,81 @@ class CollectionAPITest(TestCase):
         )
         self.assertEqual(result[0]['bitNot'], -6)
 
+    def test__aggregate_bitwise_errors(self):
+        self.db.collection.insert_one({'a': 5, 'b': 3})
+        with self.assertRaises(mongomock.OperationFailure):
+            list(self.db.collection.aggregate([{'$project': {'bitAnd': {'$bitAnd': ['$a']}}}]))
+        with self.assertRaises(mongomock.OperationFailure):
+            list(
+                self.db.collection.aggregate(
+                    [{'$project': {'bitAnd': {'$bitAnd': ['$a', '$b', '$a']}}}]
+                )
+            )
+        with self.assertRaises(mongomock.OperationFailure):
+            list(self.db.collection.aggregate([{'$project': {'bitAnd': {'$bitAnd': ['$a', 1.5]}}}]))
+        with self.assertRaises(mongomock.OperationFailure):
+            list(self.db.collection.aggregate([{'$project': {'bitNot': {'$bitNot': 1.5}}}]))
+
+    def test__aggregate_std_dev(self):
+        self.db.collection.insert_many(
+            [
+                {'g': 'a', 'v': 2},
+                {'g': 'a', 'v': 4},
+                {'g': 'a', 'v': 6},
+                {'g': 'b', 'v': 10},
+            ]
+        )
+        result = list(
+            self.db.collection.aggregate(
+                [
+                    {
+                        '$group': {
+                            '_id': '$g',
+                            'pop': {'$stdDevPop': '$v'},
+                            'samp': {'$stdDevSamp': '$v'},
+                        }
+                    },
+                    {'$sort': {'_id': 1}},
+                ]
+            )
+        )
+        self.assertAlmostEqual(result[0]['pop'], 1.632993161855452)
+        self.assertAlmostEqual(result[0]['samp'], 2.0)
+        self.assertEqual(result[1]['pop'], 0.0)
+        self.assertIsNone(result[1]['samp'])
+
+    def test__aggregate_std_dev_edge_cases(self):
+        self.db.collection.insert_many(
+            [
+                {'g': 'a', 'v': 'x'},
+                {'g': 'a', 'v': 'y'},
+            ]
+        )
+        result = list(
+            self.db.collection.aggregate(
+                [
+                    {
+                        '$group': {
+                            '_id': '$g',
+                            'pop': {'$stdDevPop': '$v'},
+                            'samp': {'$stdDevSamp': '$v'},
+                        }
+                    },
+                ]
+            )
+        )
+        self.assertIsNone(result[0]['pop'])
+        self.assertIsNone(result[0]['samp'])
+
+    def test__update_bit_operator(self):
+        self.db.collection.insert_one({'a': 5})
+        self.db.collection.update_one({}, {'$bit': {'a': {'and': 3}}})
+        self.assertEqual(self.db.collection.find_one()['a'], 1)
+        self.db.collection.update_one({}, {'$bit': {'a': {'or': 4}}})
+        self.assertEqual(self.db.collection.find_one()['a'], 5)
+        self.db.collection.update_one({}, {'$bit': {'a': {'xor': 6}}})
+        self.assertEqual(self.db.collection.find_one()['a'], 3)
+
     def test__aggregate_not_implemented(self):
         self.db.collection.insert_one({})
 
