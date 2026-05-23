@@ -185,7 +185,9 @@ class _Filterer:
                     if isinstance(search, ObjectId):
                         is_match |= str(search) in doc_val
                 else:
-                    is_match = (doc_val == search) or (search is None and doc_val is NOTHING)
+                    is_match = operator_eq(doc_val, search) or (
+                        search is None and doc_val is NOTHING
+                    )
 
                 # When checking negative match, all the elements should match.
                 if is_checking_negative_match and not is_match:

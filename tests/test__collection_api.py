@@ -10495,3 +10495,133 @@ class CollectionAPITest(TestCase):
         doc = collection.find_one_and_delete({'_id': 1}, projection={'a.b': 1})
         self.assertIn('a', doc)
         self.assertEqual(doc['a']['b'], 1)
+
+    def test__collection_bool(self):
+        with self.assertRaises(NotImplementedError):
+            bool(self.db.collection)
+
+    def test__aggregate_exp_overflow(self):
+        self.db.collection.insert_one({'_id': 1})
+        with self.assertRaises(mongomock.OperationFailure):
+            self.db.collection.aggregate([{'$project': {'x': {'$exp': 10000}}}])
+
+    def test__aggregate_pow_overflow(self):
+        self.db.collection.insert_one({'_id': 1})
+        with self.assertRaises(mongomock.OperationFailure):
+            self.db.collection.aggregate([{'$project': {'x': {'$pow': [10000, 10000]}}}])
+
+    def test__aggregate_mod_overflow(self):
+        self.db.collection.insert_one({'_id': 1})
+        with self.assertRaises(mongomock.OperationFailure):
+            self.db.collection.aggregate([{'$project': {'x': {'$mod': [10**1000, 3]}}}])
+
+    def test__aggregate_to_double_overflow(self):
+        self.db.collection.insert_one({'_id': 1})
+        with self.assertRaises(mongomock.OperationFailure):
+            self.db.collection.aggregate([{'$project': {'x': {'$toDouble': 10**1000}}}])
+
+    def test__aggregate_concatArrays_empty(self):
+        self.db.collection.insert_one({'_id': 1})
+        with self.assertRaises(mongomock.OperationFailure):
+            self.db.collection.aggregate([{'$project': {'x': {'$concatArrays': []}}}])
+
+    def test__aggregate_in_non_array(self):
+        self.db.collection.insert_one({'_id': 1, 'v': 5})
+        with self.assertRaises(mongomock.OperationFailure):
+            self.db.collection.aggregate([{'$project': {'x': {'$in': ['$v', 5]}}}])
+
+    def test__update_all_positional_array(self):
+        collection = self.db.collection
+        collection.insert_one({'_id': 1, 'arr': [{'x': 1}, {'x': 2}]})
+        collection.update_one({'_id': 1}, {'$set': {'arr.$[].x': 10}})
+        doc = collection.find_one({'_id': 1})
+        self.assertEqual(doc['arr'], [{'x': 10}, {'x': 10}])
+
+    def test__update_all_positional_array_top_level(self):
+        collection = self.db.collection
+        collection.insert_one({'_id': 1, 'arr': [1, 2, 3]})
+        collection.update_one({'_id': 1}, {'$set': {'arr.$[]': 10}})
+        doc = collection.find_one({'_id': 1})
+        self.assertEqual(doc['arr'], [10, 10, 10])
+
+    def test__update_all_positional_remaining_path(self):
+        collection = self.db.collection
+        collection.insert_one({'_id': 1, 'arr': [{'x': {'y': 1}}, {'x': {'y': 2}}]})
+        collection.update_one({'_id': 1}, {'$set': {'arr.$[].x.y': 99}})
+        doc = collection.find_one({'_id': 1})
+        self.assertEqual(doc['arr'], [{'x': {'y': 99}}, {'x': {'y': 99}}])
+
+    def test__update_all_positional_mixed_keys(self):
+        collection = self.db.collection
+        collection.insert_one({'_id': 1, 'title': 'hello', 'arr': [1, 2]})
+        collection.update_one({'_id': 1}, {'$set': {'title': 'world', 'arr.$[]': 99}})
+        doc = collection.find_one({'_id': 1})
+        self.assertEqual(doc['title'], 'world')
+        self.assertEqual(doc['arr'], [99, 99])
+
+    def test__update_array_filter_not_found(self):
+        collection = self.db.collection
+        collection.insert_one({'_id': 1, 'arr': [{'x': 1}, {'x': 2}]})
+        with self.assertRaises(mongomock.WriteError):
+            collection.update_one(
+                {'_id': 1},
+                {'$set': {'arr.$[bad].x': 10}},
+                array_filters=[{'good.x': {'$gte': 0}}],
+            )
+
+    def test__update_array_filter_non_dict_item(self):
+        collection = self.db.collection
+        collection.insert_one({'_id': 1, 'arr': [1, 2, 3]})
+        collection.update_one(
+            {'_id': 1},
+            {'$set': {'arr.$[e]': 10}},
+            array_filters=[{'e': {'$gte': 2}}],
+        )
+        doc = collection.find_one({'_id': 1})
+        self.assertEqual(doc['arr'], [1, 10, 10])
+
+    def test__update_array_filter_remaining_path(self):
+        collection = self.db.collection
+        collection.insert_one({'_id': 1, 'arr': [{'nested': {'v': 1}}, {'nested': {'v': 2}}]})
+        collection.update_one(
+            {'_id': 1},
+            {'$set': {'arr.$[elem].nested.v': 99}},
+            array_filters=[{'elem': {'nested.v': {'$gte': 2}}}],
+        )
+        doc = collection.find_one({'_id': 1})
+        self.assertEqual(doc['arr'], [{'nested': {'v': 1}}, {'nested': {'v': 99}}])
+
+    def test__update_array_index_error(self):
+        collection = self.db.collection
+        collection.insert_one({'_id': 1, 'arr': [{'x': 1}]})
+        with self.assertRaises((ValueError, mongomock.WriteError)):
+            collection.update_one({'_id': 1}, {'$set': {'arr.5.x': 99}})
+
+    def test__aggregate_binary_operator_wrong_args(self):
+        self.db.collection.insert_one({'_id': 1})
+        with self.assertRaises(mongomock.OperationFailure):
+            self.db.collection.aggregate([{'$project': {'x': {'$round': [1, 2, 3]}}}])
+
+    def test__find_nat_comparison(self):
+        import pandas as pd
+
+        collection = self.db.collection
+        oid1 = mongomock.ObjectId()
+        oid2 = mongomock.ObjectId()
+        collection._store[oid1] = {'_id': oid1, 'dt': pd.NaT}
+        collection._store[oid2] = {'_id': oid2, 'dt': pd.NaT}
+        docs = list(collection.find({'dt': pd.NaT}))
+        self.assertEqual(len(docs), 2)
+
+    def test__find_nat_sort(self):
+        import pandas as pd
+
+        collection = self.db.collection
+        oid1 = mongomock.ObjectId()
+        oid2 = mongomock.ObjectId()
+        oid3 = mongomock.ObjectId()
+        collection._store[oid1] = {'_id': oid1, 'dt': pd.NaT}
+        collection._store[oid2] = {'_id': oid2, 'dt': pd.NaT}
+        collection._store[oid3] = {'_id': oid3, 'dt': pd.Timestamp('2020-01-01')}
+        docs = list(collection.find().sort('dt', -1))
+        self.assertEqual(len(docs), 3)
