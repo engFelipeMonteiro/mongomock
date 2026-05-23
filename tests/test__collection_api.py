@@ -95,7 +95,7 @@ class CollectionAPITest(TestCase):
 
     def test__get_collection_read_concern_option(self):
         """Ensure read_concern option isn't rejected."""
-        self.assertTrue(self.db.get_collection('new_collection', read_concern=None))
+        self.assertIsNotNone(self.db.get_collection('new_collection', read_concern=None))
 
     def test__get_collection_full_name(self):
         self.assertEqual(self.db.coll.name, 'coll')
@@ -1062,15 +1062,13 @@ class CollectionAPITest(TestCase):
         )
         self.db.collection.update_many(
             filter={'a': 1},
-            update={'$set': {'a': 0}},
-            array_filters=None,
+            update={'$set': {'c.$[e]': 0}},
+            array_filters=[{'e': {'$lt': 5}}],
         )
-        with self.assertRaises(NotImplementedError):
-            self.db.collection.update_many(
-                filter={'a': 1},
-                update={'$set': {'c.$[e]': 0}},
-                array_filters=[{'e': {'$lt': 5}}],
-            )
+        doc = self.db.collection.find_one({'a': 1, 'c': [0, 5, 6]})
+        self.assertIsNotNone(doc)
+        doc2 = self.db.collection.find_one({'a': 2})
+        self.assertEqual(doc2['c'], [12, 15])
 
     def test__update_many_let(self):
         self.db.collection.insert_many([{'a': 1, 'c': 2}, {'a': 1, 'c': 3}, {'a': 2, 'c': 4}])
