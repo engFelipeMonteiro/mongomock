@@ -4,6 +4,7 @@ import numbers
 import operator
 import re
 import uuid
+from collections.abc import Mapping
 from datetime import datetime
 from typing import Any
 from typing import ClassVar
@@ -254,7 +255,7 @@ def iter_key_candidates(key, doc):
     if isinstance(doc, list):
         return _iter_key_candidates_sublist(key, doc)
 
-    if not isinstance(doc, dict):
+    if not isinstance(doc, (dict, Mapping)):
         return ()
 
     key_parts = key.split('.')
@@ -284,7 +285,7 @@ def _iter_key_candidates_sublist(key, doc):
         # subkey is not an integer...
         ret = []
         for sub_doc in doc:
-            if isinstance(sub_doc, dict):
+            if isinstance(sub_doc, (dict, Mapping)):
                 if sub_key in sub_doc:
                     ret.extend(iter_key_candidates(key_remainder, sub_doc[sub_key]))
                 else:

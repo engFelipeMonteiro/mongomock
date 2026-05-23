@@ -313,7 +313,7 @@ def _copy_field(obj, container):
         for item in obj:
             new.append(_copy_field(item, container))
         return new
-    if isinstance(obj, dict):
+    if isinstance(obj, Mapping):
         new = container()
         for key, value in obj.items():
             new[key] = _copy_field(value, container)

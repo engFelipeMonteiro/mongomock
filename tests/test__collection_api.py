@@ -10445,12 +10445,24 @@ class CollectionAPITest(TestCase):
             col.find(allow_disk_use=1)
 
     def test__aggregate_immutable_output(self):
+        import types
+
         collection = self.db.collection
-        collection.insert_one({'_id': 1, 'a': {'b': 1}})
-        docs = list(collection.aggregate([{'$match': {'_id': 1}}]))
-        docs[0]['a']['b'] = 999
-        docs_2 = list(collection.aggregate([{'$match': {'_id': 1}}]))
-        self.assertEqual(docs_2[0]['a']['b'], 1)
+        frozen = types.MappingProxyType({'b': 1})
+        collection.insert_one({'_id': 1, 'a': frozen})
+        doc = collection.find_one({'_id': 1})
+        doc['a']['b'] = 999
+        doc_2 = collection.find_one({'_id': 1})
+        self.assertEqual(doc_2['a']['b'], 1)
+
+    def test__find_mappingproxytype_query(self):
+        import types
+
+        collection = self.db.collection
+        frozen = types.MappingProxyType({'b': 1})
+        collection.insert_one({'_id': 1, 'a': frozen})
+        docs = list(collection.find({'a.b': 1}))
+        self.assertEqual(len(docs), 1)
 
     def test__find_dot_notation_nested_arrays(self):
         collection = self.db.collection
