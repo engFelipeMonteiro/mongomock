@@ -88,6 +88,19 @@ class Database:
             return self._client == other._client and self.name == other.name
         return NotImplemented
 
+    def __bool__(self):
+        raise NotImplementedError(
+            'Database objects do not implement truth '
+            'value testing or bool(). Please compare '
+            'with None instead: database is not None'
+        )
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        raise TypeError("'Database' object is not iterable")
+
     if version.parse('3.12') <= helpers.PYMONGO_VERSION:
 
         def __hash__(self):
