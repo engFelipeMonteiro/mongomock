@@ -8,8 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [7.5.7] - 2026-05-24
 ### Fixed
 - `Database.__bool__` raises `NotImplementedError`, matching PyMongo behavior (closes #64)
-- `Database.__iter__` returns `self` and `__next__` raises `TypeError`, matching PyMongo behavior (closes #64)
-- `MongoClient.drop_database` uses `is not None` instead of truth check for Database comparison (closes #64)
+- `MongoClient.drop_database` uses `is not None` instead of truth check on Database object (closes #64)
 
 ## [7.5.5] - 2026-05-23
 ### Fixed
