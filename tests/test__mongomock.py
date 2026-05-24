@@ -5851,3 +5851,25 @@ class DatabaseTest(_CollectionComparisonTest):
             return
 
         self.cmp.do.collection_names()
+
+    def test__database_bool_raises_notimplementederror(self):
+        fake_db = self.cmp.conns['fake']
+        real_db = self.cmp.conns['real']
+        for db in (fake_db, real_db):
+            with self.assertRaises(NotImplementedError) as ctx:
+                bool(db)
+            self.assertIn('compare with None instead', str(ctx.exception))
+            with self.assertRaises(NotImplementedError) as ctx:
+                if db:
+                    pass
+            self.assertIn('compare with None instead', str(ctx.exception))
+
+    def test__database_iter_and_next(self):
+        fake_db = self.cmp.conns['fake']
+        real_db = self.cmp.conns['real']
+        for db in (fake_db, real_db):
+            it = iter(db)
+            self.assertIs(it, db)
+            with self.assertRaises(TypeError) as ctx:
+                next(it)
+            self.assertIn('not iterable', str(ctx.exception))
