@@ -158,7 +158,7 @@ class MongoClient:
                 _db.drop_collection(col_name)
 
         if isinstance(name_or_db, Database):
-            db = next(db for db in self._database_accesses.values() if db is name_or_db)
+            db = next((db for db in self._database_accesses.values() if db is name_or_db), None)
             if db is not None:
                 drop_collections_for_db(db)
 
