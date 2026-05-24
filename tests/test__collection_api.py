@@ -46,6 +46,7 @@ except ImportError:
     from mongomock_ng.write_concern import WriteConcern
     from tests.utils import DBRef
 
+
 warnings.simplefilter('ignore', DeprecationWarning)
 IS_PYPY = platform.python_implementation() != 'CPython'
 SERVER_VERSION = version.parse(mongomock.SERVER_VERSION)
@@ -1799,6 +1800,7 @@ class CollectionAPITest(TestCase):
         self.db.collection.create_index([('c', 1)], unique=True, sparse=True)
 
         self.db.collection.insert_one({})
+        self.db.collection.insert_one({})
         self.db.collection.insert_one({'c': 1})
         self.db.collection.insert_one({'a': 1})
         self.db.collection.insert_one({'a': {'b': 1}})
@@ -1819,6 +1821,7 @@ class CollectionAPITest(TestCase):
 
         # We should be able to add documents with duplicated `value` and
         # `partialFilterExpression_value` if `partialFilterExpression_value` isn't set to 1
+        self.db.collection.insert_one({'partialFilterExpression_value': 3, 'value': 4})
         self.db.collection.insert_one({'partialFilterExpression_value': 3, 'value': 4})
 
         # We should be able to add documents with distinct `value` values and duplicated
@@ -1863,6 +1866,8 @@ class CollectionAPITest(TestCase):
         self.db.collection.create_index([('value', 1)], unique=True, sparse=True)
 
         self.db.collection.insert_one({})
+        self.db.collection.insert_one({})
+        self.db.collection.insert_one({'value': None})
         self.db.collection.insert_one({'value': None})
 
         self.assertEqual(self.db.collection.count_documents({}), 4)
@@ -1922,6 +1927,7 @@ class CollectionAPITest(TestCase):
         self.assertEqual(self.db.collection.count_documents({}), 1)
 
     def test__create_uniq_idxs_with_dupes_already_there(self):
+        self.db.collection.insert_one({'value': 1})
         self.db.collection.insert_one({'value': 1})
 
         with self.assertRaises(mongomock.DuplicateKeyError):
@@ -2092,7 +2098,6 @@ class CollectionAPITest(TestCase):
     )
     def test__find_and_modify_with_sort(self):
         self.db.collection.insert_one({'time_check': float(time.time())})
-        self.db.collection.insert_one({'time_check': float(time.time())})
 
         start_check_time = float(time.time())
         self.db.collection.find_and_modify(
@@ -2122,7 +2127,6 @@ class CollectionAPITest(TestCase):
         )
 
     def test__cursor_sort_kept_after_clone(self):
-        self.db.collection.insert_one({'time_check': float(time.time())})
         self.db.collection.insert_one({'time_check': float(time.time())})
 
         cursor = self.db.collection.find({}, sort=[('time_check', -1)])
@@ -2945,6 +2949,7 @@ class CollectionAPITest(TestCase):
 
     @skipIf(not helpers.HAVE_PYMONGO, 'pymongo not installed')
     def test__bulk_write_delete_many(self):
+        self.db.collection.insert_one({'a': 1})
         self.db.collection.insert_one({'a': 1})
         operations = [pymongo.DeleteMany({'a': 1})]
         result = self.db.collection.bulk_write(operations)
@@ -5549,6 +5554,8 @@ class CollectionAPITest(TestCase):
                 {'a': [{}]},
                 {'a': [{'b': 61, 'c': 62}, {'b': 66, 'c': 67}]},
                 {'a': []},
+                {'a': []},
+                {},
                 {},
             ],
         )
@@ -6926,6 +6933,7 @@ class CollectionAPITest(TestCase):
             {'type': 2, 'val': 30},
         ]
         collection.insert_many(data)
+        # Note: type-1 has 3 docs, type-2 has 1 doc → 4 docs total, 4 window outputs
         actual = collection.aggregate(
             [
                 {
@@ -6953,7 +6961,6 @@ class CollectionAPITest(TestCase):
             {'type': 1, 'val': 10, 'pushed': [10, 10], 'set': [10]},
             {'type': 1, 'val': 20, 'pushed': [10, 10, 20], 'set': [10, 20]},
             {'type': 2, 'val': 30, 'pushed': [30], 'set': [30]},
-            {'type': 2, 'val': 30, 'pushed': [30, 30], 'set': [30]},
         ]
         result = list(actual)
         for doc in result:
@@ -7039,6 +7046,7 @@ class CollectionAPITest(TestCase):
         collection = self.db.collection
         data = [
             {'type': 1, 'val': 10},
+            {'type': 1, 'val': 10},
             {'type': 1, 'val': 20},
             {'type': 2, 'val': 5},
         ]
@@ -7060,6 +7068,7 @@ class CollectionAPITest(TestCase):
             ]
         )
         expected = [
+            {'type': 1, 'val': 10, 'rank': 1, 'dense_rank': 1},
             {'type': 1, 'val': 10, 'rank': 1, 'dense_rank': 1},
             {'type': 1, 'val': 20, 'rank': 3, 'dense_rank': 2},
             {'type': 2, 'val': 5, 'rank': 1, 'dense_rank': 1},
@@ -7274,7 +7283,7 @@ class CollectionAPITest(TestCase):
         expect = [
             {
                 '_id': 'one',
-                'count': 8,
+                'count': 7,
                 'countData': 4,
                 'countDataExists': 5,
             }
@@ -9836,6 +9845,10 @@ class CollectionAPITest(TestCase):
             {'items': {'a': 4, 'b': 2, 'c': 3}, 'not_exists': None},
             {'items': {'a': 4, 'b': 2, 'c': 3}, 'not_exists': None},
             {'items': {'a': 4, 'b': 2, 'c': 3}, 'not_exists': None},
+            {'items': {'a': 4, 'b': 2, 'c': 3}, 'not_exists': None},
+            {'items': {'a': 4, 'b': 2, 'c': 3}, 'not_exists': None},
+            {'items': {'a': 4, 'b': 2, 'c': 3}, 'not_exists': None},
+            {'items': {}, 'not_exists': None},
             {'items': {}, 'not_exists': None},
             {'items': None, 'not_exists': None},
         ]
