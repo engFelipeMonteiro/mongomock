@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [7.5.14] - 2026-05-26
+### Changed
+- Strip `mongomock_ng` references from test files (10 files) to clean diffs against upstream mongomock
+- Convert intra-package `mongomock_ng` references to relative imports in source package (7 files)
+- Add `test__import_consistency.py`: AST-based verification of no `mongomock_ng` leaks in tests
+- Add `test__import_relative.py`: verify relative imports don't cause circular imports
+
 ## [7.5.13] - 2026-05-26
 ### Added
 - `$where` operator support with Python-based evaluation (simple `this.field` expressions)
