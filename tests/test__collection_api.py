@@ -946,6 +946,49 @@ class CollectionAPITest(TestCase):
         self.assertEqual(doc['x']['y'], 'val')
         self.assertNotIn('c', doc['a']['b'])
 
+    def test__rename_source_missing(self):
+        col = self.db.collection
+        col.insert_one({'_id': 1, 'a': {'x': 1}})
+        col.update_one({'_id': 1}, {'$rename': {'a.b.c': 'y'}})
+        doc = col.find_one({'_id': 1})
+        self.assertEqual(doc['a']['x'], 1)
+        self.assertNotIn('y', doc)
+
+    def test__add_to_set_with_each(self):
+        col = self.db.collection
+        col.insert_one({'_id': 1, 'items': [1, 2]})
+        col.update_one({'_id': 1}, {'$addToSet': {'items': {'$each': [2, 3, 4]}}})
+        doc = col.find_one({'_id': 1})
+        self.assertEqual(doc['items'], [1, 2, 3, 4])
+
+    def test__add_to_set_with_each_nested(self):
+        col = self.db.collection
+        col.insert_one({'_id': 1, 'nested': {'items': [1, 2]}})
+        col.update_one({'_id': 1}, {'$addToSet': {'nested.items': {'$each': [2, 3, 4]}}})
+        doc = col.find_one({'_id': 1})
+        self.assertEqual(doc['nested']['items'], [1, 2, 3, 4])
+
+    def test__add_to_set_boolean_distinct(self):
+        col = self.db.collection
+        col.insert_one({'_id': 1, 'flags': [1, 0]})
+        col.update_one({'_id': 1}, {'$addToSet': {'flags': True}})
+        col.update_one({'_id': 1}, {'$addToSet': {'flags': False}})
+        doc = col.find_one({'_id': 1})
+        self.assertIn(True, doc['flags'])
+        self.assertIn(False, doc['flags'])
+        self.assertIn(1, doc['flags'])
+        self.assertIn(0, doc['flags'])
+        self.assertEqual(len(doc['flags']), 4)
+
+    def test__add_to_set_boolean_with_each(self):
+        col = self.db.collection
+        col.insert_one({'_id': 1, 'vals': [1, 0]})
+        col.update_one({'_id': 1}, {'$addToSet': {'vals': {'$each': [True, False, 2]}}})
+        doc = col.find_one({'_id': 1})
+        self.assertIn(True, doc['vals'])
+        self.assertIn(False, doc['vals'])
+        self.assertIn(2, doc['vals'])
+
     def test__update_one_upsert_invalid_filter(self):
         with self.assertRaises(mongomock.WriteError):
             self.db.collection.update_one(
