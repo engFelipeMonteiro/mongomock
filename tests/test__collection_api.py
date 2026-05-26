@@ -924,14 +924,27 @@ class CollectionAPITest(TestCase):
         self.assertEqual(update_result.matched_count, 1)
         self.assert_document_stored(insert_result.inserted_id, input_)
 
-    def test__rename_unsupported(self):
+    def test__rename_with_dots(self):
         input_ = {'_id': 1, 'foo': 'bar'}
         insert_result = self.db.collection.insert_one(input_)
         self.assert_document_stored(insert_result.inserted_id, input_)
 
         query = {'_id': 1}
-        update = {'$rename': {'foo': 'f.o.o.'}}
-        self.assertRaises(NotImplementedError, self.db.collection.update_one, query, update=update)
+        update = {'$rename': {'foo': 'f.o.o'}}
+        self.db.collection.update_one(query, update=update)
+        doc = self.db.collection.find_one(query)
+        self.assertEqual(doc['f']['o']['o'], 'bar')
+        self.assertNotIn('foo', doc)
+
+    def test__rename_nested(self):
+        input_ = {'_id': 1, 'a': {'b': {'c': 'val'}}}
+        self.db.collection.insert_one(input_)
+
+        update = {'$rename': {'a.b.c': 'x.y'}}
+        self.db.collection.update_one({'_id': 1}, update=update)
+        doc = self.db.collection.find_one({'_id': 1})
+        self.assertEqual(doc['x']['y'], 'val')
+        self.assertNotIn('c', doc['a']['b'])
 
     def test__update_one_upsert_invalid_filter(self):
         with self.assertRaises(mongomock.WriteError):
@@ -11015,15 +11028,27 @@ class CollectionAPITest(TestCase):
                 array_filters=[{'elem.x': 5}],
             )
 
-    def test__array_filter_update_rename_fails(self):
+    def test__array_filter_update_rename_dotted(self):
         collection = self.db.collection
-        collection.insert_one({'_id': 1, 'arr': [{'x': 1}, {'x': 2}]})
-        with self.assertRaises(NotImplementedError):
-            collection.update_one(
-                {'_id': 1},
-                {'$rename': {'arr.$[elem].x': 'arr.$[elem].y'}},
-                array_filters=[{'elem.x': 1}],
-            )
+        collection.insert_one({'_id': 1, 'a': {'b': {'c': 'deep'}, 'd': 'old'}})
+        collection.update_one(
+            {'_id': 1},
+            {'$rename': {'a.b.c': 'a.b.x'}},
+        )
+        doc = collection.find_one({'_id': 1})
+        self.assertNotIn('c', doc['a']['b'])
+        self.assertEqual(doc['a']['b']['x'], 'deep')
+
+    def test__array_filter_update_rename_dotted_to_top(self):
+        collection = self.db.collection
+        collection.insert_one({'_id': 1, 'a': {'b': {'c': 'deep'}}})
+        collection.update_one(
+            {'_id': 1},
+            {'$rename': {'a.b.c': 'x'}},
+        )
+        doc = collection.find_one({'_id': 1})
+        self.assertNotIn('c', doc['a']['b'])
+        self.assertEqual(doc['x'], 'deep')
 
     def test__array_filter_update_pop(self):
         collection = self.db.collection
