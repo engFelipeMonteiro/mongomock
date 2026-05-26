@@ -3956,6 +3956,66 @@ class CollectionAPITest(TestCase):
             actual,
         )
 
+    def test__aggregate_lookup_pipeline_sort_limit(self):
+        self.db.orders.insert_many(
+            [
+                {'_id': 1, 'item': 'apple', 'qty': 5},
+                {'_id': 2, 'item': 'banana', 'qty': 3},
+                {'_id': 3, 'item': 'apple', 'qty': 2},
+            ]
+        )
+        self.db.books.insert_many(
+            [
+                {'_id': 1, 'book_id': 'apple', 'title': 'C', 'created_at': 3},
+                {'_id': 2, 'book_id': 'apple', 'title': 'A', 'created_at': 1},
+                {'_id': 3, 'book_id': 'apple', 'title': 'B', 'created_at': 2},
+                {'_id': 4, 'book_id': 'banana', 'title': 'D', 'created_at': 5},
+            ]
+        )
+        pipeline = [
+            {
+                '$lookup': {
+                    'from': 'books',
+                    'let': {'bookId': '$item'},
+                    'pipeline': [
+                        {'$match': {'$expr': {'$eq': ['$book_id', '$$bookId']}}},
+                        {'$sort': {'created_at': -1}},
+                        {'$limit': 1},
+                    ],
+                    'as': 'top_book',
+                }
+            },
+            {'$addFields': {'top_book': {'$first': '$top_book.title'}}},
+        ]
+        actual = list(self.db.orders.aggregate(pipeline))
+        self.assertEqual(
+            [
+                {'_id': 1, 'item': 'apple', 'qty': 5, 'top_book': 'C'},
+                {'_id': 2, 'item': 'banana', 'qty': 3, 'top_book': 'D'},
+                {'_id': 3, 'item': 'apple', 'qty': 2, 'top_book': 'C'},
+            ],
+            actual,
+        )
+
+    def test__aggregate_lookup_pipeline_empty_result(self):
+        self.db.orders.insert_one({'_id': 1, 'item': 'nonexistent'})
+        self.db.books.insert_one({'_id': 1, 'book_id': 'apple', 'title': 'A'})
+        pipeline = [
+            {
+                '$lookup': {
+                    'from': 'books',
+                    'let': {'bookId': '$item'},
+                    'pipeline': [
+                        {'$match': {'$expr': {'$eq': ['$book_id', '$$bookId']}}},
+                    ],
+                    'as': 'matches',
+                }
+            },
+        ]
+        actual = list(self.db.orders.aggregate(pipeline))
+        self.assertEqual(1, len(actual))
+        self.assertEqual([], actual[0]['matches'])
+
     def test__aggregate_lookup_dbref(self):
         self.db.a.insert_many(
             [
@@ -6403,6 +6463,38 @@ class CollectionAPITest(TestCase):
         result = self.db.collection.find_one({'$where': 'this["name"] == "Anya"'})
         self.assertEqual(result['name'], 'Anya')
 
+    def test__find_where_multiple_results(self):
+        self.db.collection.insert_many(
+            [
+                {'name': 'Anya', 'age': 25},
+                {'name': 'Bob', 'age': 35},
+                {'name': 'Eve', 'age': 20},
+            ]
+        )
+        result = list(self.db.collection.find({'$where': 'this.age >= 21'}))
+        self.assertEqual(2, len(result))
+        names = {doc['name'] for doc in result}
+        self.assertEqual({'Anya', 'Bob'}, names)
+
+    def test__find_where_combined_query(self):
+        self.db.collection.insert_many(
+            [
+                {'name': 'Anya', 'age': 25},
+                {'name': 'Bob', 'age': 35},
+                {'name': 'Eve', 'age': 20},
+            ]
+        )
+        result = list(
+            self.db.collection.find(
+                {
+                    'age': {'$gte': 21},
+                    '$where': 'this.age < 30',
+                }
+            )
+        )
+        self.assertEqual(1, len(result))
+        self.assertEqual('Anya', result[0]['name'])
+
     def test__unwind_no_prefix(self):
         self.db.collection.insert_one({'_id': 1, 'arr': [1, 2]})
         with self.assertRaises(ValueError) as err:
@@ -8455,6 +8547,28 @@ class CollectionAPITest(TestCase):
         for option in options:
             with self.assertRaises(mongomock.OperationFailure, msg=option):
                 self.db.collection.aggregate([{'$project': {'slice': {'$slice': option}}}])
+
+    def test__aggregate_function_not_implemented(self):
+        self.db.collection.insert_one({'_id': 1, 'text': 'hello'})
+        with self.assertRaises(NotImplementedError) as err:
+            list(
+                self.db.collection.aggregate(
+                    [
+                        {
+                            '$match': {
+                                '$expr': {
+                                    '$function': {
+                                        'body': '(function(text) { return true; })',
+                                        'args': ['$text'],
+                                        'lang': 'js',
+                                    },
+                                },
+                            }
+                        },
+                    ]
+                )
+            )
+        self.assertIn('$function', str(err.exception))
 
     def test__aggregate_redact(self):
         self.db.a.insert_many(

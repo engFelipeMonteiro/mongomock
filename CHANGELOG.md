@@ -12,6 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add `test__import_consistency.py`: AST-based verification of no `mongomock_ng` leaks in tests
 - Add `test__import_relative.py`: verify relative imports don't cause circular imports
 
+### Added
+- Test for `$where` with `find()` returning multiple results and combined with query operators
+- Test for `$lookup` pipeline with `$sort` and `$limit` inside sub-pipeline
+- Test for `$lookup` pipeline returning empty result set
+- Test for `$function` aggregation operator raising `NotImplementedError`
+
 ## [7.5.13] - 2026-05-26
 ### Added
 - `$where` operator support with Python-based evaluation (simple `this.field` expressions)
