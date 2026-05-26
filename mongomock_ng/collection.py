@@ -964,21 +964,21 @@ class Collection:
 
                     src_doc = existing_document
                     for part in src_parts[:-1]:
-                        if isinstance(src_doc, dict) and part in src_doc:
+                        if isinstance(src_doc, MutableMapping) and part in src_doc:
                             src_doc = src_doc[part]
                         else:
                             break
                     else:
-                        if isinstance(src_doc, dict) and src_parts[-1] in src_doc:
+                        if isinstance(src_doc, MutableMapping) and src_parts[-1] in src_doc:
                             value = src_doc.pop(src_parts[-1])
                             dst_doc = existing_document
                             for part in dst_parts[:-1]:
-                                if isinstance(dst_doc, dict):
+                                if isinstance(dst_doc, MutableMapping):
                                     dst_doc = dst_doc.setdefault(part, {})
                                 else:
                                     break
                             else:
-                                if isinstance(dst_doc, dict):
+                                if isinstance(dst_doc, MutableMapping):
                                     dst_doc[dst_parts[-1]] = value
             elif k == '$setOnInsert':
                 if not was_insert:

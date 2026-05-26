@@ -989,6 +989,31 @@ class CollectionAPITest(TestCase):
         self.assertIn(False, doc['vals'])
         self.assertIn(2, doc['vals'])
 
+    def test__add_to_set_each_non_list(self):
+        col = self.db.collection
+        col.insert_one({'_id': 1, 'tags': ['a']})
+        col.update_one({'_id': 1}, {'$addToSet': {'tags': {'$each': 'b'}}})
+        doc = col.find_one({'_id': 1})
+        self.assertIn('b', doc['tags'])
+        self.assertEqual(len(doc['tags']), 2)
+
+    def test__add_to_set_each_non_list_nested(self):
+        col = self.db.collection
+        col.insert_one({'_id': 1, 'nested': {'tags': ['a']}})
+        col.update_one({'_id': 1}, {'$addToSet': {'nested.tags': {'$each': 'b'}}})
+        doc = col.find_one({'_id': 1})
+        self.assertIn('b', doc['nested']['tags'])
+        self.assertEqual(len(doc['nested']['tags']), 2)
+
+    def test__rename_dest_intermediate_not_mapping(self):
+        col = self.db.collection
+        col.insert_one({'_id': 1, 'foo': 'bar', 'x': 5})
+        col.update_one({'_id': 1}, {'$rename': {'foo': 'x.y'}})
+        doc = col.find_one({'_id': 1})
+        self.assertEqual(doc['x'], 5)
+        self.assertNotIn('y', doc)
+        self.assertNotIn('foo', doc)
+
     def test__update_one_upsert_invalid_filter(self):
         with self.assertRaises(mongomock.WriteError):
             self.db.collection.update_one(
