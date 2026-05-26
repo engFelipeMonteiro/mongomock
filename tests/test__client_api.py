@@ -4,10 +4,10 @@ from unittest import mock
 from unittest import skipIf
 from unittest import skipUnless
 
+from mongomock import helpers
 from packaging import version
 
 import mongomock_ng as mongomock
-from mongomock_ng import helpers
 
 
 try:

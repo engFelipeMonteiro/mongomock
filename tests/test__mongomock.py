@@ -10,14 +10,14 @@ from unittest import skipIf
 from unittest import skipUnless
 from unittest import TestCase
 
+from mongomock import ConfigurationError
+from mongomock import Database
+from mongomock import helpers
+from mongomock import InvalidURI
+from mongomock import OperationFailure
 from packaging import version
 
 import mongomock_ng as mongomock
-from mongomock_ng import ConfigurationError
-from mongomock_ng import Database
-from mongomock_ng import helpers
-from mongomock_ng import InvalidURI
-from mongomock_ng import OperationFailure
 
 
 try:
@@ -33,8 +33,9 @@ try:
     from pymongo import read_concern
     from pymongo.read_preferences import ReadPreference
 except ImportError:
-    from mongomock_ng import read_concern
-    from mongomock_ng.object_id import ObjectId
+    from mongomock import read_concern
+    from mongomock.object_id import ObjectId
+
     from tests.utils import DBRef
 
 try:

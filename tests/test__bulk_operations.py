@@ -1,10 +1,10 @@
 import os
 from unittest import mock
 
+from mongomock import helpers
 from packaging import version
 
 import mongomock_ng as mongomock
-from mongomock_ng import helpers
 
 
 try:
@@ -206,8 +206,8 @@ class CollectionComparisonTest(TestCase):
         super().setUp()
         self.fake_conn = mongomock.MongoClient()
         self.mongo_conn = pymongo.MongoClient(host=os.environ.get('TEST_MONGO_HOST', 'localhost'))
-        self.db_name = 'mongomock_ng___testing_db'
-        self.collection_name = 'mongomock_ng___testing_collection'
+        self.db_name = 'mongomock___testing_db'
+        self.collection_name = 'mongomock___testing_collection'
         self.mongo_conn[self.db_name][self.collection_name].remove()
         self.cmp = MultiCollection(
             {
@@ -224,7 +224,7 @@ class CollectionComparisonTest(TestCase):
 
         # hacky! Depending on mongo server version 'nModified' is returned or not..
         # so let make simple bulk operation to know what's the server behaviour...
-        coll = self.mongo_conn[self.db_name]['mongomock_ng_testing_prepare_test']
+        coll = self.mongo_conn[self.db_name]['mongomock_testing_prepare_test']
         bulk = coll.initialize_ordered_bulk_op()
         bulk.insert({'a': 1})
         insert_returns_nmodified = 'nModified' in bulk.execute()

@@ -16,10 +16,10 @@ from unittest import skipIf
 from unittest import skipUnless
 from unittest import TestCase
 
+from mongomock import helpers
 from packaging import version
 
 import mongomock_ng as mongomock
-from mongomock_ng import helpers
 from tests.diff import diff
 
 
@@ -39,11 +39,12 @@ try:
     from pymongo.read_preferences import ReadPreference
     from pymongo.write_concern import WriteConcern
 except ImportError:
-    from mongomock_ng import ObjectId
-    from mongomock_ng.collection import Collation
-    from mongomock_ng.collection import ReturnDocument
-    from mongomock_ng.read_concern import ReadConcern
-    from mongomock_ng.write_concern import WriteConcern
+    from mongomock import ObjectId
+    from mongomock.collection import Collation
+    from mongomock.collection import ReturnDocument
+    from mongomock.read_concern import ReadConcern
+    from mongomock.write_concern import WriteConcern
+
     from tests.utils import DBRef
 
 
@@ -355,7 +356,7 @@ class CollectionAPITest(TestCase):
         self.assertIsInstance(col1, mongomock.Collection)
 
     def test__save_class_deriving_from_dict(self):
-        # See https://github.com/vmalloc/mongomock_ng/issues/52
+        # See https://github.com/vmalloc/mongomock/issues/52
         class Document(dict):
             def __init__(self, collection):
                 self.collection = collection
@@ -1861,8 +1862,8 @@ class CollectionAPITest(TestCase):
         self.db.collection.insert_one({'value': now + timedelta(seconds=100)})
         self.assertEqual(self.db.collection.count_documents({}), 1)
 
-        with mock.patch('mongomock.utcnow') as mongomock_ng_utcnow:
-            mongomock_ng_utcnow.return_value = now + timedelta(100)
+        with mock.patch('mongomock.utcnow') as mongomock_utcnow:
+            mongomock_utcnow.return_value = now + timedelta(100)
             self.assertEqual(self.db.collection.count_documents({}), 0)
 
     def test__ttl_index_is_removed_if_collection_dropped(self):

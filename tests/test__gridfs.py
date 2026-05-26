@@ -5,11 +5,11 @@ from unittest import skipIf
 from unittest import skipUnless
 from unittest import TestCase
 
+from mongomock import gridfs
+from mongomock import helpers
 from packaging import version
 
 import mongomock_ng as mongomock
-import mongomock_ng.gridfs
-from mongomock_ng import helpers
 
 
 try:
@@ -41,7 +41,7 @@ class GridFsTest(TestCase):
         super().setUp()
         self.fake_conn = mongomock.MongoClient()
         self.mongo_conn = self._connect_to_local_mongodb()
-        self.db_name = 'mongomock_ng___testing_db'
+        self.db_name = 'mongomock___testing_db'
 
         self.mongo_conn[self.db_name]['fs']['files'].drop()
         self.mongo_conn[self.db_name]['fs']['chunks'].drop()
