@@ -13,6 +13,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Optimized document cloning by replacing `copy.deepcopy` with custom `_clone_document` helper
 - Significant insert/update performance improvement for bulk operations
+## [7.5.12] - 2026-05-26
+### Added
+- Unique index constraints now enforce per-element uniqueness on array fields (multikey behavior)
+- `create_indexes()` forwards `partialFilterExpression` to `create_index()`
+
+### Fixed
+- `create_index()` with `unique=True` and `partialFilterExpression` skips non-matching documents during duplicate pre-check
+- TTL index expiration now resolves nested dotted field names (e.g., `data.timestamp`) correctly
 
 
 ## [7.5.11] - 2026-05-25
