@@ -6199,20 +6199,33 @@ class CollectionAPITest(TestCase):
     def test__find_where(self):
         self.db.collection.insert_many(
             [
-                {'name': 'Anya'},
-                {'name': 'Bob'},
+                {'name': 'Anya', 'age': 25},
+                {'name': 'Bob', 'age': 30},
             ]
         )
-        with self.assertRaises(NotImplementedError):
-            self.db.collection.find_one(
-                {
-                    '$where': (
-                        'function() {'
-                        '  return (hex_md5(this.name) == "9b53e667f30cd329dca1ec9e6a83e994")'
-                        '}'
-                    ),
-                }
-            )
+        result = self.db.collection.find_one({'$where': 'this.name == "Anya"'})
+        self.assertEqual(result['name'], 'Anya')
+
+    def test__find_where_false(self):
+        self.db.collection.insert_many(
+            [
+                {'name': 'Anya', 'age': 25},
+                {'name': 'Bob', 'age': 30},
+            ]
+        )
+        result = self.db.collection.find_one({'$where': 'this.age > 30'})
+        self.assertIsNone(result)
+
+    def test__find_where_warning(self):
+        self.db.collection.insert_one({'name': 'Anya'})
+        with self.assertWarns(RuntimeWarning) as ctx:
+            self.db.collection.find_one({'$where': 'this.name == "Anya"'})
+        self.assertIn('eval', str(ctx.warning))
+
+    def test__find_where_invalid(self):
+        self.db.collection.insert_one({'name': 'Anya'})
+        with self.assertRaises(mongomock.OperationFailure):
+            self.db.collection.find_one({'$where': 'this.name == '})
 
     def test__unwind_no_prefix(self):
         self.db.collection.insert_one({'_id': 1, 'arr': [1, 2]})
@@ -8804,6 +8817,20 @@ class CollectionAPITest(TestCase):
             msg='Modifying the found document afterwards does not modify the stored document.',
         )
         self.assertEqual(dict(original_document, date=None), dict(stored_document, date=None))
+
+    def test__clone_document_isolation(self):
+        doc = {'a': 1, 'b': {'c': 2}, 'd': [3, 4]}
+        cloned = helpers._clone_document(doc)
+        cloned['b']['c'] = 99
+        cloned['d'].append(5)
+        self.assertEqual(doc, {'a': 1, 'b': {'c': 2}, 'd': [3, 4]})
+
+    def test__clone_document_bson_types(self):
+        doc = {'nested': {'x': 1}, 'items': [1, 2, 3]}
+        cloned = helpers._clone_document(doc)
+        self.assertEqual(cloned, doc)
+        cloned['nested']['x'] = 99
+        self.assertEqual(doc['nested']['x'], 1)
 
     @skipIf(not helpers.HAVE_PYMONGO, 'pymongo not installed')
     def test__aggregate_to_string(self):

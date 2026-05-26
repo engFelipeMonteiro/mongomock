@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [7.5.13] - 2026-05-26
+### Added
+- `$where` operator support with Python-based evaluation (simple `this.field` expressions)
+- RuntimeWarning when using `$where` to alert about security implications
+
+### Changed
+- Optimized document cloning by replacing `copy.deepcopy` with custom `_clone_document` helper
+- Significant insert/update performance improvement for bulk operations
+
+
 ## [7.5.11] - 2026-05-25
 ### Fixed
 - `$rename` operator now supports dot notation for nested field renaming
