@@ -1,8 +1,8 @@
 from unittest import mock
 
-from mongomock_ng import Collection as MongoMockCollection
-from mongomock_ng import Database as MongoMockDatabase
-from mongomock_ng.collection import Cursor as MongoMockCursor
+from . import Collection as MongoMockCollection
+from . import Database as MongoMockDatabase
+from .collection import Cursor as MongoMockCursor
 
 
 try:

@@ -2,14 +2,13 @@ import warnings
 
 from packaging import version
 
-from mongomock_ng import codec_options as mongomock_codec_options
-from mongomock_ng import helpers
-from mongomock_ng import read_preferences
-from mongomock_ng import store
-
+from . import codec_options as mongomock_codec_options
 from . import CollectionInvalid
+from . import helpers
 from . import InvalidName
 from . import OperationFailure
+from . import read_preferences
+from . import store
 from .collection import Collection
 from .command_cursor import CommandCursor
 from .filtering import filter_applies

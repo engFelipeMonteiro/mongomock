@@ -3,8 +3,9 @@ import datetime
 import functools
 
 import mongomock_ng
-from mongomock_ng import helpers
-from mongomock_ng.thread import RWLock
+
+from . import helpers
+from .thread import RWLock
 
 
 class ServerStore:

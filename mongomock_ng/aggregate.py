@@ -21,8 +21,6 @@ import pytz
 from packaging import version
 from sentinels import NOTHING  # type: ignore[import-untyped]
 
-import mongomock_ng
-
 from . import command_cursor
 from . import filtering
 from . import helpers
@@ -678,9 +676,9 @@ class _Parser:
         if operator in binary_arithmetic_operators | binary_bitwise_operators:
             return self._eval_binary_arithmetic_operator(operator, values)
         # N-ary operators
-        assert isinstance(
-            values, (tuple, list)
-        ), f"Parameter to {operator} must evaluate to a list, got '{type(values)}'"
+        assert isinstance(values, (tuple, list)), (
+            f"Parameter to {operator} must evaluate to a list, got '{type(values)}'"
+        )
 
         parsed_values = list(self.parse_many(values))
         assert parsed_values, f'{operator} must have at least one parameter'
@@ -1627,9 +1625,9 @@ class _Parser:
     def _handle_conditional_operator(self, operator, values):
         if operator == '$ifNull':
             fields = values[:-1]
-            if len(fields) > 1 and version.parse(mongomock_ng.SERVER_VERSION) <= version.parse(
-                '4.4'
-            ):
+            from . import SERVER_VERSION
+
+            if len(fields) > 1 and version.parse(SERVER_VERSION) <= version.parse('4.4'):
                 raise OperationFailure(
                     '$ifNull supports only one input expression  in MongoDB v4.4 and lower'
                 )
@@ -1706,7 +1704,7 @@ class _Parser:
             parsed_array = self.parse(array)
             if not isinstance(parsed_array, (list, tuple)):
                 raise OperationFailure('$in requires an array')
-            from mongomock_ng.filtering import operator_eq
+            from .filtering import operator_eq
 
             return any(operator_eq(parsed_expression, item) for item in parsed_array)
         if operator in ('$setUnion', '$setIntersection', '$setEquals'):

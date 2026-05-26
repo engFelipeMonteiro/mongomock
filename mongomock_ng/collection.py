@@ -2528,7 +2528,7 @@ class Cursor:
         return self
 
     def explain(self):
-        from mongomock_ng import SERVER_VERSION
+        from . import SERVER_VERSION
 
         results_limit = self._compute_results(with_limit_and_skip=True)
         results_all = self._compute_results(with_limit_and_skip=False)

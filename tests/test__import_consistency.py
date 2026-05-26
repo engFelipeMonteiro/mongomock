@@ -9,7 +9,11 @@ class ImportConsistencyTest(TestCase):
         from pathlib import Path
 
         tests_dir = Path(__file__).parent
-        allowed_files = {'conftest.py', 'test__import_consistency.py'}
+        allowed_files = {
+            'conftest.py',
+            'test__import_consistency.py',
+            'test__import_relative.py',
+        }
         allowed_imports = {
             'test__database_api.py': {
                 'from mongomock_ng.command_cursor import CommandCursor',

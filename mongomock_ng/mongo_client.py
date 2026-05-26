@@ -3,13 +3,12 @@ import warnings
 
 from packaging import version
 
-import mongomock_ng
-from mongomock_ng import codec_options as mongomock_codec_options
-from mongomock_ng import ConfigurationError
-from mongomock_ng import helpers
-from mongomock_ng import read_preferences
-from mongomock_ng.database import Database
-from mongomock_ng.store import ServerStore
+from . import codec_options as mongomock_codec_options
+from . import ConfigurationError
+from . import helpers
+from . import read_preferences
+from .database import Database
+from .store import ServerStore
 
 
 try:
@@ -79,7 +78,9 @@ class MongoClient:
 
         self.__default_database_name = dbase
 
-        self._server_version = mongomock_ng.SERVER_VERSION
+        from . import SERVER_VERSION
+
+        self._server_version = SERVER_VERSION
 
     def __getitem__(self, db_name):
         return self.get_database(db_name)
