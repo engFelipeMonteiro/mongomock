@@ -11516,3 +11516,74 @@ class CollectionAPITest(TestCase):
         coll.insert_one({'b': 'hello'})
         with self.assertRaises(WriteError):
             coll.insert_one({'b': 123})
+
+    def test__validation_level_off_skips_validation(self):
+        coll = self.db.create_collection(
+            'validated',
+            validator={'a': {'$type': 'int'}},
+            validationLevel='off',
+        )
+        coll.insert_one({'a': 'should pass'})
+        self.assertEqual(coll.count_documents({}), 1)
+
+    def test__validation_action_warn_skips_validation(self):
+        coll = self.db.create_collection(
+            'validated',
+            validator={'a': {'$type': 'int'}},
+            validationAction='warn',
+        )
+        coll.insert_one({'a': 'should pass'})
+        self.assertEqual(coll.count_documents({}), 1)
+
+    def test__update_rollback_on_validation_failure(self):
+        coll = self.db.create_collection('validated', validator={'a': {'$type': 'int'}})
+        coll.insert_one({'a': 1, 'x': 'original'})
+        with self.assertRaises(WriteError):
+            coll.update_one({'a': 1}, {'$set': {'a': 'bad', 'x': 'changed'}})
+        doc = coll.find_one()
+        self.assertEqual(doc['a'], 1)
+        self.assertEqual(doc['x'], 'original')
+
+    def test__validation_level_moderate_valid_original_rejects_invalid(self):
+        coll = self.db.create_collection('validated', validator={'a': {'$type': 'int'}})
+        coll.insert_one({'a': 1})
+        self.db.command('collMod', 'validated', validationLevel='moderate')
+        with self.assertRaises(WriteError):
+            coll.update_one({'a': 1}, {'$set': {'a': 'bad'}})
+        doc = coll.find_one()
+        self.assertEqual(doc['a'], 1)
+
+    def test__validation_level_moderate_invalid_original_skips_validation(self):
+        coll = self.db.create_collection('validated', validator={'a': {'$type': 'int'}})
+        coll.insert_one({'a': 1})
+        coll.update_one({'a': 1}, {'$set': {'a': 'bad'}}, bypass_document_validation=True)
+        self.db.command('collMod', 'validated', validationLevel='moderate')
+        coll.update_one({'a': 'bad'}, {'$set': {'a': 'still bad'}})
+        doc = coll.find_one()
+        self.assertEqual(doc['a'], 'still bad')
+
+    def test__validation_on_find_one_and_update(self):
+        coll = self.db.create_collection('v', validator={'a': {'$type': 'int'}})
+        coll.insert_one({'a': 1})
+        coll.find_one_and_update({'a': 1}, {'$set': {'a': 2}})
+        self.assertEqual(coll.find_one()['a'], 2)
+
+    def test__validation_on_find_one_and_replace(self):
+        coll = self.db.create_collection('v', validator={'a': {'$type': 'int'}})
+        coll.insert_one({'a': 1})
+        coll.find_one_and_replace({'a': 1}, {'a': 2})
+        self.assertEqual(coll.find_one()['a'], 2)
+
+    def test__validation_on_find_one_and_update_rejects(self):
+        coll = self.db.create_collection('v', validator={'a': {'$type': 'int'}})
+        coll.insert_one({'a': 1})
+        with self.assertRaises(WriteError):
+            coll.find_one_and_update({'a': 1}, {'$set': {'a': 'bad'}})
+        self.assertEqual(coll.find_one()['a'], 1)
+
+    def test__validation_on_find_one_and_replace_rejects(self):
+        coll = self.db.create_collection('v', validator={'a': {'$type': 'int'}})
+        coll.insert_one({'a': 1})
+        with self.assertRaises(WriteError):
+            coll.find_one_and_replace({'a': 1}, {'a': 'bad'})
+        self.assertEqual(coll.find_one()['a'], 1)
