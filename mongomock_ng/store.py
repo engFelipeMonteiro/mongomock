@@ -83,6 +83,10 @@ class CollectionStore:
             if key not in self._supported_options:
                 raise NotImplementedError(f'Unsupported collection option: {key}')
         self.options.update(options)
+        validation_opts = {'validator', 'validationLevel', 'validationAction'}
+        if validation_opts.intersection(options):
+            self.options.setdefault('validationLevel', 'strict')
+            self.options.setdefault('validationAction', 'error')
         self._is_force_created = True
 
     @property
