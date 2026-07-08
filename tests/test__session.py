@@ -3,7 +3,11 @@ import unittest
 from unittest import skipIf
 
 import mongomock_ng as mongomock
+from mongomock_ng.read_concern import ReadConcern
 from mongomock_ng.session import ClientSession
+from mongomock_ng.session import SessionOptions
+from mongomock_ng.session import TransactionOptions
+from mongomock_ng.write_concern import WriteConcern
 
 
 try:
@@ -15,6 +19,47 @@ try:
     HAVE_PYMONGO = True
 except ImportError:
     HAVE_PYMONGO = False
+
+
+class SessionOptionsTests(unittest.TestCase):
+    def test_transaction_options_defaults(self):
+        opts = TransactionOptions()
+        self.assertIsNone(opts.read_concern)
+        self.assertIsNone(opts.write_concern)
+        self.assertIsNone(opts.read_preference)
+        self.assertIsNone(opts.max_commit_time_ms)
+
+    def test_transaction_options_with_params(self):
+        rc = ReadConcern(level='local')
+        wc = WriteConcern(w=1)
+        opts = TransactionOptions(
+            read_concern=rc,
+            write_concern=wc,
+            read_preference='primary',
+            max_commit_time_ms=1000,
+        )
+        self.assertIs(opts.read_concern, rc)
+        self.assertIs(opts.write_concern, wc)
+        self.assertEqual(opts.read_preference, 'primary')
+        self.assertEqual(opts.max_commit_time_ms, 1000)
+
+    def test_session_options_defaults(self):
+        opts = SessionOptions()
+        self.assertTrue(opts.causal_consistency)
+        self.assertIsNone(opts.default_transaction_options)
+
+    def test_session_options_with_params(self):
+        txn_opts = TransactionOptions(read_concern=ReadConcern(level='snapshot'))
+        opts = SessionOptions(
+            causal_consistency=False,
+            default_transaction_options=txn_opts,
+        )
+        self.assertFalse(opts.causal_consistency)
+        self.assertIs(opts.default_transaction_options, txn_opts)
+
+    def test_session_options_default_transaction_options_property(self):
+        opts = SessionOptions(default_transaction_options='dummy')
+        self.assertEqual(opts.default_transaction_options, 'dummy')
 
 
 class SessionBasicTests(unittest.TestCase):
@@ -70,6 +115,13 @@ class TransactionTests(unittest.TestCase):
             self.assertTrue(session.in_transaction)
         self.assertFalse(session.in_transaction)
         session.end_session()
+
+    def test_start_transaction_on_ended_session_raises(self):
+        client = mongomock.MongoClient()
+        session = client.start_session()
+        session.end_session()
+        with self.assertRaises(mongomock.InvalidOperation):
+            session.start_transaction()
 
     def test_double_start_transaction_raises(self):
         client = mongomock.MongoClient()

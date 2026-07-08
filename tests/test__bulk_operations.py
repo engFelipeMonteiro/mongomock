@@ -18,8 +18,6 @@ from unittest import TestCase
 from tests.multicollection import MultiCollection
 
 
-# https://pymongo.readthedocs.io/en/stable/migrate-to-pymongo4.html#collection-initialize-ordered-bulk-op-and-initialize-unordered-bulk-op-is-removed
-@skipIf(version.parse('4.0') <= helpers.PYMONGO_VERSION, 'pymongo v4 or above')
 class BulkOperationsTest(TestCase):
     test_with_pymongo = False
 
@@ -38,7 +36,7 @@ class BulkOperationsTest(TestCase):
         self.bulk_op = self.db.collection.initialize_ordered_bulk_op()
 
     def __check_document(self, doc, count=1):
-        found_num = self.db.collection.find(doc).count()
+        found_num = self.db.collection.count_documents(doc)
         if found_num != count:
             all = list(self.db.collection.find())
             self.fail(
@@ -77,7 +75,7 @@ class BulkOperationsTest(TestCase):
         self.__check_result(result, **expecting_result)
 
     def __check_number_of_elements(self, count):
-        has_count = self.db.collection.count()
+        has_count = self.db.collection.count_documents({})
         self.assertEqual(
             has_count, count, f'There is {has_count} documents but there should be {count}'
         )
@@ -200,7 +198,6 @@ class BulkOperationsWithPymongoTest(BulkOperationsTest):
 @skipIf(not helpers.HAVE_PYMONGO, 'pymongo not installed')
 @skipIf(os.getenv('NO_LOCAL_MONGO'), 'No local Mongo server running')
 # https://pymongo.readthedocs.io/en/stable/migrate-to-pymongo4.html#collection-initialize-ordered-bulk-op-and-initialize-unordered-bulk-op-is-removed
-@skipIf(version.parse('4.0') <= helpers.PYMONGO_VERSION, 'pymongo v4 or above')
 class CollectionComparisonTest(TestCase):
     def setUp(self):
         super().setUp()
