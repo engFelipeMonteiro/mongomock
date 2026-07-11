@@ -27,7 +27,7 @@ def parse_geojson(obj: Any) -> dict:
     typ = obj.get('type')
     if not isinstance(typ, str) or typ not in GEOJSON_TYPES:
         raise OperationFailure(
-            f'Invalid GeoJSON type: {typ!r}. Must be one of ' f'{", ".join(sorted(GEOJSON_TYPES))}'
+            f'Invalid GeoJSON type: {typ!r}. Must be one of {", ".join(sorted(GEOJSON_TYPES))}'
         )
     coordinates = obj.get('coordinates')
     if typ == 'GeometryCollection':
