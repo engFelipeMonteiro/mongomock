@@ -614,11 +614,23 @@ class Collection:
         return self._codec_options
 
     def initialize_unordered_bulk_op(self, bypass_document_validation=False):
+        warnings.warn(
+            'Collection.initialize_unordered_bulk_op() is deprecated. '
+            'Use Collection.bulk_write() instead.',
+            DeprecationWarning,
+            stacklevel=2,
+        )
         return BulkOperationBuilder(
             self, ordered=False, bypass_document_validation=bypass_document_validation
         )
 
     def initialize_ordered_bulk_op(self, bypass_document_validation=False):
+        warnings.warn(
+            'Collection.initialize_ordered_bulk_op() is deprecated. '
+            'Use Collection.bulk_write() instead.',
+            DeprecationWarning,
+            stacklevel=2,
+        )
         return BulkOperationBuilder(
             self, ordered=True, bypass_document_validation=bypass_document_validation
         )
@@ -1559,7 +1571,7 @@ class Collection:
         """Copy only the specified fields."""
 
         # https://pymongo.readthedocs.io/en/stable/migrate-to-pymongo4.html#collection-find-returns-entire-document-with-empty-projection
-        if fields is None:
+        if fields is None or fields == []:
             return _copy_field(doc, container)
 
         if not fields:
@@ -2162,6 +2174,81 @@ class Collection:
         raise NotImplementedError(
             'aggregate_raw_batches method is not implemented in mongomock-ng yet'
         )
+
+    # Deprecated methods — available with DeprecationWarning for pymongo 4.x compat.
+
+    def remove(self, filter=None, **kwargs):
+        warnings.warn(
+            'Collection.remove() is deprecated. Use delete_one() or delete_many() instead.',
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        if filter is None:
+            return self.delete_many({}, **kwargs)
+        return self.delete_many(filter, **kwargs)
+
+    def save(self, to_save, **kwargs):
+        warnings.warn(
+            'Collection.save() is deprecated. Use insert_one() or replace_one() instead.',
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        if not isinstance(to_save, dict):
+            raise TypeError(f'cannot save {type(to_save)} object')
+        if '_id' in to_save:
+            result = self.replace_one({'_id': to_save['_id']}, to_save, upsert=True, **kwargs)
+            return result.upserted_id or to_save['_id']
+        else:
+            result = self.insert_one(to_save, **kwargs)
+            return result.inserted_id
+
+    def count(self, filter=None, **kwargs):
+        warnings.warn(
+            'Collection.count() is deprecated. Use count_documents() instead.',
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.count_documents(filter or {}, **kwargs)
+
+    def find_and_modify(self, query=None, update=None, upsert=False, **kwargs):
+        warnings.warn(
+            'Collection.find_and_modify() is deprecated. Use find_one_and_update() or '
+            'find_one_and_replace() or find_one_and_delete() instead.',
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        if update is not None:
+            return self.find_one_and_update(query or {}, update, upsert=upsert, **kwargs)
+        return self.find_one_and_replace(query or {}, upsert=upsert, **kwargs)
+
+    def update(self, filter, update, **kwargs):
+        warnings.warn(
+            'Collection.update() is deprecated. Use update_one() or update_many() instead.',
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        multi = kwargs.pop('multi', True)
+        if multi:
+            return self.update_many(filter, update, **kwargs)
+        return self.update_one(filter, update, **kwargs)
+
+    def insert(self, doc_or_docs, **kwargs):
+        warnings.warn(
+            'Collection.insert() is deprecated. Use insert_one() or insert_many() instead.',
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        if isinstance(doc_or_docs, list):
+            return self.insert_many(doc_or_docs, **kwargs)
+        return self.insert_one(doc_or_docs, **kwargs)
+
+    def ensure_index(self, key_or_list, **kwargs):
+        warnings.warn(
+            'Collection.ensure_index() is deprecated. Use create_index() instead.',
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.create_index(key_or_list, **kwargs)
 
 
 class Cursor:

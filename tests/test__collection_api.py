@@ -11367,3 +11367,55 @@ class CollectionAPITest(TestCase):
         """Gap 9: filtering.py non-Mapping filter -> TypeError"""
         with self.assertRaises(TypeError):
             list(self.db.collection.find(['not', 'a', 'dict']))
+
+    def test__collection_remove_deprecated_not_type_error(self):
+        """After adding deprecated remove(), it no longer raises TypeError."""
+        with self.assertWarns(DeprecationWarning):
+            self.db.collection.remove({})
+
+    def test__deprecated_remove(self):
+        self.db.collection.insert_one({'_id': 1, 'a': 1})
+        self.db.collection.insert_one({'_id': 2, 'a': 2})
+        with self.assertWarns(DeprecationWarning):
+            self.db.collection.remove({'_id': 1})
+        self.assertEqual(1, self.db.collection.count_documents({}))
+
+    def test__deprecated_save_insert(self):
+        with self.assertWarns(DeprecationWarning):
+            self.db.collection.save({'_id': 'new', 'x': 1})
+        self.assertEqual(1, self.db.collection.count_documents({}))
+
+    def test__deprecated_save_replace(self):
+        self.db.collection.insert_one({'_id': 'existing', 'x': 1})
+        with self.assertWarns(DeprecationWarning):
+            self.db.collection.save({'_id': 'existing', 'x': 2})
+        doc = self.db.collection.find_one({'_id': 'existing'})
+        self.assertEqual(2, doc['x'])
+
+    def test__deprecated_count(self):
+        self.db.collection.insert_one({'a': 1})
+        self.db.collection.insert_one({'a': 2})
+        with self.assertWarns(DeprecationWarning):
+            self.assertEqual(2, self.db.collection.count())
+
+    def test__deprecated_update(self):
+        self.db.collection.insert_one({'_id': 1, 'a': 1})
+        with self.assertWarns(DeprecationWarning):
+            self.db.collection.update({'_id': 1}, {'$set': {'a': 2}}, multi=False)
+        doc = self.db.collection.find_one({'_id': 1})
+        self.assertEqual(2, doc['a'])
+
+    def test__deprecated_insert(self):
+        with self.assertWarns(DeprecationWarning):
+            self.db.collection.insert({'_id': 'new', 'x': 1})
+        self.assertEqual(1, self.db.collection.count_documents({}))
+
+    def test__deprecated_insert_many(self):
+        with self.assertWarns(DeprecationWarning):
+            self.db.collection.insert([{'_id': 'a'}, {'_id': 'b'}])
+        self.assertEqual(2, self.db.collection.count_documents({}))
+
+    def test__deprecated_ensure_index(self):
+        with self.assertWarns(DeprecationWarning):
+            self.db.collection.ensure_index('x')
+        self.assertIn('x_1', self.db.collection.index_information())

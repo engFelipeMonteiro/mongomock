@@ -269,8 +269,26 @@ class _CollectionComparisonTest(TestCase):
     This is done via cross-comparison of the results.
     """
 
+    _mongo_available = None
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        try:
+            conn = PymongoClient(
+                host=os.environ.get('TEST_MONGO_HOST', 'localhost'),
+                serverSelectionTimeoutMS=2000,
+            )
+            conn.admin.command('ping')
+            conn.close()
+            cls._mongo_available = True
+        except Exception:
+            cls._mongo_available = False
+
     def setUp(self):
         super().setUp()
+        if not self._mongo_available:
+            self.skipTest('No local MongoDB server available')
         self.fake_conn = mongomock.MongoClient()
         self.mongo_conn = self._connect_to_local_mongodb()
         self.db_name = 'mongomock___testing_db'
@@ -306,7 +324,7 @@ class _CollectionComparisonTest(TestCase):
         )
 
     def _connect_to_local_mongodb(self, num_retries=60):
-        """Performs retries on connection refused errors (for travis-ci builds)"""
+        """Performs retries on connection errors (for travis-ci builds)"""
         for retry in range(num_retries):
             if retry > 0:
                 time.sleep(0.5)
@@ -314,10 +332,8 @@ class _CollectionComparisonTest(TestCase):
                 return PymongoClient(
                     host=os.environ.get('TEST_MONGO_HOST', 'localhost'), maxPoolSize=1
                 )
-            except pymongo.errors.ConnectionFailure as e:
+            except pymongo.errors.ConnectionFailure:
                 if retry == num_retries - 1:
-                    raise
-                if 'connection refused' not in e.message.lower():
                     raise
 
     def tearDown(self):

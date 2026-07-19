@@ -375,18 +375,33 @@ class TransactionTests(unittest.TestCase):
 @skipIf(not HAVE_PYMONGO, 'pymongo not installed')
 @skipIf(os.getenv('NO_LOCAL_MONGO'), 'No local Mongo server running')
 class SessionComparisonTests(unittest.TestCase):
-    def setUp(self):
+    _mongo_available = None
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
         try:
-            self.fake_conn = mongomock.MongoClient()
-            self.mongo_conn = self._connect_to_local_mongodb()
-            self.db_name = 'mongomock___session_test_db'
-            self.collection_name = 'mongomock___session_test_collection'
-            self.mongo_conn.drop_database(self.db_name)
-            self.mongo_collection = self.mongo_conn[self.db_name][self.collection_name]
-            self.fake_collection = self.fake_conn[self.db_name][self.collection_name]
-            self._transactions_supported = self._check_transactions_supported()
+            conn = PymongoClient(
+                host=os.environ.get('TEST_MONGO_HOST', 'localhost'),
+                serverSelectionTimeoutMS=2000,
+            )
+            conn.admin.command('ping')
+            conn.close()
+            cls._mongo_available = True
         except Exception:
-            self.skipTest('MongoDB not available')
+            cls._mongo_available = False
+
+    def setUp(self):
+        if not self._mongo_available:
+            self.skipTest('No local MongoDB server available')
+        self.fake_conn = mongomock.MongoClient()
+        self.mongo_conn = self._connect_to_local_mongodb()
+        self.db_name = 'mongomock___session_test_db'
+        self.collection_name = 'mongomock___session_test_collection'
+        self.mongo_conn.drop_database(self.db_name)
+        self.mongo_collection = self.mongo_conn[self.db_name][self.collection_name]
+        self.fake_collection = self.fake_conn[self.db_name][self.collection_name]
+        self._transactions_supported = self._check_transactions_supported()
 
     def _check_transactions_supported(self):
         try:
@@ -412,10 +427,8 @@ class SessionComparisonTests(unittest.TestCase):
                 return PymongoClient(
                     host=os.environ.get('TEST_MONGO_HOST', 'localhost'), maxPoolSize=1
                 )
-            except pymongo.errors.ConnectionFailure as e:
+            except pymongo.errors.ConnectionFailure:
                 if retry == num_retries - 1:
-                    raise
-                if 'connection refused' not in e.message.lower():
                     raise
 
     def tearDown(self):

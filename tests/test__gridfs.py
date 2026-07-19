@@ -37,6 +37,15 @@ class GridFsTest(TestCase):
     @classmethod
     def setUpClass(cls):
         mongomock.gridfs.enable_gridfs_integration()
+        try:
+            conn = PymongoClient(
+                host=os.environ.get('TEST_MONGO_HOST', 'localhost'),
+                serverSelectionTimeoutMS=2000,
+            )
+            conn.admin.command('ping')
+            conn.close()
+        except Exception:
+            raise unittest.SkipTest('No local MongoDB server available') from None
 
     def setUp(self):
         super().setUp()
@@ -174,7 +183,7 @@ class GridFsTest(TestCase):
         return self.fake_conn[self.db_name]['fs']['files'].find_one({'_id': i})
 
     def _connect_to_local_mongodb(self, num_retries=60):
-        """Performs retries on connection refused errors (for travis-ci builds)"""
+        """Performs retries on connection errors (for travis-ci builds)"""
         for retry in range(num_retries):
             if retry > 0:
                 time.sleep(0.5)
@@ -182,10 +191,8 @@ class GridFsTest(TestCase):
                 return PymongoClient(
                     host=os.environ.get('TEST_MONGO_HOST', 'localhost'), maxPoolSize=1
                 )
-            except pymongo.errors.ConnectionFailure as e:
+            except pymongo.errors.ConnectionFailure:
                 if retry == num_retries - 1:
-                    raise
-                if 'connection refused' not in e.message.lower():
                     raise
 
 
