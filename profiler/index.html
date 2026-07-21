@@ -1,0 +1,2116 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="In-memory MongoDB mock for Python testing">
+      
+      
+      
+        <link rel="canonical" href="https://engFelipeMonteiro.github.io/mongomock-ng/profiler/">
+      
+      
+        <link rel="prev" href="../sessions/">
+      
+      
+        <link rel="next" href="../LIMITATIONS/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Query Profiler - mongomock-ng</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#queryprofiler" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="mongomock-ng" class="md-header__button md-logo" aria-label="mongomock-ng" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            mongomock-ng
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Query Profiler
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="amber"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/engFelipeMonteiro/mongomock-ng" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    engFelipeMonteiro/mongomock-ng
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../installation/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Getting Started
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../API/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API Reference
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../AGGREGATION/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Aggregation Pipeline
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../geospatial/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Geospatial Support
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../sessions/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Sessions & Transactions
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Query Profiler
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../LIMITATIONS/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Limitations
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../CHANGELOG/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Changelog
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../contributing/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Contributing
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="mongomock-ng" class="md-nav__button md-logo" aria-label="mongomock-ng" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    mongomock-ng
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/engFelipeMonteiro/mongomock-ng" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    engFelipeMonteiro/mongomock-ng
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../AGGREGATION/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Aggregation Pipeline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../geospatial/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Geospatial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sessions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sessions & Transactions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Query Profiler
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Query Profiler
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quickstart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quickstart
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="API Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get_profiler-queryprofiler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_profiler() -&gt; QueryProfiler
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#queryprofilerstartoutput_path-str-mongomock-profiler-reportjson" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        QueryProfiler.start(output_path: str = 'mongomock-profiler-report.json')
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#queryprofilerstop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        QueryProfiler.stop()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#queryprofilerreset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        QueryProfiler.reset()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#queryprofilerrecordfilter-collection-operation-indexesnone-sortnone" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        QueryProfiler.record(filter, collection, operation, indexes=None, sort=None)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#queryprofilerexport_jsonpath-str-none-none" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        QueryProfiler.export_json(path: str | None = None)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#queryprofilerreport-dict" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        QueryProfiler.report() -&gt; dict
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#normalize_predicatefilter-any-any" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        normalize_predicate(filter: Any) -&gt; Any
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-it-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How It Works
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How It Works">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#collection-hooks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Collection Hooks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aggregation-hook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aggregation Hook
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#index-snapshots" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Index Snapshots
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sort-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sort Context
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#auto-export-on-exit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Auto-export on Exit
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#predicate-normalization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Predicate Normalization
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Predicate Normalization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#algorithm-normalize_predicate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Algorithm (normalize_predicate)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recursive-ops" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recursive Ops
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#coverage-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Coverage Analysis
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Coverage Analysis">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#filter-coverage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Filter Coverage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sort-coverage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sort Coverage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#partial-indexes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partial Indexes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#json-report-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JSON Report Format
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="JSON Report Format">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#top-level-keys" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Top-level keys
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#per-pattern-keys" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Per-pattern keys
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage Examples
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Usage Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#via-environment-variable-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Via Environment Variable (recommended)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#via-conftestpy-teardown-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Via conftest.py (teardown check)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#programmatic-within-a-single-test" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Programmatic (within a single test)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        See Also
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../LIMITATIONS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Limitations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CHANGELOG/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quickstart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quickstart
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="API Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get_profiler-queryprofiler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_profiler() -&gt; QueryProfiler
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#queryprofilerstartoutput_path-str-mongomock-profiler-reportjson" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        QueryProfiler.start(output_path: str = 'mongomock-profiler-report.json')
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#queryprofilerstop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        QueryProfiler.stop()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#queryprofilerreset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        QueryProfiler.reset()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#queryprofilerrecordfilter-collection-operation-indexesnone-sortnone" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        QueryProfiler.record(filter, collection, operation, indexes=None, sort=None)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#queryprofilerexport_jsonpath-str-none-none" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        QueryProfiler.export_json(path: str | None = None)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#queryprofilerreport-dict" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        QueryProfiler.report() -&gt; dict
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#normalize_predicatefilter-any-any" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        normalize_predicate(filter: Any) -&gt; Any
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-it-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How It Works
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How It Works">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#collection-hooks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Collection Hooks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aggregation-hook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aggregation Hook
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#index-snapshots" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Index Snapshots
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sort-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sort Context
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#auto-export-on-exit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Auto-export on Exit
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#predicate-normalization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Predicate Normalization
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Predicate Normalization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#algorithm-normalize_predicate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Algorithm (normalize_predicate)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recursive-ops" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recursive Ops
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#coverage-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Coverage Analysis
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Coverage Analysis">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#filter-coverage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Filter Coverage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sort-coverage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sort Coverage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#partial-indexes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partial Indexes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#json-report-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JSON Report Format
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="JSON Report Format">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#top-level-keys" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Top-level keys
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#per-pattern-keys" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Per-pattern keys
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage Examples
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Usage Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#via-environment-variable-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Via Environment Variable (recommended)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#via-conftestpy-teardown-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Via conftest.py (teardown check)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#programmatic-within-a-single-test" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Programmatic (within a single test)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        See Also
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="queryprofiler">QueryProfiler<a class="headerlink" href="#queryprofiler" title="Permanent link">&para;</a></h1>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<p>QueryProfiler is a diagnostic mode that captures every query executed through
+mongomock-ng during a test run, normalizes filter predicates (replacing values
+with <code>?</code>), groups identical query shapes together, and analyzes whether each
+query pattern is covered by the collection's indexes.</p>
+<p>The output is a JSON report that answers:</p>
+<ul>
+<li>Which queries ran, how often, and in which tests?</li>
+<li>Which index (if any) covers each query pattern?</li>
+<li>Are there <strong>uncovered</strong> queries that would trigger a collection scan in real
+  MongoDB?</li>
+</ul>
+<p>The profiler is <strong>zero-config</strong> — set one environment variable and run your
+existing test suite as-is.</p>
+<h2 id="quickstart">Quickstart<a class="headerlink" href="#quickstart" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nv">MONGOMOCK_PROFILER</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>pytest
+</code></pre></div>
+<p>After the suite completes, a <code>mongomock-profiler-report.json</code> file appears in
+the working directory. No code changes, no imports, no fixtures.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&quot;metadata&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="nt">&quot;total_queries&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">142</span><span class="p">,</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="nt">&quot;total_patterns&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">18</span><span class="p">,</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="nt">&quot;filter_coverage_summary&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">      </span><span class="nt">&quot;full&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">12</span><span class="p">,</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">      </span><span class="nt">&quot;partial&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">      </span><span class="nt">&quot;none&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="p">},</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">    </span><span class="nt">&quot;sort_coverage_summary&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">      </span><span class="nt">&quot;full&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">      </span><span class="nt">&quot;none&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">15</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">  </span><span class="p">},</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">  </span><span class="nt">&quot;collections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">}</span>
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="p">}</span>
+</code></pre></div>
+<h2 id="api-reference">API Reference<a class="headerlink" href="#api-reference" title="Permanent link">&para;</a></h2>
+<h3 id="get_profiler-queryprofiler"><code>get_profiler() -&gt; QueryProfiler</code><a class="headerlink" href="#get_profiler-queryprofiler" title="Permanent link">&para;</a></h3>
+<p>Singleton accessor. Returns the global <code>QueryProfiler</code> instance, creating it on
+first call.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">mongomock_ng.profiler</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_profiler</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">profiler</span> <span class="o">=</span> <span class="n">get_profiler</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="queryprofilerstartoutput_path-str-mongomock-profiler-reportjson"><code>QueryProfiler.start(output_path: str = 'mongomock-profiler-report.json')</code><a class="headerlink" href="#queryprofilerstartoutput_path-str-mongomock-profiler-reportjson" title="Permanent link">&para;</a></h3>
+<p>Enable recording and clear any prior records. Optionally set the default export
+path.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">profiler</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="s1">&#39;/tmp/my-report.json&#39;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="queryprofilerstop"><code>QueryProfiler.stop()</code><a class="headerlink" href="#queryprofilerstop" title="Permanent link">&para;</a></h3>
+<p>Disable recording. Already-captured records are preserved.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">profiler</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="queryprofilerreset"><code>QueryProfiler.reset()</code><a class="headerlink" href="#queryprofilerreset" title="Permanent link">&para;</a></h3>
+<p>Clear all captured records and index snapshots.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">profiler</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="queryprofilerrecordfilter-collection-operation-indexesnone-sortnone"><code>QueryProfiler.record(filter, collection, operation, indexes=None, sort=None)</code><a class="headerlink" href="#queryprofilerrecordfilter-collection-operation-indexesnone-sortnone" title="Permanent link">&para;</a></h3>
+<p>Add a query record. Called automatically by the internal hooks — you should
+not need to call this manually.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>filter</code></td>
+<td><code>dict</code></td>
+<td>Original query filter document</td>
+</tr>
+<tr>
+<td><code>collection</code></td>
+<td><code>str</code></td>
+<td>Fully qualified collection name (e.g. <code>mydb.users</code>)</td>
+</tr>
+<tr>
+<td><code>operation</code></td>
+<td><code>str</code></td>
+<td><code>find</code>, <code>count</code>, <code>update</code>, <code>delete</code>, or <code>aggregate</code></td>
+</tr>
+<tr>
+<td><code>indexes</code></td>
+<td><code>dict \| None</code></td>
+<td>Snapshot of the collection's index configurations</td>
+</tr>
+<tr>
+<td><code>sort</code></td>
+<td><code>list \| None</code></td>
+<td>Sort specification from the query (thread-local)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="queryprofilerexport_jsonpath-str-none-none"><code>QueryProfiler.export_json(path: str | None = None)</code><a class="headerlink" href="#queryprofilerexport_jsonpath-str-none-none" title="Permanent link">&para;</a></h3>
+<p>Serialize the full report to JSON and write it to disk. Uses the path from
+<code>start()</code>, or the argument, or falls back to <code>mongomock-profiler-report.json</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">profiler</span><span class="o">.</span><span class="n">export_json</span><span class="p">(</span><span class="s1">&#39;custom-report.json&#39;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="queryprofilerreport-dict"><code>QueryProfiler.report() -&gt; dict</code><a class="headerlink" href="#queryprofilerreport-dict" title="Permanent link">&para;</a></h3>
+<p>Return the report as a Python dictionary (same structure as the JSON output).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">report</span> <span class="o">=</span> <span class="n">profiler</span><span class="o">.</span><span class="n">report</span><span class="p">()</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="nb">print</span><span class="p">(</span><span class="n">report</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;total_queries&#39;</span><span class="p">])</span>
+</code></pre></div>
+<h3 id="normalize_predicatefilter-any-any"><code>normalize_predicate(filter: Any) -&gt; Any</code><a class="headerlink" href="#normalize_predicatefilter-any-any" title="Permanent link">&para;</a></h3>
+<p>Replace all literal values in a filter with <code>?</code>, preserving the operator
+structure. Useful standalone for test assertions or custom reporting.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">mongomock_ng.profiler</span><span class="w"> </span><span class="kn">import</span> <span class="n">normalize_predicate</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="n">normalize_predicate</span><span class="p">({</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;active&quot;</span><span class="p">,</span> <span class="s2">&quot;age&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;$gt&quot;</span><span class="p">:</span> <span class="mi">18</span><span class="p">}})</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="c1"># → {&quot;status&quot;: {&quot;$eq&quot;: &quot;?&quot;}, &quot;age&quot;: {&quot;$gt&quot;: &quot;?&quot;}}</span>
+</code></pre></div>
+<h2 id="how-it-works">How It Works<a class="headerlink" href="#how-it-works" title="Permanent link">&para;</a></h2>
+<h3 id="collection-hooks">Collection Hooks<a class="headerlink" href="#collection-hooks" title="Permanent link">&para;</a></h3>
+<p>The primary hook lives in <code>Collection._iter_documents()</code>, the single entry
+point through which <code>find()</code>, <code>find_one()</code>, <code>count_documents()</code>,
+<code>update_many()</code>, <code>delete_many()</code>, and similar operations all pass. Each call
+triggers <code>get_profiler().record(...)</code> with the current filter, operation,
+index snapshot, and sort context.</p>
+<p>Operation type is set via thread-local helpers before the operation-specific
+method is entered:</p>
+<table>
+<thead>
+<tr>
+<th>Helper</th>
+<th>Set by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>_profiler_set_operation()</code></td>
+<td><code>find</code>, <code>update</code>, <code>delete</code>, <code>count</code> paths</td>
+</tr>
+<tr>
+<td><code>_profiler_set_sort()</code></td>
+<td><code>find()</code> before cursor creation</td>
+</tr>
+</tbody>
+</table>
+<h3 id="aggregation-hook">Aggregation Hook<a class="headerlink" href="#aggregation-hook" title="Permanent link">&para;</a></h3>
+<p>The <code>$match</code> pipeline stage handler in <code>aggregate.py</code> calls
+<code>get_profiler().record(...)</code> with the stage spec and <code>operation='aggregate'</code>.
+This captures every aggregation pipeline that contains a <code>$match</code> stage.</p>
+<h3 id="index-snapshots">Index Snapshots<a class="headerlink" href="#index-snapshots" title="Permanent link">&para;</a></h3>
+<p>Indexes are captured <strong>on first query</strong> per collection. The
+<code>dict(self._list_all_indexes())</code> call returns the full index configuration at
+the time of the query. Because indexes in tests are typically created in setup
+and unchanged during the test, a single snapshot per collection suffices.</p>
+<h3 id="sort-context">Sort Context<a class="headerlink" href="#sort-context" title="Permanent link">&para;</a></h3>
+<p>Sort is tracked via <code>threading.local()</code> because <code>sort()</code> is called on the
+cursor (after <code>find()</code>) while the hook fires inside <code>_iter_documents</code>. The
+thread-local <code>_profiler_set_sort(sort)</code> / <code>_profiler_get_sort()</code> bridge this
+gap.</p>
+<h3 id="auto-export-on-exit">Auto-export on Exit<a class="headerlink" href="#auto-export-on-exit" title="Permanent link">&para;</a></h3>
+<p>When <code>MONGOMOCK_PROFILER=1</code> is set, the module's top-level code calls
+<code>get_profiler().start()</code> and registers <code>auto_export()</code> via <code>atexit</code>. If any
+records were captured, the JSON report is written when the process exits.</p>
+<h2 id="predicate-normalization">Predicate Normalization<a class="headerlink" href="#predicate-normalization" title="Permanent link">&para;</a></h2>
+<p>The profiler normalizes query filters so that queries with the same <strong>shape</strong>
+but different values cluster together. This is essential for coverage analysis:
+<code>{"status": "active"}</code> and <code>{"status": "inactive"}</code> are the same pattern.</p>
+<h3 id="algorithm-normalize_predicate">Algorithm (<code>normalize_predicate</code>)<a class="headerlink" href="#algorithm-normalize_predicate" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Dict values</strong> → recurse into each key-value pair</li>
+<li><strong>List items</strong> → recurse into each element</li>
+<li><strong>Scalars</strong> → replace with <code>?</code></li>
+</ol>
+<p>The result preserves the operator structure:</p>
+<table>
+<thead>
+<tr>
+<th>Filter</th>
+<th>Normalized</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>{"status": "active"}</code></td>
+<td><code>{"status": {"$eq": "?"}}</code></td>
+</tr>
+<tr>
+<td><code>{"age": {"$gt": 18}}</code></td>
+<td><code>{"age": {"$gt": "?"}}</code></td>
+</tr>
+<tr>
+<td><code>{"tags": ["a", "b"]}</code></td>
+<td><code>{"tags": ["?", "?"]}</code></td>
+</tr>
+<tr>
+<td><code>{"$or": [{"x": 1}, {"y": 2}]}</code></td>
+<td><code>{"$or": [{"x": {"$eq": "?"}}, {"y": ...}]}</code></td>
+</tr>
+</tbody>
+</table>
+<p>Note that top-level bare keys become <code>{"$eq": "?"}</code> (not just <code>"?"</code>) because
+MongoDB treats <code>{"field": value}</code> as <code>{"field": {"$eq": value}}</code>.</p>
+<h3 id="recursive-ops">Recursive Ops<a class="headerlink" href="#recursive-ops" title="Permanent link">&para;</a></h3>
+<p><code>$and</code>, <code>$or</code>, <code>$nor</code>, and <code>$not</code> are recursed into — their sub-expressions
+are normalized identically.</p>
+<h2 id="coverage-analysis">Coverage Analysis<a class="headerlink" href="#coverage-analysis" title="Permanent link">&para;</a></h2>
+<h3 id="filter-coverage">Filter Coverage<a class="headerlink" href="#filter-coverage" title="Permanent link">&para;</a></h3>
+<p>For each normalized predicate, the profiler extracts the set of queried fields
+and compares them against index keys:</p>
+<table>
+<thead>
+<tr>
+<th>Classification</th>
+<th>Condition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>full</code></td>
+<td>Every queried field is covered by at least one index</td>
+</tr>
+<tr>
+<td><code>partial</code></td>
+<td>Some queried fields are indexed, some are not</td>
+</tr>
+<tr>
+<td><code>none</code></td>
+<td>No queried field appears in any index</td>
+</tr>
+</tbody>
+</table>
+<p>When <code>q_fields</code> is empty (e.g. <code>{}</code> filter), coverage is reported as <code>none</code>.</p>
+<h3 id="sort-coverage">Sort Coverage<a class="headerlink" href="#sort-coverage" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Classification</th>
+<th>Condition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>full</code></td>
+<td>An index key list starts with the sort fields (direction can be inverted)</td>
+</tr>
+<tr>
+<td><code>partial</code></td>
+<td>A single-field sort matches a field in a compound index (not as first key — first-key prefix match is <code>full</code>)</td>
+</tr>
+<tr>
+<td><code>none</code></td>
+<td>No index matches the sort</td>
+</tr>
+</tbody>
+</table>
+<p>Direction tolerance: <code>[("status", 1)]</code> is covered by an index with key
+<code>[("status", -1)]</code> (asc ↔ desc swap counts as <code>full</code>).</p>
+<h3 id="partial-indexes">Partial Indexes<a class="headerlink" href="#partial-indexes" title="Permanent link">&para;</a></h3>
+<p>Partial indexes (<code>partialFilterExpression</code>) are matched against the
+<strong>original</strong> filter values (not the normalized predicate). If the query filter
+does not satisfy the partial expression, the index is <strong>not</strong> considered as
+covering that query, even if the field names align.</p>
+<h2 id="json-report-format">JSON Report Format<a class="headerlink" href="#json-report-format" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="p">{</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span><span class="nt">&quot;metadata&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span><span class="nt">&quot;total_queries&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">    </span><span class="nt">&quot;total_patterns&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">    </span><span class="nt">&quot;filter_coverage_summary&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">      </span><span class="nt">&quot;full&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">      </span><span class="nt">&quot;partial&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="w">      </span><span class="nt">&quot;none&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="w">    </span><span class="p">},</span>
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="w">    </span><span class="nt">&quot;sort_coverage_summary&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="w">      </span><span class="nt">&quot;full&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="w">      </span><span class="nt">&quot;none&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a><span class="w">  </span><span class="p">},</span>
+<a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a><span class="w">  </span><span class="nt">&quot;collections&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a><span class="w">    </span><span class="nt">&quot;mydb.users&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a><span class="w">      </span><span class="nt">&quot;indexes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a><span class="w">        </span><span class="p">{</span>
+<a id="__codelineno-9-19" name="__codelineno-9-19" href="#__codelineno-9-19"></a><span class="w">          </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;status_1&quot;</span><span class="p">,</span>
+<a id="__codelineno-9-20" name="__codelineno-9-20" href="#__codelineno-9-20"></a><span class="w">          </span><span class="nt">&quot;key&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[[</span><span class="s2">&quot;status&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">]]</span>
+<a id="__codelineno-9-21" name="__codelineno-9-21" href="#__codelineno-9-21"></a><span class="w">        </span><span class="p">},</span>
+<a id="__codelineno-9-22" name="__codelineno-9-22" href="#__codelineno-9-22"></a><span class="w">        </span><span class="p">{</span>
+<a id="__codelineno-9-23" name="__codelineno-9-23" href="#__codelineno-9-23"></a><span class="w">          </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;age_-1_name_1&quot;</span><span class="p">,</span>
+<a id="__codelineno-9-24" name="__codelineno-9-24" href="#__codelineno-9-24"></a><span class="w">          </span><span class="nt">&quot;key&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[[</span><span class="s2">&quot;age&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">-1</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">]]</span>
+<a id="__codelineno-9-25" name="__codelineno-9-25" href="#__codelineno-9-25"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-9-26" name="__codelineno-9-26" href="#__codelineno-9-26"></a><span class="w">      </span><span class="p">],</span>
+<a id="__codelineno-9-27" name="__codelineno-9-27" href="#__codelineno-9-27"></a><span class="w">      </span><span class="nt">&quot;patterns&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-9-28" name="__codelineno-9-28" href="#__codelineno-9-28"></a><span class="w">        </span><span class="p">{</span>
+<a id="__codelineno-9-29" name="__codelineno-9-29" href="#__codelineno-9-29"></a><span class="w">          </span><span class="nt">&quot;predicate&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-9-30" name="__codelineno-9-30" href="#__codelineno-9-30"></a><span class="w">            </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;$eq&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;?&quot;</span><span class="p">}</span>
+<a id="__codelineno-9-31" name="__codelineno-9-31" href="#__codelineno-9-31"></a><span class="w">          </span><span class="p">},</span>
+<a id="__codelineno-9-32" name="__codelineno-9-32" href="#__codelineno-9-32"></a><span class="w">          </span><span class="nt">&quot;operations&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;find&quot;</span><span class="p">],</span>
+<a id="__codelineno-9-33" name="__codelineno-9-33" href="#__codelineno-9-33"></a><span class="w">          </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<a id="__codelineno-9-34" name="__codelineno-9-34" href="#__codelineno-9-34"></a><span class="w">          </span><span class="nt">&quot;tests&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-9-35" name="__codelineno-9-35" href="#__codelineno-9-35"></a><span class="w">            </span><span class="s2">&quot;test_users.test_find_active&quot;</span><span class="p">,</span>
+<a id="__codelineno-9-36" name="__codelineno-9-36" href="#__codelineno-9-36"></a><span class="w">            </span><span class="s2">&quot;test_users.test_find_inactive&quot;</span>
+<a id="__codelineno-9-37" name="__codelineno-9-37" href="#__codelineno-9-37"></a><span class="w">          </span><span class="p">],</span>
+<a id="__codelineno-9-38" name="__codelineno-9-38" href="#__codelineno-9-38"></a><span class="w">          </span><span class="nt">&quot;filter_coverage&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;full&quot;</span><span class="p">,</span>
+<a id="__codelineno-9-39" name="__codelineno-9-39" href="#__codelineno-9-39"></a><span class="w">          </span><span class="nt">&quot;sort_coverage&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+<a id="__codelineno-9-40" name="__codelineno-9-40" href="#__codelineno-9-40"></a><span class="w">          </span><span class="nt">&quot;covered_fields&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">],</span>
+<a id="__codelineno-9-41" name="__codelineno-9-41" href="#__codelineno-9-41"></a><span class="w">          </span><span class="nt">&quot;uncovered_fields&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<a id="__codelineno-9-42" name="__codelineno-9-42" href="#__codelineno-9-42"></a><span class="w">          </span><span class="nt">&quot;covering_index&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;status_1&quot;</span><span class="p">,</span>
+<a id="__codelineno-9-43" name="__codelineno-9-43" href="#__codelineno-9-43"></a><span class="w">          </span><span class="nt">&quot;sort&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<a id="__codelineno-9-44" name="__codelineno-9-44" href="#__codelineno-9-44"></a><span class="w">        </span><span class="p">},</span>
+<a id="__codelineno-9-45" name="__codelineno-9-45" href="#__codelineno-9-45"></a><span class="w">        </span><span class="p">{</span>
+<a id="__codelineno-9-46" name="__codelineno-9-46" href="#__codelineno-9-46"></a><span class="w">          </span><span class="nt">&quot;predicate&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-9-47" name="__codelineno-9-47" href="#__codelineno-9-47"></a><span class="w">            </span><span class="nt">&quot;email&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;$eq&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;?&quot;</span><span class="p">}</span>
+<a id="__codelineno-9-48" name="__codelineno-9-48" href="#__codelineno-9-48"></a><span class="w">          </span><span class="p">},</span>
+<a id="__codelineno-9-49" name="__codelineno-9-49" href="#__codelineno-9-49"></a><span class="w">          </span><span class="nt">&quot;operations&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;find&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;update&quot;</span><span class="p">],</span>
+<a id="__codelineno-9-50" name="__codelineno-9-50" href="#__codelineno-9-50"></a><span class="w">          </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
+<a id="__codelineno-9-51" name="__codelineno-9-51" href="#__codelineno-9-51"></a><span class="w">          </span><span class="nt">&quot;tests&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-9-52" name="__codelineno-9-52" href="#__codelineno-9-52"></a><span class="w">            </span><span class="s2">&quot;test_users.test_find_by_email&quot;</span>
+<a id="__codelineno-9-53" name="__codelineno-9-53" href="#__codelineno-9-53"></a><span class="w">          </span><span class="p">],</span>
+<a id="__codelineno-9-54" name="__codelineno-9-54" href="#__codelineno-9-54"></a><span class="w">          </span><span class="nt">&quot;filter_coverage&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+<a id="__codelineno-9-55" name="__codelineno-9-55" href="#__codelineno-9-55"></a><span class="w">          </span><span class="nt">&quot;sort_coverage&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+<a id="__codelineno-9-56" name="__codelineno-9-56" href="#__codelineno-9-56"></a><span class="w">          </span><span class="nt">&quot;covered_fields&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<a id="__codelineno-9-57" name="__codelineno-9-57" href="#__codelineno-9-57"></a><span class="w">          </span><span class="nt">&quot;uncovered_fields&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;email&quot;</span><span class="p">],</span>
+<a id="__codelineno-9-58" name="__codelineno-9-58" href="#__codelineno-9-58"></a><span class="w">          </span><span class="nt">&quot;covering_index&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<a id="__codelineno-9-59" name="__codelineno-9-59" href="#__codelineno-9-59"></a><span class="w">          </span><span class="nt">&quot;sort&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<a id="__codelineno-9-60" name="__codelineno-9-60" href="#__codelineno-9-60"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-9-61" name="__codelineno-9-61" href="#__codelineno-9-61"></a><span class="w">      </span><span class="p">]</span>
+<a id="__codelineno-9-62" name="__codelineno-9-62" href="#__codelineno-9-62"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-9-63" name="__codelineno-9-63" href="#__codelineno-9-63"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-9-64" name="__codelineno-9-64" href="#__codelineno-9-64"></a><span class="p">}</span>
+</code></pre></div>
+<h3 id="top-level-keys">Top-level keys<a class="headerlink" href="#top-level-keys" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>metadata</code></td>
+<td>Totals across all collections</td>
+</tr>
+<tr>
+<td><code>collections</code></td>
+<td>Per-collection map, keyed by fully qualified name</td>
+</tr>
+</tbody>
+</table>
+<h3 id="per-pattern-keys">Per-pattern keys<a class="headerlink" href="#per-pattern-keys" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>predicate</code></td>
+<td>Normalized filter (values replaced with <code>?</code>)</td>
+</tr>
+<tr>
+<td><code>operations</code></td>
+<td>Operation types that produced this pattern</td>
+</tr>
+<tr>
+<td><code>count</code></td>
+<td>Number of queries matching this pattern</td>
+</tr>
+<tr>
+<td><code>tests</code></td>
+<td>Test identifiers that triggered this pattern</td>
+</tr>
+<tr>
+<td><code>filter_coverage</code></td>
+<td><code>full</code>, <code>partial</code>, or <code>none</code></td>
+</tr>
+<tr>
+<td><code>sort_coverage</code></td>
+<td><code>full</code> or <code>none</code></td>
+</tr>
+<tr>
+<td><code>covered_fields</code></td>
+<td>Fields in the predicate that appear in an index</td>
+</tr>
+<tr>
+<td><code>uncovered_fields</code></td>
+<td>Fields in the predicate that appear in <strong>no</strong> index</td>
+</tr>
+<tr>
+<td><code>covering_index</code></td>
+<td>Name of the first index that covers the predicate, or <code>null</code></td>
+</tr>
+<tr>
+<td><code>sort</code></td>
+<td>Sort specification from the query (or <code>null</code>)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="usage-examples">Usage Examples<a class="headerlink" href="#usage-examples" title="Permanent link">&para;</a></h2>
+<h3 id="via-environment-variable-recommended">Via Environment Variable (recommended)<a class="headerlink" href="#via-environment-variable-recommended" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nv">MONGOMOCK_PROFILER</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>pytest<span class="w"> </span>tests/<span class="w"> </span>-x
+</code></pre></div>
+<p>Zero code changes. Report written on exit.</p>
+<p>To customize the output path:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nv">MONGOMOCK_PROFILER</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="s2">import os</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="s2">os.environ[&#39;MONGOMOCK_PROFILER&#39;] = &#39;1&#39;</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="s2">from mongomock_ng.profiler import get_profiler</span>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="s2">get_profiler().start(&#39;custom-report.json&#39;)</span>
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="s2">&quot;</span>
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>pytest
+</code></pre></div>
+<h3 id="via-conftestpy-teardown-check">Via conftest.py (teardown check)<a class="headerlink" href="#via-conftestpy-teardown-check" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># conftest.py</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">mongomock_ng.profiler</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_profiler</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">autouse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="k">def</span><span class="w"> </span><span class="nf">profiler_teardown</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>    <span class="n">profiler</span> <span class="o">=</span> <span class="n">get_profiler</span><span class="p">()</span>
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">profiler</span><span class="o">.</span><span class="n">enabled</span><span class="p">:</span>
+<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>        <span class="n">profiler</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>    <span class="k">yield</span>
+<a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a>    <span class="c1"># At the end of the session, export and fail if uncovered queries exist</span>
+<a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a>    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">testscollector</span><span class="p">:</span>
+<a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a>        <span class="n">report</span> <span class="o">=</span> <span class="n">profiler</span><span class="o">.</span><span class="n">report</span><span class="p">()</span>
+<a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a>        <span class="n">uncovered</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+<a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a>            <span class="mi">1</span> <span class="k">for</span> <span class="n">coll</span> <span class="ow">in</span> <span class="n">report</span><span class="p">[</span><span class="s1">&#39;collections&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+<a id="__codelineno-12-17" name="__codelineno-12-17" href="#__codelineno-12-17"></a>            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">coll</span><span class="p">[</span><span class="s1">&#39;patterns&#39;</span><span class="p">]</span>
+<a id="__codelineno-12-18" name="__codelineno-12-18" href="#__codelineno-12-18"></a>            <span class="k">if</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;filter_coverage&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;none&#39;</span>
+<a id="__codelineno-12-19" name="__codelineno-12-19" href="#__codelineno-12-19"></a>        <span class="p">)</span>
+<a id="__codelineno-12-20" name="__codelineno-12-20" href="#__codelineno-12-20"></a>        <span class="n">profiler</span><span class="o">.</span><span class="n">export_json</span><span class="p">()</span>
+<a id="__codelineno-12-21" name="__codelineno-12-21" href="#__codelineno-12-21"></a>        <span class="k">if</span> <span class="n">uncovered</span><span class="p">:</span>
+<a id="__codelineno-12-22" name="__codelineno-12-22" href="#__codelineno-12-22"></a>            <span class="n">pytest</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="n">uncovered</span><span class="si">}</span><span class="s2"> uncovered query pattern(s). See profiler report.&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="programmatic-within-a-single-test">Programmatic (within a single test)<a class="headerlink" href="#programmatic-within-a-single-test" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">mongomock_ng.profiler</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_profiler</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="k">def</span><span class="w"> </span><span class="nf">test_query_patterns</span><span class="p">():</span>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>    <span class="n">profiler</span> <span class="o">=</span> <span class="n">get_profiler</span><span class="p">()</span>
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>    <span class="n">profiler</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>    <span class="n">profiler</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>
+<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>    <span class="n">collection</span><span class="o">.</span><span class="n">insert_many</span><span class="p">([</span>
+<a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>        <span class="p">{</span><span class="s2">&quot;_id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;active&quot;</span><span class="p">,</span> <span class="s2">&quot;age&quot;</span><span class="p">:</span> <span class="mi">25</span><span class="p">},</span>
+<a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>        <span class="p">{</span><span class="s2">&quot;_id&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;inactive&quot;</span><span class="p">,</span> <span class="s2">&quot;age&quot;</span><span class="p">:</span> <span class="mi">30</span><span class="p">},</span>
+<a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a>    <span class="p">])</span>
+<a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a>    <span class="n">collection</span><span class="o">.</span><span class="n">create_index</span><span class="p">([(</span><span class="s2">&quot;status&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)])</span>
+<a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a>
+<a id="__codelineno-13-14" name="__codelineno-13-14" href="#__codelineno-13-14"></a>    <span class="nb">list</span><span class="p">(</span><span class="n">collection</span><span class="o">.</span><span class="n">find</span><span class="p">({</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;active&quot;</span><span class="p">}))</span>
+<a id="__codelineno-13-15" name="__codelineno-13-15" href="#__codelineno-13-15"></a>    <span class="nb">list</span><span class="p">(</span><span class="n">collection</span><span class="o">.</span><span class="n">find</span><span class="p">({</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;inactive&quot;</span><span class="p">}))</span>
+<a id="__codelineno-13-16" name="__codelineno-13-16" href="#__codelineno-13-16"></a>    <span class="nb">list</span><span class="p">(</span><span class="n">collection</span><span class="o">.</span><span class="n">find</span><span class="p">({</span><span class="s2">&quot;age&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;$gt&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">}}))</span>
+<a id="__codelineno-13-17" name="__codelineno-13-17" href="#__codelineno-13-17"></a>
+<a id="__codelineno-13-18" name="__codelineno-13-18" href="#__codelineno-13-18"></a>    <span class="n">report</span> <span class="o">=</span> <span class="n">profiler</span><span class="o">.</span><span class="n">report</span><span class="p">()</span>
+<a id="__codelineno-13-19" name="__codelineno-13-19" href="#__codelineno-13-19"></a>    <span class="n">patterns</span> <span class="o">=</span> <span class="n">report</span><span class="p">[</span><span class="s1">&#39;collections&#39;</span><span class="p">][</span><span class="s1">&#39;mydb.test&#39;</span><span class="p">][</span><span class="s1">&#39;patterns&#39;</span><span class="p">]</span>
+<a id="__codelineno-13-20" name="__codelineno-13-20" href="#__codelineno-13-20"></a>
+<a id="__codelineno-13-21" name="__codelineno-13-21" href="#__codelineno-13-21"></a>    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">patterns</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>  <span class="c1"># two normalized shapes</span>
+<a id="__codelineno-13-22" name="__codelineno-13-22" href="#__codelineno-13-22"></a>    <span class="k">assert</span> <span class="n">patterns</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;count&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>  <span class="c1"># status queries cluster</span>
+<a id="__codelineno-13-23" name="__codelineno-13-23" href="#__codelineno-13-23"></a>    <span class="k">assert</span> <span class="n">patterns</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;filter_coverage&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;full&#39;</span>
+<a id="__codelineno-13-24" name="__codelineno-13-24" href="#__codelineno-13-24"></a>    <span class="k">assert</span> <span class="n">patterns</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;filter_coverage&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;none&#39;</span>  <span class="c1"># age not indexed</span>
+</code></pre></div>
+<h2 id="see-also">See Also<a class="headerlink" href="#see-also" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://www.mongodb.com/docs/manual/core/query-plans/">MongoDB Query Plans &amp; Indexes</a></li>
+<li><a href="https://www.mongodb.com/docs/manual/reference/command/explain/">MongoDB explain() Output</a></li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

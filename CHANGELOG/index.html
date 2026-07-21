@@ -1,0 +1,3574 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="In-memory MongoDB mock for Python testing">
+      
+      
+      
+        <link rel="canonical" href="https://engFelipeMonteiro.github.io/mongomock-ng/CHANGELOG/">
+      
+      
+        <link rel="prev" href="../LIMITATIONS/">
+      
+      
+        <link rel="next" href="../contributing/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Changelog - mongomock-ng</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#changelog" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="mongomock-ng" class="md-header__button md-logo" aria-label="mongomock-ng" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            mongomock-ng
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Changelog
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="amber"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="amber"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/engFelipeMonteiro/mongomock-ng" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    engFelipeMonteiro/mongomock-ng
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../installation/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Getting Started
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../API/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API Reference
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../AGGREGATION/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Aggregation Pipeline
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../geospatial/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Geospatial Support
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../sessions/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Sessions & Transactions
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../profiler/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Query Profiler
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../LIMITATIONS/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Limitations
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Changelog
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../contributing/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Contributing
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="mongomock-ng" class="md-nav__button md-logo" aria-label="mongomock-ng" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    mongomock-ng
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/engFelipeMonteiro/mongomock-ng" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    engFelipeMonteiro/mongomock-ng
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../AGGREGATION/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Aggregation Pipeline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../geospatial/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Geospatial Support
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sessions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sessions & Transactions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../profiler/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Query Profiler
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../LIMITATIONS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Limitations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#783-2026-07-21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.8.3] - 2026-07-21
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.8.3] - 2026-07-21">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#782-2026-07-20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.8.2] - 2026-07-20
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.8.2] - 2026-07-20">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#781-2026-07-20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.8.1 - 2026-07-20
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7.8.1 - 2026-07-20">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#790" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.9.0]
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.9.0]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#780" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.8.0]
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.8.0]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#770-2026-07-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.7.0] - 2026-07-06
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.7.0] - 2026-07-06">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#760-2026-05-28" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.6.0] - 2026-05-28
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.6.0] - 2026-05-28">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7514-2026-05-28" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.5.14] - 2026-05-28
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.5.14] - 2026-05-28">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7513-2026-05-26" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.5.13] - 2026-05-26
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.5.13] - 2026-05-26">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7512-2026-05-26" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.5.12] - 2026-05-26
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.5.12] - 2026-05-26">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7511-2026-05-25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.5.11] - 2026-05-25
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.5.11] - 2026-05-25">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7510-2026-05-25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.5.10] - 2026-05-25
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.5.10] - 2026-05-25">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#759-2026-05-24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.5.9] - 2026-05-24
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.5.9] - 2026-05-24">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#758-2026-05-24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.5.8] - 2026-05-24
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.5.8] - 2026-05-24">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#757-2026-05-24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.5.7] - 2026-05-24
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.5.7] - 2026-05-24">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#755-2026-05-23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.5.5] - 2026-05-23
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.5.5] - 2026-05-23">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#754-2026-05-23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.5.4] - 2026-05-23
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.5.4] - 2026-05-23">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#753-2026-05-23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.5.3] - 2026-05-23
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.5.3] - 2026-05-23">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#752-2026-05-21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.5.2] - 2026-05-21
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.5.2] - 2026-05-21">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#751-2026-05-21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.5.1] - 2026-05-21
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.5.1] - 2026-05-21">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#741-2026-05-21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.4.1] - 2026-05-21
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.4.1] - 2026-05-21">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#740-2026-05-21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.4.0] - 2026-05-21
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.4.0] - 2026-05-21">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#730-2026-05-20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.3.0] - 2026-05-20
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.3.0] - 2026-05-20">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#711-2026-05-20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.1.1] - 2026-05-20
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.1.1] - 2026-05-20">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#added_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#721-2026-05-20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.2.1] - 2026-05-20
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.2.1] - 2026-05-20">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#720-2026-05-20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.2.0] - 2026-05-20
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.2.0] - 2026-05-20">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#710-2026-05-20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.1.0] - 2026-05-20
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.1.0] - 2026-05-20">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#added_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#702-2026-05-19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.0.2] - 2026-05-19
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.0.2] - 2026-05-19">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#700-2026-05-18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.0.0 - 2026-05-18
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7.0.0 - 2026-05-18">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Removed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Notes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#440-tbd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4.0 - tbd
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.4.0 - tbd">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removed_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Removed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#430-2024-11-16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3.0 - 2024-11-16
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.3.0 - 2024-11-16">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#420-2024-09-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2.0 - 2024-09-11
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.2.0 - 2024-09-11">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removed_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Removed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#783-2026-07-21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.8.3] - 2026-07-21
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.8.3] - 2026-07-21">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#782-2026-07-20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.8.2] - 2026-07-20
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.8.2] - 2026-07-20">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#781-2026-07-20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.8.1 - 2026-07-20
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7.8.1 - 2026-07-20">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#790" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.9.0]
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.9.0]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#780" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.8.0]
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.8.0]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#770-2026-07-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.7.0] - 2026-07-06
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.7.0] - 2026-07-06">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#760-2026-05-28" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.6.0] - 2026-05-28
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.6.0] - 2026-05-28">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7514-2026-05-28" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.5.14] - 2026-05-28
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.5.14] - 2026-05-28">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7513-2026-05-26" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.5.13] - 2026-05-26
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.5.13] - 2026-05-26">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7512-2026-05-26" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.5.12] - 2026-05-26
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.5.12] - 2026-05-26">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7511-2026-05-25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.5.11] - 2026-05-25
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.5.11] - 2026-05-25">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7510-2026-05-25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.5.10] - 2026-05-25
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.5.10] - 2026-05-25">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#759-2026-05-24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.5.9] - 2026-05-24
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.5.9] - 2026-05-24">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#758-2026-05-24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.5.8] - 2026-05-24
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.5.8] - 2026-05-24">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#757-2026-05-24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.5.7] - 2026-05-24
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.5.7] - 2026-05-24">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#755-2026-05-23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.5.5] - 2026-05-23
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.5.5] - 2026-05-23">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#754-2026-05-23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.5.4] - 2026-05-23
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.5.4] - 2026-05-23">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#753-2026-05-23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.5.3] - 2026-05-23
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.5.3] - 2026-05-23">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#752-2026-05-21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.5.2] - 2026-05-21
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.5.2] - 2026-05-21">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#751-2026-05-21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.5.1] - 2026-05-21
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.5.1] - 2026-05-21">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#741-2026-05-21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.4.1] - 2026-05-21
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.4.1] - 2026-05-21">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#740-2026-05-21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.4.0] - 2026-05-21
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.4.0] - 2026-05-21">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#730-2026-05-20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.3.0] - 2026-05-20
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.3.0] - 2026-05-20">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#711-2026-05-20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.1.1] - 2026-05-20
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.1.1] - 2026-05-20">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#added_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#721-2026-05-20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.2.1] - 2026-05-20
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.2.1] - 2026-05-20">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#720-2026-05-20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.2.0] - 2026-05-20
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.2.0] - 2026-05-20">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#710-2026-05-20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.1.0] - 2026-05-20
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.1.0] - 2026-05-20">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#added_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#702-2026-05-19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [7.0.2] - 2026-05-19
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[7.0.2] - 2026-05-19">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#700-2026-05-18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.0.0 - 2026-05-18
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7.0.0 - 2026-05-18">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Removed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Notes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#440-tbd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4.0 - tbd
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.4.0 - tbd">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removed_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Removed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#430-2024-11-16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3.0 - 2024-11-16
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.3.0 - 2024-11-16">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#420-2024-09-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2.0 - 2024-09-11
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.2.0 - 2024-09-11">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removed_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Removed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="changelog">Changelog<a class="headerlink" href="#changelog" title="Permanent link">&para;</a></h1>
+<p>All notable changes to this project will be documented in this file.</p>
+<p>The format is based on <a href="https://keepachangelog.com/en/1.0.0/">Keep a Changelog</a>,
+and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
+<h2 id="783-2026-07-21">[7.8.3] - 2026-07-21<a class="headerlink" href="#783-2026-07-21" title="Permanent link">&para;</a></h2>
+<h3 id="added">Added<a class="headerlink" href="#added" title="Permanent link">&para;</a></h3>
+<ul>
+<li>MkDocs documentation site with Material theme (docs, dark mode, search, code copy)</li>
+<li>GitHub Pages auto-deploy via GitHub Actions on push to develop</li>
+<li><code>make clean-coverage</code> target to remove <code>.coverage</code> and <code>*,cover</code> files</li>
+</ul>
+<h3 id="changed">Changed<a class="headerlink" href="#changed" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Documentation migrated from flat markdown files to structured MkDocs site</li>
+<li>New pages: <code>docs/index.md</code>, <code>docs/installation.md</code>, <code>docs/contributing.md</code></li>
+</ul>
+<h2 id="782-2026-07-20">[7.8.2] - 2026-07-20<a class="headerlink" href="#782-2026-07-20" title="Permanent link">&para;</a></h2>
+<h3 id="added_1">Added<a class="headerlink" href="#added_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>find()</code> positional projection <code>$</code>: returns first matching array element (#114)</li>
+<li><code>$size</code> projection operator: filters documents by array length in find() (#78)</li>
+<li>Aggregation dot notation: verified <code>$project</code> and <code>$addFields</code> nested field extraction (#118)</li>
+</ul>
+<h2 id="781-2026-07-20"><a href="https://github.com/engFelipeMonteiro/mongomock-ng/compare/7.8.0...7.8.1">7.8.1</a> - 2026-07-20<a class="headerlink" href="#781-2026-07-20" title="Permanent link">&para;</a></h2>
+<h3 id="fixed">Fixed<a class="headerlink" href="#fixed" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>bulk_write</code>: <code>upserted_ids</code> keys now use real operation index instead of sequential count (#60)</li>
+<li><code>DuplicateKeyError</code>: now includes <code>details</code> dict with <code>keyPattern</code> and <code>keyValue</code> matching pymongo format (#88)</li>
+</ul>
+<h2 id="790">[7.9.0]<a class="headerlink" href="#790" title="Permanent link">&para;</a></h2>
+<h3 id="fixed_1">Fixed<a class="headerlink" href="#fixed_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>$group</code>: missing properties in subdocument no longer nullify the entire object (#66)</li>
+<li><code>$group</code>: falsey <code>_id</code> values (<code>0</code>, <code>""</code>, <code>false</code>) handled correctly (#103)</li>
+<li><code>$toLong</code>/<code>$toInt</code>: datetime conversion to epoch milliseconds (#49)</li>
+<li><code>$add</code>: datetime + timedelta arithmetic support (#108)</li>
+<li><code>$count</code>: accumulator alias for <code>$sum:1</code> in <code>$group</code> stage (#42)</li>
+<li><code>$map</code> + <code>$sum</code> nesting: array flattening in <code>$sum</code>, expression parse fix (#76)</li>
+<li><code>$multiply</code>/<code>$add</code>: Decimal128 support in arithmetic operators (#36)</li>
+<li><code>find()</code> projection: computed field references (<code>$dotted.path</code>) resolved correctly (#31)</li>
+<li><code>$project</code>: nested object inclusion specs return actual values, not literal 1s (#835)</li>
+<li><code>$slice</code> projection-only: no longer drops other fields from result (#81)</li>
+<li><code>$slice</code> projection: deep copy prevents database mutation (#30)</li>
+</ul>
+<h2 id="780">[7.8.0]<a class="headerlink" href="#780" title="Permanent link">&para;</a></h2>
+<h3 id="added_2">Added<a class="headerlink" href="#added_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>QueryProfiler</code> — query capture and index coverage analyzer (docs/profiler.md)</li>
+<li>Activated via <code>MONGOMOCK_PROFILER=1</code> env var with <code>atexit</code> auto-export</li>
+<li>Hooks in <code>Collection._iter_documents</code>, <code>_update_documents</code>, <code>_delete</code>, and <code>aggregate $match</code></li>
+<li>Predicate normalization (values → <code>?</code>) for query pattern grouping</li>
+<li>Filter coverage analysis: <code>full</code>/<code>partial</code>/<code>none</code> per query pattern</li>
+<li>Sort coverage analysis against index keys</li>
+<li>Partial index support (matches original filter values against <code>partialFilterExpression</code>)</li>
+<li>JSON report with per-collection patterns, indexes, and coverage summary</li>
+<li>Documentation: AGGREGATION.md, API.md, LIMITATIONS.md</li>
+<li>Examples: basic CRUD, aggregation, filtering, TTL, validation</li>
+</ul>
+<h2 id="770-2026-07-06">[7.7.0] - 2026-07-06<a class="headerlink" href="#770-2026-07-06" title="Permanent link">&para;</a></h2>
+<h3 id="added_3">Added<a class="headerlink" href="#added_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>ClientSession</code> and transaction support via <code>MongoClient.start_session()</code></li>
+<li><code>SessionOptions</code> and <code>TransactionOptions</code> classes</li>
+<li>Transaction flow: <code>start_transaction()</code>, <code>commit_transaction()</code>, <code>abort_transaction()</code></li>
+<li><code>with_transaction(callback)</code> convenience method</li>
+<li>Session parameter support in all CRUD operations (insert, update, delete, find, find_one_and_*, bulk_write, aggregate, etc.)</li>
+<li>Transaction isolation: writes within a transaction are buffered and only applied on commit, discarded on abort</li>
+<li>Independent client instances have isolated storage</li>
+</ul>
+<h2 id="760-2026-05-28">[7.6.0] - 2026-05-28<a class="headerlink" href="#760-2026-05-28" title="Permanent link">&para;</a></h2>
+<h3 id="added_4">Added<a class="headerlink" href="#added_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Geospatial query operators: <code>$geoIntersects</code> and <code>$geoWithin</code> for Point-in-Polygon and Polygon intersection queries</li>
+<li>Geospatial distance operators: <code>$near</code> and <code>$nearSphere</code> for proximity queries with distance filtering</li>
+<li><code>$geoNear</code> aggregation stage for geospatial aggregation pipelines</li>
+<li>Pure Python GeoJSON support: Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon, GeometryCollection</li>
+<li>Point-in-polygon ray casting algorithm with hole (inner ring) support</li>
+<li>Haversine distance calculations for spherical geometry</li>
+<li>Euclidean distance calculations for planar geometry</li>
+<li>GeoJSON coordinate validation (longitude [-180, 180], latitude [-90, 90])</li>
+<li>Distance-based sorting on <code>$near</code> queries (implicit unless explicit <code>.sort()</code> provided)</li>
+<li>Support for <code>$maxDistance</code> and <code>$minDistance</code> constraints on proximity queries</li>
+</ul>
+<h2 id="7514-2026-05-28">[7.5.14] - 2026-05-28<a class="headerlink" href="#7514-2026-05-28" title="Permanent link">&para;</a></h2>
+<h3 id="added_5">Added<a class="headerlink" href="#added_5" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Document validation on collections via <code>validator</code> option on <code>create_collection</code> and <code>collMod</code> command (mongomock#704)</li>
+<li><code>Collection.options()</code> method returns collection options including validator</li>
+<li>Documents validated on insert/update against JSON Schema-like validator expressions</li>
+<li><code>validationLevel</code> support: <code>strict</code> (default) and <code>moderate</code></li>
+<li><code>validationAction</code> support: <code>error</code> (default) and <code>warn</code> (no-op)</li>
+<li><code>bypass_document_validation</code> flag on insert/update operations as per MongoDB API</li>
+</ul>
+<h2 id="7513-2026-05-26">[7.5.13] - 2026-05-26<a class="headerlink" href="#7513-2026-05-26" title="Permanent link">&para;</a></h2>
+<h3 id="added_6">Added<a class="headerlink" href="#added_6" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>$where</code> operator support with Python-based evaluation (simple <code>this.field</code> expressions)</li>
+<li>RuntimeWarning when using <code>$where</code> to alert about security implications</li>
+</ul>
+<h3 id="changed_1">Changed<a class="headerlink" href="#changed_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Optimized document cloning by replacing <code>copy.deepcopy</code> with custom <code>_clone_document</code> helper</li>
+<li>Significant insert/update performance improvement for bulk operations</li>
+</ul>
+<h2 id="7512-2026-05-26">[7.5.12] - 2026-05-26<a class="headerlink" href="#7512-2026-05-26" title="Permanent link">&para;</a></h2>
+<h3 id="added_7">Added<a class="headerlink" href="#added_7" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Unique index constraints now enforce per-element uniqueness on array fields (multikey behavior)</li>
+<li><code>create_indexes()</code> forwards <code>partialFilterExpression</code> to <code>create_index()</code></li>
+</ul>
+<h3 id="fixed_2">Fixed<a class="headerlink" href="#fixed_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>create_index()</code> with <code>unique=True</code> and <code>partialFilterExpression</code> skips non-matching documents during duplicate pre-check</li>
+<li>TTL index expiration now resolves nested dotted field names (e.g., <code>data.timestamp</code>) correctly</li>
+</ul>
+<h2 id="7511-2026-05-25">[7.5.11] - 2026-05-25<a class="headerlink" href="#7511-2026-05-25" title="Permanent link">&para;</a></h2>
+<h3 id="fixed_3">Fixed<a class="headerlink" href="#fixed_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>$rename</code> operator now supports dot notation for nested field renaming</li>
+<li><code>$addToSet</code> preserves boolean type distinction from numeric 1/0</li>
+<li><code>$addToSet</code> with <code>$each</code> modifier handles array values correctly</li>
+<li>Query engine accepts <code>MutableMapping</code> objects (not just <code>dict</code>)</li>
+<li><code>UpdateOne</code>/<code>UpdateMany</code> validation raises proper errors for list criteria</li>
+</ul>
+<h2 id="7510-2026-05-25">[7.5.10] - 2026-05-25<a class="headerlink" href="#7510-2026-05-25" title="Permanent link">&para;</a></h2>
+<h3 id="added_8">Added<a class="headerlink" href="#added_8" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Python 3.14 and PyPy 3.10 support in test matrix and classifiers</li>
+<li><code>Database.list_collections()</code> returns <code>CommandCursor</code> with collection metadata</li>
+<li><code>Database.command()</code> now supports <code>ismaster</code>/<code>isMaster</code> admin command</li>
+<li><code>Cursor.explain()</code> returns mock query execution plan</li>
+<li><code>MongoClient</code> constructor accepts <code>_store</code> parameter</li>
+</ul>
+<h3 id="fixed_4">Fixed<a class="headerlink" href="#fixed_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>CommandCursor.alive</code> now tracks exhaustion; returns <code>False</code> after iteration complete</li>
+<li><code>list_database_names()</code> returns active databases including defaults</li>
+<li><code>list_collection_names()</code> filter behavior aligned with PyMongo</li>
+<li><code>database.command('ismaster')</code> omits replica set keys for standalone mock</li>
+<li><code>Cursor.explain()</code> caches <code>_compute_results</code> to avoid double computation</li>
+</ul>
+<h2 id="759-2026-05-24">[7.5.9] - 2026-05-24<a class="headerlink" href="#759-2026-05-24" title="Permanent link">&para;</a></h2>
+<h3 id="fixed_5">Fixed<a class="headerlink" href="#fixed_5" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Aggregation missing vs null distinction: <code>get_value_by_dot</code> returns <code>NOTHING</code> sentinel instead of raising <code>KeyError</code> for missing fields (mongomock#770)</li>
+<li><code>$group</code>, <code>$cond</code>, <code>$switch</code>, <code>$type</code> operators now distinguish missing fields from <code>None</code> values</li>
+<li><code>$ifNull</code> now correctly handles <code>NOTHING</code> (missing) as nullish</li>
+<li><code>$arrayElemAt</code> returns <code>NOTHING</code> for out-of-bounds indices instead of raising <code>KeyError</code></li>
+<li><code>_parse_or_nothing</code> method removed; replaced by <code>parse()</code> which returns <code>NOTHING</code> directly</li>
+<li><code>ignore_missing_keys</code> parameter removed from <code>_Parser</code> and <code>_parse_expression</code></li>
+</ul>
+<h2 id="758-2026-05-24">[7.5.8] - 2026-05-24<a class="headerlink" href="#758-2026-05-24" title="Permanent link">&para;</a></h2>
+<h3 id="added_9">Added<a class="headerlink" href="#added_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>Database.__iter__</code> returns <code>self</code>, <code>Database.__next__</code> raises <code>TypeError</code>, matching PyMongo behavior (closes #64)</li>
+<li>48+ edge-case tests for <code>$[]</code> positional all and <code>arrayFilters</code> operators</li>
+</ul>
+<h3 id="fixed_6">Fixed<a class="headerlink" href="#fixed_6" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>_lookup_array_filter</code> now handles dot-notation filter keys (e.g., <code>{'e.x': {'$gte': 1}}</code>)</li>
+<li><code>_lookup_array_filter</code> now handles <code>$and</code>/<code>$or</code> logical operators in array filter specs</li>
+<li><code>_array_filter_applies</code> now strips <code>filter_id</code> prefix from <code>$and</code>/<code>$or</code> subfilters</li>
+<li><code>_update_document_fields_positional</code> no longer overwrites the <code>subdocument</code> parameter with <code>current_doc</code>, preventing incorrect subdocument carry-over between fields</li>
+</ul>
+<h2 id="757-2026-05-24">[7.5.7] - 2026-05-24<a class="headerlink" href="#757-2026-05-24" title="Permanent link">&para;</a></h2>
+<h3 id="fixed_7">Fixed<a class="headerlink" href="#fixed_7" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>Database.__bool__</code> raises <code>NotImplementedError</code>, matching PyMongo behavior (closes #64)</li>
+<li><code>MongoClient.drop_database</code> uses <code>is not None</code> instead of truth check on Database object (closes #64)</li>
+</ul>
+<h2 id="755-2026-05-23">[7.5.5] - 2026-05-23<a class="headerlink" href="#755-2026-05-23" title="Permanent link">&para;</a></h2>
+<h3 id="fixed_8">Fixed<a class="headerlink" href="#fixed_8" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>$in</code> operator now correctly handles NaN values in query matching — NaN matches NaN (closes #105)</li>
+<li><code>$in</code> operator no longer coerces across BSON types (e.g., <code>1</code> no longer matches <code>True</code>)</li>
+<li>Aggregation <code>$in</code> expression operator uses NaN-aware comparison (closes #105)</li>
+<li><code>$[]</code> all-positional array update operator implemented for <code>$set</code>/<code>$unset</code>/<code>$inc</code>/<code>$pop</code>/<code>$bit</code>/<code>$max</code>/<code>$min</code> (closes #128)</li>
+<li><code>arrayFilters</code> parameter now supported for <code>update_one</code>/<code>update_many</code> with <code>$[&lt;id&gt;]</code> pattern (closes #126)</li>
+<li><code>$project</code> stage no longer falsely rejects <code>{_id: 1}</code> in exclusion projections (closes #122)</li>
+<li><code>$concatArrays</code> now raises <code>OperationFailure</code> on empty argument list (closes #107)</li>
+<li><code>$exp</code>/<code>$pow</code>/<code>$mod</code> aggregation operators wrap <code>OverflowError</code> as <code>OperationFailure</code> (closes #134)</li>
+<li><code>$toDouble</code> conversion wraps <code>OverflowError</code> for huge integers (closes #134)</li>
+<li><code>pandas.NaT</code> values in documents no longer crash comparison/sort — treated as datetime type (closes #135)</li>
+<li>Test <code>DBRef</code> stub made immutable — <code>__setattr__</code> raises <code>AttributeError</code>, matching real <code>bson.DBRef</code> (closes #83)</li>
+<li><code>bool(collection)</code> now raises <code>NotImplementedError</code>, matching PyMongo behavior</li>
+<li><code>Database</code> and <code>Collection</code> no longer rely on truthiness (<code>or</code>) for optional parameter defaults, ensuring compatibility with objects that forbid <code>bool()</code></li>
+<li><code>Database.write_concern</code> property added, matching PyMongo Database API</li>
+</ul>
+<h2 id="754-2026-05-23">[7.5.4] - 2026-05-23<a class="headerlink" href="#754-2026-05-23" title="Permanent link">&para;</a></h2>
+<h3 id="added_10">Added<a class="headerlink" href="#added_10" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>$bit</code> update operator — bitwise AND/OR/XOR on document fields (mongomock#891)</li>
+<li><code>$bitAnd</code>, <code>$bitOr</code>, <code>$bitXor</code>, <code>$bitNot</code> aggregation expression operators for bitwise operations</li>
+<li><code>$stdDevPop</code> and <code>$stdDevSamp</code> group/project accumulator operators — closes #71</li>
+</ul>
+<h3 id="changed_2">Changed<a class="headerlink" href="#changed_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Upstream compatibility</strong>: tests now import <code>mongomock_ng as mongomock</code> via alias + <code>sys.modules</code> shim in conftest, enabling test reuse with upstream <code>mongomock</code> repo. <code>MongoClient.__repr__</code> outputs <code>mongomock.MongoClient(...)</code> to match.</li>
+</ul>
+<h2 id="753-2026-05-23">[7.5.3] - 2026-05-23<a class="headerlink" href="#753-2026-05-23" title="Permanent link">&para;</a></h2>
+<h3 id="added_11">Added<a class="headerlink" href="#added_11" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>$unionWith</code> aggregation pipeline stage with string and <code>{coll, pipeline}</code> syntax — closes #87</li>
+<li><code>$trim</code>, <code>$ltrim</code>, <code>$rtrim</code> string expression operators — closes #112</li>
+<li><code>$toDate</code> type conversion expression operator (standalone, previously only via <code>$convert</code> <code>{to: 9}</code>) — closes #85;</li>
+<li><code>$getField</code> field expression operator with string shorthand and <code>{field, input}</code> syntax — closes #25</li>
+</ul>
+<h3 id="security">Security<a class="headerlink" href="#security" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>$function</code> custom aggregation expression now raises <code>NotImplementedError</code> with security advisory instead of silently accepting</li>
+</ul>
+<h2 id="752-2026-05-21">[7.5.2] - 2026-05-21<a class="headerlink" href="#752-2026-05-21" title="Permanent link">&para;</a></h2>
+<h3 id="added_12">Added<a class="headerlink" href="#added_12" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>$indexOfArray</code> aggregation operator and <code>$concatArrays</code> array-literal parsing improvements — replicates mongomock#739 and #931; closes #188, #148, #107</li>
+</ul>
+<h3 id="fixed_9">Fixed<a class="headerlink" href="#fixed_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>$addToSet</code> group accumulation preserves falsey values while still ignoring missing fields — closes #133</li>
+</ul>
+<h2 id="751-2026-05-21">[7.5.1] - 2026-05-21<a class="headerlink" href="#751-2026-05-21" title="Permanent link">&para;</a></h2>
+<h3 id="added_13">Added<a class="headerlink" href="#added_13" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>$replaceWith</code> aggregation stage and update-pipeline stage aliasing <code>$replaceRoot</code> semantics — closes #96, #37</li>
+<li><code>$merge</code> aggregation stage with <code>into</code>, <code>on</code>, <code>whenMatched</code> (<code>replace</code>/<code>merge</code>/<code>keepExisting</code>/<code>fail</code>) and <code>whenNotMatched</code> (<code>insert</code>/<code>discard</code>/<code>fail</code>) support; <code>whenMatched: pipeline</code> remains unimplemented — closes #89</li>
+<li><code>$dateAdd</code>, <code>$dateSubtract</code>, <code>$dateDiff</code>, <code>$dateTrunc</code>, and <code>$dateFromString</code> aggregation date operators — replicates mongomock#815, #817, #772, #902; closes #181, #179, #185, #156, #110, #24</li>
+</ul>
+<h3 id="changed_3">Changed<a class="headerlink" href="#changed_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Refactor <code>$replaceRoot</code> to share root-replacement expression handling with <code>$replaceWith</code></li>
+</ul>
+<h2 id="741-2026-05-21">[7.4.1] - 2026-05-21<a class="headerlink" href="#741-2026-05-21" title="Permanent link">&para;</a></h2>
+<h3 id="changed_4">Changed<a class="headerlink" href="#changed_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Drop Python 3.14 from test matrix and classifiers — not yet stable, incompatible with runtime dependencies</li>
+<li>Add pymongo 4.12.0 and 4.14.0 to hatch-test matrix for broader compatibility coverage</li>
+</ul>
+<h3 id="fixed_10">Fixed<a class="headerlink" href="#fixed_10" title="Permanent link">&para;</a></h3>
+<ul>
+<li>TTL document expiry no longer crashes on Python 3.13 — normalize naive datetimes to UTC-aware before subtraction in <code>_value_meets_expiry</code> (store.py)</li>
+<li>Replace deprecated <code>datetime.utcfromtimestamp</code> with <code>datetime.fromtimestamp(..., tz=timezone.utc)</code> in aggregation <code>$convert</code> to date handlers (aggregate.py)</li>
+<li>Replace deprecated <code>datetime.utcnow()</code> with <code>datetime.now(timezone.utc).replace(tzinfo=None)</code> in helpers and test suite</li>
+<li>Fix hatch-test matrix so environment <code>hatch-test.*-4.11.0</code> correctly installs <code>pymongo==4.11.0</code> (missing <code>if</code> clause)</li>
+<li><code>find()</code> projection no longer mutates original document data (mongomock#692 — closes #191)</li>
+<li><code>$in</code> operator correctly handles empty-list values (mongomock#795 — closes #184)</li>
+<li><code>$slice</code> aggregation operator evaluates arguments as expressions (mongomock#819 — closes #178)</li>
+<li><code>$addToSet</code> with <code>$each</code> correctly deduplicates repeated values across runs (mongomock#847 — closes #170)</li>
+<li><code>$redact</code> aggregation stage now supported (mongomock#860 — closes #169)</li>
+<li><code>Cursor.collation</code> matches PyMongo 4.x method signature (mongomock#895 — closes #158)</li>
+<li><code>$in</code> operator matches whole arrays in document values (mongomock#919 — closes #154)</li>
+<li><code>BulkOperationBuilder.add_update</code> and <code>_update</code> support <code>sort</code> parameter (mongomock#933 — closes #147)</li>
+<li>NaN comparison handling in filter <code>$eq</code> operator (mongomock#936 — closes #145)</li>
+<li>Replace deprecated <code>datetime.utcnow</code> with <code>datetime.now(UTC)</code> on Python 3.11+ (mongomock#944 — closes #144)</li>
+</ul>
+<h2 id="740-2026-05-21">[7.4.0] - 2026-05-21<a class="headerlink" href="#740-2026-05-21" title="Permanent link">&para;</a></h2>
+<h3 id="added_14">Added<a class="headerlink" href="#added_14" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>$lookup</code>: DBRef <code>.$id</code> support in <code>localField</code> — resolves <code>refs.$id</code> through DBRef arrays (mongomock#878 — closes #164)</li>
+<li><code>$lookup</code>: DBRef <code>$id</code> filtering support in filter matching (mongomock#884 — closes #162)</li>
+<li>DBRef dotted-field traversal in <code>helpers.get_value_by_dot</code> for <code>$lookup</code> join conditions</li>
+</ul>
+<h2 id="730-2026-05-20">[7.3.0] - 2026-05-20<a class="headerlink" href="#730-2026-05-20" title="Permanent link">&para;</a></h2>
+<h3 id="added_15">Added<a class="headerlink" href="#added_15" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>$setIntersection</code>, <code>$setDifference</code>, <code>$setIsSubset</code>, <code>$anyElementTrue</code>, <code>$allElementsTrue</code> set operators in aggregation (mongomock#737 — closes #189, mongomock#840 — closes #172, mongomock#842 — closes #171)</li>
+<li><code>helpers.to_hashable</code> — convert values to hashable representations for set operations</li>
+</ul>
+<h2 id="711-2026-05-20">[7.1.1] - 2026-05-20<a class="headerlink" href="#711-2026-05-20" title="Permanent link">&para;</a></h2>
+<h3 id="fixed_11">Fixed<a class="headerlink" href="#fixed_11" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>$setWindowFields</code> error message typo <code>$setWindowsFields</code> → <code>$setWindowFields</code></li>
+</ul>
+<h3 id="added_16">Added<a class="headerlink" href="#added_16" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>.agents/references/MDB7_COMPAT.md</code> — MongoDB 7+ compatibility gap tracker</li>
+</ul>
+<h2 id="721-2026-05-20">[7.2.1] - 2026-05-20<a class="headerlink" href="#721-2026-05-20" title="Permanent link">&para;</a></h2>
+<h3 id="added_17">Added<a class="headerlink" href="#added_17" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Repository reference files (<code>CHANGELOG.md</code>, <code>README.md</code>, <code>CLAUDE.md</code>, etc.) migrated into <code>.agents/references/</code> for persistent agent context</li>
+</ul>
+<h2 id="720-2026-05-20">[7.2.0] - 2026-05-20<a class="headerlink" href="#720-2026-05-20" title="Permanent link">&para;</a></h2>
+<h3 id="added_18">Added<a class="headerlink" href="#added_18" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>$convert</code>: support <code>onError</code>/<code>onNull</code> + <code>to: double</code>/<code>bool</code>/<code>date</code>/<code>objectId</code> (mongomock#864 — closes #167)</li>
+<li><code>$setWindowFields</code>: <code>$sum</code>/<code>$avg</code>/<code>$min</code>/<code>$max</code>/<code>$first</code>/<code>$last</code>/<code>$push</code>/<code>$addToSet</code>/<code>$count</code>/<code>$documentNumber</code>/<code>$rank</code>/<code>$denseRank</code> + <code>window</code> bounds (mongomock#821 — closes #176)</li>
+<li><code>$fill</code>: <code>method</code> (locf/linear), <code>sortBy</code>, <code>partitionByFields</code> support (mongomock#892 — closes #160)</li>
+</ul>
+<h3 id="changed_5">Changed<a class="headerlink" href="#changed_5" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Version now defined statically in <code>mongomock_ng/__version__.py</code> (single source of truth), replacing dynamic <code>hatch-vcs</code> — closes #197</li>
+<li>Tag creation automated via <code>tag-on-merge</code> workflow on PR merge to <code>develop</code>, replacing manual <code>make release</code></li>
+</ul>
+<h2 id="710-2026-05-20">[7.1.0] - 2026-05-20<a class="headerlink" href="#710-2026-05-20" title="Permanent link">&para;</a></h2>
+<h3 id="added_19">Added<a class="headerlink" href="#added_19" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>CLAUDE.md</code> with token-efficiency techniques for opencode (opencode instructions)</li>
+<li><code>.github/copilot-instructions.md</code> moved to correct location</li>
+</ul>
+<h3 id="fixed_12">Fixed<a class="headerlink" href="#fixed_12" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>$type</code> now returns <code>"double"</code> for <code>float</code> values (mongomock#929)</li>
+<li><code>$setWindowFields</code> no longer produces duplicate documents with multiple <code>output</code> fields (mongomock#821)</li>
+</ul>
+<h3 id="added_20">Added<a class="headerlink" href="#added_20" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>$sortByCount</code> aggregation stage (mongomock#896 — closes #157)</li>
+<li><code>$fill</code> aggregation stage (mongomock#892 — closes #160)</li>
+<li><code>$convert</code> aggregation operator with type dispatch (mongomock#864 — closes #167)</li>
+<li><code>$reduce</code> array aggregation operator (mongomock#820 — closes #177)</li>
+<li><code>$setWindowFields</code> aggregation stage with <code>$shift</code> operator (mongomock#821 — closes #176)</li>
+<li><code>$unset</code> aggregation stage with nested field support (mongomock#925 — closes #151)</li>
+<li><code>$type</code> aggregation operator with date support (mongomock#929 — closes #150)</li>
+<li><code>$round</code> aggregation operator with <code>&lt;place&gt;</code> parameter (mongomock#930 — closes #149)</li>
+<li><code>$toObjectId</code> type conversion operator (mongomock#935 — closes #146)</li>
+<li><code>$timezone</code> expression support in date operators (mongomock#822 — closes #175)</li>
+</ul>
+<h2 id="702-2026-05-19">[7.0.2] - 2026-05-19<a class="headerlink" href="#702-2026-05-19" title="Permanent link">&para;</a></h2>
+<h3 id="added_21">Added<a class="headerlink" href="#added_21" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>comment</code> parameter support for <code>find()</code>, <code>find_one()</code>, <code>count_documents()</code>,
+  <code>estimated_document_count()</code>, <code>distinct()</code>, <code>bulk_write()</code>, <code>insert_one()</code>,
+  <code>delete_one()</code>, <code>update_one()</code>, <code>find_one_and_update()</code>, <code>find_one_and_replace()</code>
+  (mongomock#921, mongomock#922, mongomock#915, mongomock#831)</li>
+<li><code>hint</code> parameter support for <code>find()</code>, <code>find_one()</code>, <code>count_documents()</code>, <code>distinct()</code>
+  (mongomock#922)</li>
+<li><code>let</code> parameter support for <code>delete_one()</code> (mongomock#831)</li>
+<li>Accepts <code>comment</code> and <code>hint</code> via <code>_IGNORED_FEATURES</code> in <code>not_implemented.py</code></li>
+</ul>
+<h3 id="changed_6">Changed<a class="headerlink" href="#changed_6" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Updated <code>find()</code> signature to accept <code>comment</code> and <code>hint</code> before <code>**kwargs</code></li>
+</ul>
+<h2 id="700-2026-05-18"><a href="https://github.com/engFelipeMonteiro/mongomock-ng/compare/4.3.0...7.0.0">7.0.0</a> - 2026-05-18<a class="headerlink" href="#700-2026-05-18" title="Permanent link">&para;</a></h2>
+<h3 id="changed_7">Changed<a class="headerlink" href="#changed_7" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Rebranded from <code>mongomock</code> to <code>mongomock_ng</code></strong> — all imports must use the new package name</li>
+<li>Versioned to against MongoDB 7.0.34 server behavior</li>
+<li>Migrated build system to Hatch with PEP 621</li>
+<li>Replaced <code>tox</code> with Hatch matrix testing (Python 3.10–3.13 × PyMongo 3/4/4.11/7.0/latest/none)</li>
+<li>Updated CI to GitHub Actions with lint, type-check, test matrix, and code coverage</li>
+<li>Switched code formatting to Ruff</li>
+<li>Updated <code>hatch.toml</code> test matrix for PyMongo 4.11 and 7.0 compatibility</li>
+<li>Updated <code>Makefile</code> with docker and release helpers</li>
+</ul>
+<h3 id="removed">Removed<a class="headerlink" href="#removed" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Legacy build files: <code>setup.py</code>, <code>setup.cfg</code>, <code>tox.ini</code>, <code>.travis.yml</code></li>
+</ul>
+<h3 id="fixed_13">Fixed<a class="headerlink" href="#fixed_13" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Compatibility with PyMongo 4.11 (BSON validation error messages, BulkOperationBuilder)</li>
+<li>Codec options not forwarded to update methods</li>
+<li>mypy type errors</li>
+</ul>
+<h3 id="notes">Notes<a class="headerlink" href="#notes" title="Permanent link">&para;</a></h3>
+<ul>
+<li>This is a major release. Consumers should run their project's test-suite against
+  <code>mongomock-ng</code> 7.0.0 and review any deprecation warnings.</li>
+</ul>
+<h2 id="440-tbd"><a href="https://github.com/engFelipeMonteiro/mongomock-ng/compare/4.3.0...4.4.0">4.4.0</a> - tbd<a class="headerlink" href="#440-tbd" title="Permanent link">&para;</a></h2>
+<h3 id="added_22">Added<a class="headerlink" href="#added_22" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Add support for Python 3.13</li>
+</ul>
+<h3 id="changed_8">Changed<a class="headerlink" href="#changed_8" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Remove legacy syntax constructs using <code>pyupgrade --py39-plus</code></li>
+</ul>
+<h3 id="removed_1">Removed<a class="headerlink" href="#removed_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Remove support for deprecated Python version 3.8</li>
+</ul>
+<h2 id="430-2024-11-16"><a href="https://github.com/engFelipeMonteiro/mongomock-ng/compare/4.2.0...4.3.0">4.3.0</a> - 2024-11-16<a class="headerlink" href="#430-2024-11-16" title="Permanent link">&para;</a></h2>
+<h3 id="added_23">Added<a class="headerlink" href="#added_23" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Support for aggregation pipelines in updates <a href="https://github.com/maximkir-fl">@maximkir-fl</a></li>
+</ul>
+<h3 id="changed_9">Changed<a class="headerlink" href="#changed_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Remove legacy syntax constructs using <code>pyupgrade --py38-plus</code></li>
+</ul>
+<h3 id="fixed_14">Fixed<a class="headerlink" href="#fixed_14" title="Permanent link">&para;</a></h3>
+<ul>
+<li>The Mongo Python driver did refactor the <code>gridfs</code> implementation, so that the patched code had to
+  be adapted.</li>
+</ul>
+<h2 id="420-2024-09-11"><a href="https://github.com/engFelipeMonteiro/mongomock-ng/compare/4.1.3...4.2.0">4.2.0</a> - 2024-09-11<a class="headerlink" href="#420-2024-09-11" title="Permanent link">&para;</a></h2>
+<h3 id="changed_10">Changed<a class="headerlink" href="#changed_10" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Switch to <a href="https://hatch.pypa.io">hatch</a> as build system.</li>
+<li>Switch to <a href="https://peps.python.org/pep-0621/">PEP 621</a> compliant project setup.</li>
+<li>Updated the license to <a href="https://en.wikipedia.org/wiki/ISC_license">ISC</a>.</li>
+</ul>
+<h3 id="removed_2">Removed<a class="headerlink" href="#removed_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li>The <a href="https://setuptools.pypa.io">setuptools</a> specific files e.g. <code>setup.cfg</code> and <code>setup.py</code> have
+  been removed in the scope of the switch to <code>hatch</code>.</li>
+<li>Remove support for deprecated Python versions (everything prior to 3.8)</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
