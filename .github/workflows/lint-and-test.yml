@@ -150,6 +150,22 @@ jobs:
           ls -la coverage-mongodb.xml
           cd -
 
+      - name: Combine all + generate XML
+        run: |
+          cd /tmp/cov-all
+          coverage combine --data-file=.coverage.all .coverage.mock.* .coverage.mongodb.*
+          coverage xml --data-file=.coverage.all -o coverage-all.xml
+          ls -la coverage-all.xml
+          cd -
+
+      - name: Upload coverage (total)
+        uses: codecov/codecov-action@v6
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          flags: total
+          files: /tmp/cov-all/coverage-all.xml
+          fail_ci_if_error: false
+
       - name: Upload coverage (mock-only)
         uses: codecov/codecov-action@v6
         with:
