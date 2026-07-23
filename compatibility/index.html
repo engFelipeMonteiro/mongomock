@@ -6,15 +6,17 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="In-memory MongoDB mock for Python testing — drop-in replacement for pymongo">
+        <meta name="description" content="Python, PyPy, and pymongo version compatibility matrix for mongomock-ng">
       
       
       
-        <link rel="canonical" href="https://engFelipeMonteiro.github.io/mongomock-ng/contributing/">
+        <link rel="canonical" href="https://engFelipeMonteiro.github.io/mongomock-ng/compatibility/">
       
       
-        <link rel="prev" href="../CHANGELOG/">
+        <link rel="prev" href="../installation/">
       
+      
+        <link rel="next" href="../API/">
       
       
         
@@ -25,7 +27,7 @@
     
     
       
-        <title>Contributing - mongomock-ng</title>
+        <title>Compatibility - mongomock-ng</title>
       
     
     
@@ -76,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#contributing" class="md-skip">
+        <a href="#compatibility-matrix" class="md-skip">
           Skip to content
         </a>
       
@@ -114,7 +116,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Contributing
+              Compatibility
             
           </span>
         </div>
@@ -261,9 +263,11 @@
   
   
   
+    
   
-    <li class="md-tabs__item">
-      <a href="../compatibility/" class="md-tabs__link">
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
         
   
   
@@ -413,11 +417,9 @@
   
   
   
-    
   
-  
-    <li class="md-tabs__item md-tabs__item--active">
-      <a href="./" class="md-tabs__link">
+    <li class="md-tabs__item">
+      <a href="../contributing/" class="md-tabs__link">
         
   
   
@@ -533,10 +535,37 @@
       
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../compatibility/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Compatibility
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -552,6 +581,81 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#supported-versions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Supported Versions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#test-matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Test Matrix
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installation-extras" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installation Extras
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mongodb-server-version" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MongoDB Server Version
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-constraints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version Constraints
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -749,37 +853,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Contributing
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../contributing/" class="md-nav__link">
         
   
   
@@ -795,114 +872,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#prerequisites" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Prerequisites
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#setup" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Setup
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#running-tests" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Running Tests
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#code-quality" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Code Quality
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#pre-commit-hooks" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Pre-commit Hooks
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#branching-model" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Branching Model
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#releasing" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Releasing
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#container-engine" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Container Engine
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -934,10 +903,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#prerequisites" class="md-nav__link">
+  <a href="#supported-versions" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Prerequisites
+        Supported Versions
       
     </span>
   </a>
@@ -945,10 +914,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#setup" class="md-nav__link">
+  <a href="#test-matrix" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Setup
+        Test Matrix
       
     </span>
   </a>
@@ -956,10 +925,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#running-tests" class="md-nav__link">
+  <a href="#installation-extras" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Running Tests
+        Installation Extras
       
     </span>
   </a>
@@ -967,10 +936,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#code-quality" class="md-nav__link">
+  <a href="#mongodb-server-version" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Code Quality
+        MongoDB Server Version
       
     </span>
   </a>
@@ -978,43 +947,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#pre-commit-hooks" class="md-nav__link">
+  <a href="#version-constraints" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Pre-commit Hooks
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#branching-model" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Branching Model
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#releasing" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Releasing
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#container-engine" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Container Engine
+        Version Constraints
       
     </span>
   </a>
@@ -1041,59 +977,188 @@
   
 
 
-<h1 id="contributing">Contributing<a class="headerlink" href="#contributing" title="Permanent link">&para;</a></h1>
-<h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Python &gt;= 3.10</li>
-<li><a href="https://hatch.pypa.io/">hatch</a> (<code>pipx install hatch</code>)</li>
-<li><a href="https://pre-commit.com/">pre-commit</a> (<code>pip install pre-commit</code>)</li>
-</ul>
-<h2 id="setup">Setup<a class="headerlink" href="#setup" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>git<span class="w"> </span>clone<span class="w"> </span>git@github.com:engFelipeMonteiro/mongomock-ng.git
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">cd</span><span class="w"> </span>mongomock-ng
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>pre-commit<span class="w"> </span>install
+<h1 id="compatibility-matrix">Compatibility Matrix<a class="headerlink" href="#compatibility-matrix" title="Permanent link">&para;</a></h1>
+<p>mongomock-ng supports multiple Python implementations, pymongo versions, and MongoDB server versions.</p>
+<h2 id="supported-versions">Supported Versions<a class="headerlink" href="#supported-versions" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Supported</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Python</strong></td>
+<td>3.10, 3.11, 3.12, 3.13, 3.14</td>
+<td>CPython</td>
+</tr>
+<tr>
+<td><strong>PyPy</strong></td>
+<td>3.10, 3.11</td>
+<td>CPython-compatible</td>
+</tr>
+<tr>
+<td><strong>pymongo</strong></td>
+<td>&gt;= 4.11</td>
+<td>Optional dependency</td>
+</tr>
+<tr>
+<td><strong>MongoDB</strong></td>
+<td>7.0+</td>
+<td>Server version emulated</td>
+</tr>
+</tbody>
+</table>
+<h2 id="test-matrix">Test Matrix<a class="headerlink" href="#test-matrix" title="Permanent link">&para;</a></h2>
+<p>The CI test matrix covers:</p>
+<table>
+<thead>
+<tr>
+<th>Implementation</th>
+<th>Version</th>
+<th style="text-align: center;">pymongo 4.11</th>
+<th style="text-align: center;">pymongo 4.12</th>
+<th style="text-align: center;">pymongo 4.14</th>
+<th style="text-align: center;">pymongo latest</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CPython</td>
+<td>3.10</td>
+<td style="text-align: center;">:white_check_mark:</td>
+<td style="text-align: center;">:white_check_mark:</td>
+<td style="text-align: center;">:white_check_mark:</td>
+<td style="text-align: center;">:white_check_mark:</td>
+</tr>
+<tr>
+<td>CPython</td>
+<td>3.11</td>
+<td style="text-align: center;">:white_check_mark:</td>
+<td style="text-align: center;">:white_check_mark:</td>
+<td style="text-align: center;">:white_check_mark:</td>
+<td style="text-align: center;">:white_check_mark:</td>
+</tr>
+<tr>
+<td>CPython</td>
+<td>3.12</td>
+<td style="text-align: center;">:white_check_mark:</td>
+<td style="text-align: center;">:white_check_mark:</td>
+<td style="text-align: center;">:white_check_mark:</td>
+<td style="text-align: center;">:white_check_mark:</td>
+</tr>
+<tr>
+<td>CPython</td>
+<td>3.13</td>
+<td style="text-align: center;">:white_check_mark:</td>
+<td style="text-align: center;">:white_check_mark:</td>
+<td style="text-align: center;">:white_check_mark:</td>
+<td style="text-align: center;">:white_check_mark:</td>
+</tr>
+<tr>
+<td>CPython</td>
+<td>3.14</td>
+<td style="text-align: center;">:white_check_mark:</td>
+<td style="text-align: center;">:white_check_mark:</td>
+<td style="text-align: center;">:white_check_mark:</td>
+<td style="text-align: center;">:white_check_mark:</td>
+</tr>
+<tr>
+<td>PyPy</td>
+<td>3.10</td>
+<td style="text-align: center;">:white_check_mark:</td>
+<td style="text-align: center;">:white_check_mark:</td>
+<td style="text-align: center;">:white_check_mark:</td>
+<td style="text-align: center;">:white_check_mark:</td>
+</tr>
+<tr>
+<td>PyPy</td>
+<td>3.11</td>
+<td style="text-align: center;">:white_check_mark:</td>
+<td style="text-align: center;">:white_check_mark:</td>
+<td style="text-align: center;">:white_check_mark:</td>
+<td style="text-align: center;">:white_check_mark:</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">PyPy + pandas</p>
+<p>pandas does not support PyPy. If you use pandas in your tests, install mongomock-ng without the <code>pandas</code> extra on PyPy:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>mongomock-ng<span class="w">  </span><span class="c1"># without pandas</span>
 </code></pre></div>
-<h2 id="running-tests">Running Tests<a class="headerlink" href="#running-tests" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>hatch<span class="w"> </span><span class="nb">test</span>
+<p>Tests that use pandas are automatically skipped on PyPy.</p>
+</div>
+<h2 id="installation-extras">Installation Extras<a class="headerlink" href="#installation-extras" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Basic (no pymongo — mock only)</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>pip<span class="w"> </span>install<span class="w"> </span>mongomock-ng
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># With pymongo support</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>pip<span class="w"> </span>install<span class="w"> </span>mongomock-ng<span class="o">[</span>pymongo<span class="o">]</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># With pandas support (CPython only)</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>pip<span class="w"> </span>install<span class="w"> </span>mongomock-ng<span class="o">[</span>pandas<span class="o">]</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="c1"># Everything</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>pip<span class="w"> </span>install<span class="w"> </span>mongomock-ng<span class="o">[</span>all<span class="o">]</span>
 </code></pre></div>
-<h2 id="code-quality">Code Quality<a class="headerlink" href="#code-quality" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Lint</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>ruff<span class="w"> </span>check<span class="w"> </span>mongomock_ng/<span class="w"> </span>tests/
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># Auto-fix</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>ruff<span class="w"> </span>check<span class="w"> </span>--fix<span class="w"> </span>mongomock_ng/<span class="w"> </span>tests/
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># Format</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>ruff<span class="w"> </span>format<span class="w"> </span>mongomock_ng/<span class="w"> </span>tests/
-<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>
-<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="c1"># Type check</span>
-<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>python<span class="w"> </span>-m<span class="w"> </span>mypy<span class="w"> </span>-p<span class="w"> </span>mongomock_ng
+<h2 id="mongodb-server-version">MongoDB Server Version<a class="headerlink" href="#mongodb-server-version" title="Permanent link">&para;</a></h2>
+<p>mongomock-ng emulates MongoDB server behavior. The default server version is <code>7.0.34</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Override server version</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nv">MONGODB</span><span class="o">=</span><span class="m">7</span>.0.34<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>tests/
 </code></pre></div>
-<h2 id="pre-commit-hooks">Pre-commit Hooks<a class="headerlink" href="#pre-commit-hooks" title="Permanent link">&para;</a></h2>
-<p>The project uses pre-commit hooks (ruff, ruff-format, mypy). To run manually:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>pre-commit<span class="w"> </span>run<span class="w"> </span>--all-files
-</code></pre></div>
-<h2 id="branching-model">Branching Model<a class="headerlink" href="#branching-model" title="Permanent link">&para;</a></h2>
-<p>We use <a href="https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow">gitflow workflow</a>.
-PRs should be issued against the <code>develop</code> branch.</p>
-<h2 id="releasing">Releasing<a class="headerlink" href="#releasing" title="Permanent link">&para;</a></h2>
-<ol>
-<li>Update <code>__version__</code> in <code>mongomock_ng/__version__.py</code></li>
-<li>Update <code>CHANGELOG.md</code> with the same version</li>
-<li>Open a PR against <code>develop</code> — on merge, a tag <code>v&lt;version&gt;</code> is created automatically</li>
-<li>The tag push triggers a build and publish to PyPI</li>
-</ol>
-<h2 id="container-engine">Container Engine<a class="headerlink" href="#container-engine" title="Permanent link">&para;</a></h2>
-<p>The Makefile uses a configurable container engine via <code>.container-engine</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nb">echo</span><span class="w"> </span>podman<span class="w"> </span>&gt;<span class="w"> </span>.container-engine<span class="w">   </span><span class="c1"># default</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="nb">echo</span><span class="w"> </span>docker<span class="w"> </span>&gt;<span class="w"> </span>.container-engine
-</code></pre></div>
+<h2 id="version-constraints">Version Constraints<a class="headerlink" href="#version-constraints" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th>Constraint</th>
+<th>Reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Python</td>
+<td>&gt;= 3.10</td>
+<td>Type hints (<code>X \| Y</code>), <code>match</code>/<code>case</code></td>
+</tr>
+<tr>
+<td>pymongo</td>
+<td>&gt;= 4.11</td>
+<td>API alignment, codec options</td>
+</tr>
+<tr>
+<td>packaging</td>
+<td>any</td>
+<td>Version parsing</td>
+</tr>
+<tr>
+<td>pytz</td>
+<td>any</td>
+<td>Timezone support</td>
+</tr>
+<tr>
+<td>sentinels</td>
+<td>any</td>
+<td>NOTHING sentinel</td>
+</tr>
+<tr>
+<td>pandas</td>
+<td>any</td>
+<td>Optional, not on PyPy</td>
+</tr>
+</tbody>
+</table>
 
 
 
 
 
 
+
+  
+  
 
 
 
