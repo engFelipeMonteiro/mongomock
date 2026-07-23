@@ -1,10 +1,9 @@
 name: lint-and-test
-
 on:
   push:
-    branches: ["*"]
+    branches: [main, master, develop]
   pull_request:
-    branches: [develop]
+    branches: [main, master, develop]
 
 jobs:
   lint-style:
@@ -31,7 +30,7 @@ jobs:
       - name: Install hatch
         run: pip install hatch
       - name: Lint typing
-        run: hatch run types:check
+        run: hatch fmt --check --typing
 
   test-mock:
     runs-on: ubuntu-latest
@@ -60,11 +59,6 @@ jobs:
         env:
           NO_LOCAL_MONGO: "1"
 
-      - name: Generate mock-only XML
-        run: |
-          coverage xml -o coverage-mock.xml || true
-          ls -la coverage-mock.xml || echo "mock XML not generated"
-
       - name: Disambiguate coverage filename
         run: mv .coverage ".coverage.mock.${{ matrix.os }}.${{ matrix.python-version }}"
 
@@ -73,9 +67,7 @@ jobs:
         with:
           include-hidden-files: true
           name: coverage-mock-${{ matrix.os }}-${{ matrix.python-version }}
-          path: |
-            .coverage*
-            coverage-mock.xml
+          path: .coverage*
 
   test-mongodb:
     runs-on: ubuntu-latest
@@ -114,11 +106,6 @@ jobs:
       - name: Run tests (with MongoDB)
         run: hatch test -py=${{ matrix.python-version }} --cover
 
-      - name: Generate mongodb XML
-        run: |
-          coverage xml -o coverage-mongodb.xml || true
-          ls -la coverage-mongodb.xml || echo "mongodb XML not generated"
-
       - name: Disambiguate coverage filename
         run: mv .coverage ".coverage.mongodb.${{ matrix.os }}.${{ matrix.python-version }}"
 
@@ -127,9 +114,7 @@ jobs:
         with:
           include-hidden-files: true
           name: coverage-mongodb-${{ matrix.os }}-${{ matrix.python-version }}
-          path: |
-            .coverage*
-            coverage-mongodb.xml
+          path: .coverage*
 
   coverage:
     runs-on: ubuntu-latest
@@ -140,6 +125,14 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install coverage
+        run: pip install coverage
+
       - name: Download all coverage artifacts
         uses: actions/download-artifact@v8
         with:
@@ -148,7 +141,25 @@ jobs:
           merge-multiple: true
 
       - name: List downloaded files
-        run: find /tmp/cov-all -type f -name "*.xml" -o -name ".coverage*"
+        run: ls -la /tmp/cov-all/
+
+      - name: Combine mock-only + generate XML
+        run: |
+          cd /tmp/cov-all
+          ls -la .coverage.mock*
+          coverage combine --data-file=.coverage.mock .coverage.mock.*
+          coverage xml --data-file=.coverage.mock -o coverage-mock.xml
+          ls -la coverage-mock.xml
+          cd -
+
+      - name: Combine mongodb + generate XML
+        run: |
+          cd /tmp/cov-all
+          ls -la .coverage.mongodb*
+          coverage combine --data-file=.coverage.mongodb .coverage.mongodb.*
+          coverage xml --data-file=.coverage.mongodb -o coverage-mongodb.xml
+          ls -la coverage-mongodb.xml
+          cd -
 
       - name: Upload coverage (mock-only)
         uses: codecov/codecov-action@v6
