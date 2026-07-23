@@ -7,14 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [7.9.3] - 2026-07-23
 ### Added
-- CI: split test jobs into mock-only and MongoDB, with separate codecov uploads (flags: `total`, `mock-only`, `mongodb`)
-- Tests: `$pullAll` nested paths, `$addToSet` nested paths, `$pull` dict filters
-- Tests: `$elemMatch` no-match and empty-array projection edge cases
-- Tests: `CodecOptions`, `WriteConcern`, `ReadConcern` direct unit tests
-- Tests: comparison tests for `$fill`, `$redact`, `$out`, `$sortByCount`, `$unwind` edges, `$regexMatch`, `$facet`, `$unionWith`
-
-### Changed
-- Version bump 7.9.2 → 7.9.3
+- Test coverage improvements across update operators, aggregation, and collection edge cases
+- CI split into mock-only and MongoDB test jobs with separate codecov uploads
 
 
 ## [7.9.2] - 2026-07-23
