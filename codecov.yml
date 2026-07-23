@@ -1,0 +1,44 @@
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+    patch:
+      default:
+        target: auto
+
+flags:
+  mock-only:
+    paths:
+      - mongomock_ng/
+    carryforward: true
+  mongodb:
+    paths:
+      - mongomock_ng/
+    carryforward: true
+  total:
+    paths:
+      - mongomock_ng/
+    carryforward: true
+
+component_management:
+  individual_components:
+    - component_id: mock-only
+      name: "Mock-only"
+      flags:
+        - mock-only
+    - component_id: mongodb
+      name: "MongoDB"
+      flags:
+        - mongodb
+    - component_id: total
+      name: "Total"
+      flags:
+        - total
+
+ignore:
+  - "tests/"
+  - "docs/"
+  - "setup.py"
+  - "setup.cfg"
+  - "pyproject.toml"

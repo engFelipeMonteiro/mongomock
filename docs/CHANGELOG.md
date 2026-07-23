@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [7.9.3] - 2026-07-23
+### Added
+- Test coverage improvements across update operators, aggregation, and collection edge cases
+- CI split into mock-only and MongoDB test jobs with separate codecov uploads
+
+
 ## [7.9.2] - 2026-07-23
 ### Removed
 - pymongo <4 compatibility guards from source code (collection.py, codec_options.py)
