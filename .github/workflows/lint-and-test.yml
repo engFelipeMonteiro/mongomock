@@ -153,7 +153,7 @@ jobs:
       - name: Combine all + generate XML
         run: |
           cd /tmp/cov-all
-          coverage combine --data-file=.coverage.all .coverage.mock.* .coverage.mongodb.*
+          coverage combine --data-file=.coverage.all .coverage.mock .coverage.mongodb
           coverage xml --data-file=.coverage.all -o coverage-all.xml
           ls -la coverage-all.xml
           cd -
