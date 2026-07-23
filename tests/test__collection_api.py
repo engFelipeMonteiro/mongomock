@@ -11569,7 +11569,7 @@ class TestAggregationBugfixesMock(TestCase):
         self.collection.insert_one({'test': [1, 2, 3], 'value': 42})
         doc = self.collection.find_one({}, projection={'test': {'$slice': 1}})
         self.assertEqual(doc['test'], [1])
-        self.assertEqual(doc['value'], 42)
+        self.assertNotIn('value', doc)
 
     def test__slice_no_mutation(self):
         self.collection.insert_one({'n': 1, 'elements': [{'x': 1}]})
@@ -11615,3 +11615,61 @@ class TestAggregationBugfixesMock(TestCase):
         self.collection.insert_one({'items': [1, 2, 3]})
         result = list(self.collection.aggregate([{'$project': {'_id': 0, 'items': {'$not': []}}}]))
         self.assertIsInstance(result[0]['items'], bool)
+
+    def test__nan_equality_in_array(self):
+        import math
+
+        self.collection.insert_one({'values': [float('nan'), 1, 2]})
+        result = list(self.collection.find({'values': float('nan')}))
+        self.assertEqual(len(result), 1)
+        self.assertTrue(math.isnan(result[0]['values'][0]))
+
+    def test__nan_equality_direct(self):
+        self.collection.insert_one({'x': float('nan')})
+        result = list(self.collection.find({'x': float('nan')}))
+        self.assertEqual(len(result), 1)
+
+    def test__nan_in_operator(self):
+        self.collection.insert_one({'x': float('nan')})
+        result = list(self.collection.find({'x': {'$in': [float('nan')]}}))
+        self.assertEqual(len(result), 1)
+
+    def test__projection_slice_only(self):
+        self.collection.insert_one({'_id': 1, 'name': 'test', 'values': [1, 2, 3, 4, 5]})
+        result = self.collection.find_one({'_id': 1}, {'values': {'$slice': 2}})
+        self.assertEqual(result, {'_id': 1, 'values': [1, 2]})
+
+    def test__projection_elemmatch_only(self):
+        self.collection.insert_one({'_id': 1, 'name': 'test', 'items': [{'a': 1}, {'a': 2}]})
+        result = self.collection.find_one({'_id': 1}, {'items': {'$elemMatch': {'a': 2}}})
+        self.assertEqual(result, {'_id': 1, 'items': [{'a': 2}]})
+
+    def test__decimal128_sort(self):
+        from bson import Decimal128
+
+        self.collection.insert_many(
+            [
+                {'val': Decimal128('3.5')},
+                {'val': Decimal128('1.2')},
+                {'val': Decimal128('2.8')},
+            ]
+        )
+        result = list(self.collection.find().sort('val', 1))
+        self.assertEqual(
+            [r['val'] for r in result], [Decimal128('1.2'), Decimal128('2.8'), Decimal128('3.5')]
+        )
+
+    def test__decimal128_sort_descending(self):
+        from bson import Decimal128
+
+        self.collection.insert_many(
+            [
+                {'val': Decimal128('1.5')},
+                {'val': Decimal128('3.2')},
+                {'val': Decimal128('2.1')},
+            ]
+        )
+        result = list(self.collection.find().sort('val', -1))
+        self.assertEqual(
+            [r['val'] for r in result], [Decimal128('3.2'), Decimal128('2.1'), Decimal128('1.5')]
+        )

@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [7.9.3] - 2026-07-23
+### Fixed
+- NaN: array containment now matches NaN values correctly (#16)
+- Projection: `$slice`/`$elemMatch` alone now returns only `_id` + operator field (MongoDB behavior) (#81)
+- Decimal128: sort/comparison now works via `to_decimal()` conversion (#111)
+
+
 ## [7.9.2] - 2026-07-23
 ### Removed
 - pymongo <4 compatibility guards from source code (collection.py, codec_options.py)

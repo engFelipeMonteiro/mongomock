@@ -1668,8 +1668,7 @@ class Collection:
                 doc_copy.update(projected)
         elif not fields:
             if projection_operators:
-                has_elemmatch = any('$elemMatch' in op for op in projection_operators.values())
-                doc_copy = container() if has_elemmatch else _copy_field(doc, container)
+                doc_copy = container()
             else:
                 doc_copy = container() if id_value == 1 else _copy_field(doc, container)
         else:

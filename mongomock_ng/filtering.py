@@ -238,7 +238,9 @@ class _Filterer:
                         raise OperationFailure('BadValue $and/$or/$nor must be a nonempty array')
                     is_match = LOGICAL_OPERATOR_MAP[key](document, search, self.apply)
                 elif isinstance(doc_val, (list, tuple)):
-                    is_match = search in doc_val or search == doc_val
+                    is_match = any(operator_eq(item, search) for item in doc_val) or operator_eq(
+                        doc_val, search
+                    )
                     if isinstance(search, ObjectId):
                         is_match |= str(search) in doc_val
                 else:
@@ -451,6 +453,8 @@ def bson_compare(op, a, b, can_compare_types=True):
     if isinstance(a, bytes) and len(a) != len(b):
         return op(len(a), len(b))
         # bytes is always treated as subtype 0 by the bson library
+    if Decimal128 is not None and isinstance(a, Decimal128):
+        return op(float(a.to_decimal()), float(b.to_decimal()))
     return op(a, b)
 
 
@@ -466,6 +470,8 @@ def _get_compare_type(val):
     if isinstance(val, bool):
         return 40
     if isinstance(val, numbers.Number):
+        return 10
+    if Decimal128 is not None and isinstance(val, Decimal128):
         return 10
     if isinstance(val, str):
         return 15
