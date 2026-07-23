@@ -51,24 +51,11 @@ class CodecOptions(_CodecOptions):
         type_registry=_DEFAULT_TYPE_REGISTRY,
         datetime_conversion=_DEFAULT_DATETIME_CONVERSION,
     ):
-        if document_class is not dict:
-            raise NotImplementedError(
-                f'Mongomock-ng does not implement custom document_class yet: {document_class!r}'
-            )
-
         if not isinstance(tz_aware, bool):
             raise TypeError('tz_aware must be True or False')
 
         if uuid_representation is None:
             uuid_representation = _DEFAULT_UUID_REPRESENTATION
-
-        if unicode_decode_error_handler not in ('strict', None):
-            raise NotImplementedError(
-                'Mongomock-ng does not handle custom unicode_decode_error_handler yet'
-            )
-
-        if tzinfo is not None:
-            raise NotImplementedError('Mongomock-ng does not handle custom tzinfo yet')
 
         values = (
             document_class,
@@ -80,19 +67,10 @@ class CodecOptions(_CodecOptions):
 
         if 'type_registry' in _fields_list:
             type_registry = type_registry or _DEFAULT_TYPE_REGISTRY
-            if type_registry != _DEFAULT_TYPE_REGISTRY:
-                raise NotImplementedError(
-                    f'Mongomock-ng does not handle custom type_registry yet {type_registry!r}'
-                )
             values += (type_registry,)
 
         if 'datetime_conversion' in _fields_list:
             datetime_conversion = datetime_conversion or _DEFAULT_DATETIME_CONVERSION
-            if datetime_conversion != _DEFAULT_DATETIME_CONVERSION:
-                raise NotImplementedError(  # pragma: no cover
-                    f'Mongomock-ng does not handle custom datetime_conversion '
-                    f'yet {datetime_conversion}'
-                )
             values += (datetime_conversion,)
 
         return tuple.__new__(cls, values)
@@ -103,17 +81,21 @@ class CodecOptions(_CodecOptions):
         return CodecOptions(**opts)
 
     def to_pymongo(self):
-        if not codec_options:  # pragma: no cover
+        if not codec_options:
             return None
 
         uuid_representation = self.uuid_representation
-        if _UUID_REPRESENTATIONS and isinstance(self.uuid_representation, str):  # pragma: no cover
+        if _UUID_REPRESENTATIONS and isinstance(self.uuid_representation, str):
             uuid_representation = _UUID_REPRESENTATIONS[uuid_representation]
 
         return codec_options.CodecOptions(
+            document_class=self.document_class,
+            tz_aware=self.tz_aware,
             uuid_representation=uuid_representation,
             unicode_decode_error_handler=self.unicode_decode_error_handler,
+            tzinfo=self.tzinfo,
             type_registry=self.type_registry,
+            datetime_conversion=self.datetime_conversion,
         )
 
 

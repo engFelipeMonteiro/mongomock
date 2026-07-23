@@ -150,3 +150,66 @@ class MongoClientApiTest(unittest.TestCase):
         server_info = client.server_info()
         with mock.patch('mongomock.SERVER_VERSION', '3.6'):
             self.assertEqual(server_info, client.server_info())
+
+    def test__codec_options_to_pymongo_forwards_all_params(self):
+        from collections import OrderedDict
+
+        from mongomock_ng.codec_options import CodecOptions as MockCodecOptions
+
+        opts = MockCodecOptions(
+            document_class=OrderedDict,
+            tz_aware=True,
+            uuid_representation=3,
+            unicode_decode_error_handler='ignore',
+        )
+        result = opts.to_pymongo()
+        self.assertEqual(OrderedDict, result.document_class)
+        self.assertTrue(result.tz_aware)
+        self.assertEqual(3, result.uuid_representation)
+        self.assertEqual('ignore', result.unicode_decode_error_handler)
+
+    def test__codec_options_document_class_cast(self):
+        from collections import OrderedDict
+
+        from mongomock_ng.codec_options import CodecOptions as MockCodecOptions
+
+        client = mongomock.MongoClient()
+        client.db.collection.with_options(
+            codec_options=MockCodecOptions(document_class=OrderedDict)
+        ).insert_one({'key': 'value'})
+        result = client.db.collection.with_options(
+            codec_options=MockCodecOptions(document_class=OrderedDict)
+        ).find_one()
+        self.assertIsInstance(result, OrderedDict)
+
+    def test__codec_options_custom_type_registry(self):
+        from mongomock_ng.codec_options import CodecOptions as MockCodecOptions
+
+        class CustomType:
+            pass
+
+        class CustomTypeCodec(codec_options.TypeCodec):
+            @property
+            def python_type(self):
+                return CustomType
+
+            @property
+            def bson_type(self):
+                return int
+
+            def transform_python(self, value):
+                return 42
+
+            def transform_bson(self, value):
+                return CustomType()
+
+        registry = codec_options.TypeRegistry([CustomTypeCodec()])
+        opts = MockCodecOptions(type_registry=registry)
+        result = opts.to_pymongo()
+        self.assertIsNotNone(result)
+
+    def test__codec_options_uuid_representation_string(self):
+        client = mongomock.MongoClient(uuidRepresentation='standard')
+        opts = client.codec_options
+        result = opts.to_pymongo()
+        self.assertEqual(4, result.uuid_representation)
