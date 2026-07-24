@@ -103,7 +103,7 @@ extend-ignore = [
     "N818",    # Allow exceptions without Error suffix
     "UP006",   # Allow typing.Tuple
     "UP007",   # Allow typing.Union
-    "UP038",   # Allow (X, Y) isinstance syntax (ruff removed this rule in 0.15)
+    "UP038",   # Allow (X, Y) isinstance syntax (removed in ruff 0.15, kept for pre-commit compat)
     "PYI024",  # Allow use of collections.namedtuple
     "S101",    # Allow usage of asserts
     # TODO: Remove in future pull-requests

@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## [7.9.3] - 2026-07-23
+### Added
+- Test coverage improvements across update operators, aggregation, and collection edge cases
+- CI split into mock-only and MongoDB test jobs with separate codecov uploads
+
 ### Fixed
 - NaN: array containment now matches NaN values correctly (#16)
 - Projection: `$slice`/`$elemMatch` alone now returns only `_id` + operator field (MongoDB behavior) (#81)

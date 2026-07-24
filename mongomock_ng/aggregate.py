@@ -689,9 +689,9 @@ class _Parser:
         if operator in binary_arithmetic_operators | binary_bitwise_operators:
             return self._eval_binary_arithmetic_operator(operator, values)
         # N-ary operators
-        assert isinstance(
-            values, (tuple, list)
-        ), f"Parameter to {operator} must evaluate to a list, got '{type(values)}'"
+        assert isinstance(values, (tuple, list)), (
+            f"Parameter to {operator} must evaluate to a list, got '{type(values)}'"
+        )
 
         parsed_values = list(self.parse_many(values))
         assert parsed_values, f'{operator} must have at least one parameter'
