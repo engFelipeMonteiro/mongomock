@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [7.10.0] - 2026-07-23
+### Fixed
+- `CodecOptions.to_pymongo()`: now forwards all 7 params (document_class, tz_aware, uuid_representation, unicode_decode_error_handler, tzinfo, type_registry, datetime_conversion) (#70)
+- `CodecOptions`: removed NotImplementedError guards for custom type_registry, tzinfo, unicode_decode_error_handler, document_class (#109)
+- `CodecOptions`: custom document_class now casts returned documents (OrderedDict, SON, etc.) (#95)
+- `_bson_encode()`: now returns encoded bytes (was discarded)
+
+
 ## [7.9.3] - 2026-07-23
 ### Added
 - Test coverage improvements across update operators, aggregation, and collection edge cases
