@@ -10,13 +10,9 @@
       
       
       
-        <link rel="canonical" href="https://engFelipeMonteiro.github.io/mongomock-ng/API/">
+        <link rel="canonical" href="https://engFelipeMonteiro.github.io/mongomock-ng/linkedin-post/">
       
       
-        <link rel="prev" href="../compatibility/">
-      
-      
-        <link rel="next" href="../AGGREGATION/">
       
       
         
@@ -27,7 +23,7 @@
     
     
       
-        <title>API Reference - mongomock-ng</title>
+        <title>Linkedin post - mongomock-ng</title>
       
     
     
@@ -77,11 +73,6 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
-        
-        <a href="#api-reference" class="md-skip">
-          Skip to content
-        </a>
-      
     </div>
     <div data-md-component="announce">
       
@@ -116,7 +107,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              API Reference
+              Linkedin post
             
           </span>
         </div>
@@ -282,11 +273,9 @@
   
   
   
-    
   
-  
-    <li class="md-tabs__item md-tabs__item--active">
-      <a href="./" class="md-tabs__link">
+    <li class="md-tabs__item">
+      <a href="../API/" class="md-tabs__link">
         
   
   
@@ -562,37 +551,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    API Reference
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../API/" class="md-nav__link">
         
   
   
@@ -608,70 +570,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#mongoclient" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MongoClient
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#database" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Database
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#collection" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Collection
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#known-quirks" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Known quirks
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -882,60 +780,6 @@
   
   
   
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#mongoclient" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MongoClient
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#database" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Database
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#collection" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Collection
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#known-quirks" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Known quirks
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
   
 </nav>
                   </div>
@@ -955,61 +799,31 @@
   
 
 
-<h1 id="api-reference">API Reference<a class="headerlink" href="#api-reference" title="Permanent link">&para;</a></h1>
-<h2 id="mongoclient">MongoClient<a class="headerlink" href="#mongoclient" title="Permanent link">&para;</a></h2>
+  <h1>Linkedin post</h1>
+
+<p>Hey everyone 👋</p>
+<p>After months of work, I'm preparing to bring <strong>MongoDB 7 API support</strong> to the upstream <code>mongomock</code> library.</p>
+<p><strong>What's new in mongomock-ng (v7.9.3):</strong></p>
 <ul>
-<li><code>MongoClient(host=None, port=None, **kwargs)</code> — creates in-memory client</li>
-<li>Supports <code>uuidRepresentation</code> param ('standard', 'pythonLegacy', 'javaLegacy', 'csharpLegacy')</li>
-<li><code>client.get_database(name)</code> — returns Database mock</li>
-<li><code>client.list_database_names()</code> — list DB names</li>
-<li><code>client.drop_database(name)</code> — drop DB</li>
-<li><code>client.close()</code> — no-op (for test compatibility)</li>
+<li>MongoDB 7.0.34 CI testing</li>
+<li>PyMongo 4.11+ (dropped PyMongo 3 and Python 3.9)</li>
+<li>Full geospatial support (<code>$geoIntersects</code>, <code>$geoWithin</code>, <code>$near</code>, <code>$nearSphere</code>, <code>$geoNear</code>)</li>
+<li>Transaction support (<code>ClientSession</code>, <code>start_transaction</code>, <code>commit_transaction</code>)</li>
+<li>20+ aggregation operators added (<code>$setWindowFields</code>, <code>$fill</code>, <code>$convert</code>, <code>$reduce</code>, <code>$merge</code>, <code>$unionWith</code>, date operators, set operators, bitwise operators)</li>
+<li><code>QueryProfiler</code> for query analysis</li>
+<li>Document validation</li>
+<li>MkDocs documentation site</li>
+<li>Automated CI/CD publish on merge</li>
 </ul>
-<h2 id="database">Database<a class="headerlink" href="#database" title="Permanent link">&para;</a></h2>
-<ul>
-<li><code>db.create_collection(name, **kwargs)</code> — create explicit collection (supports validator)</li>
-<li><code>db.get_collection(name)</code> — get collection</li>
-<li><code>db.list_collection_names(filter=None)</code> — list colls, supports name filter with $eq/$ne/$regex</li>
-<li><code>db.drop_collection(name_or_collection)</code> — drop collection</li>
-<li><code>db[name]</code> / <code>db.name</code> — get collection shorthand</li>
-</ul>
-<h2 id="collection">Collection<a class="headerlink" href="#collection" title="Permanent link">&para;</a></h2>
-<ul>
-<li><code>insert_one(document, bypass_document_validation=False, session=None)</code> → InsertOneResult</li>
-<li><code>insert_many(documents, ordered=True, bypass_document_validation=False, session=None)</code> → InsertManyResult</li>
-<li><code>find(filter=None, projection=None, skip=0, limit=0, sort=None, ...)</code> → Cursor</li>
-<li><code>find_one(filter=None, ...)</code> — single doc, non-dict filter treated as _id</li>
-<li><code>update_one(filter, update, upsert=False, array_filters=None, sort=None, ...)</code> → UpdateResult</li>
-<li><code>update_many(filter, update, upsert=False, array_filters=None, ...)</code> → UpdateResult</li>
-<li><code>replace_one(filter, replacement, upsert=False, ...)</code> → UpdateResult</li>
-<li><code>delete_one(filter, ...)</code> → DeleteResult</li>
-<li><code>delete_many(filter, ...)</code> → DeleteResult</li>
-<li><code>count_documents(filter, ...)</code> → int</li>
-<li><code>estimated_document_count()</code> → int</li>
-<li><code>distinct(key, filter=None)</code> → list</li>
-<li><code>aggregate(pipeline, ...)</code> → list (returns list, not CommandCursor!)</li>
-<li><code>bulk_write(requests, ordered=True, ...)</code> → BulkWriteResult</li>
-<li><code>create_index(keys, **kwargs)</code> — supports unique, sparse, name, expireAfterSeconds</li>
-<li><code>create_indexes(indexes)</code> — list of IndexModel</li>
-<li><code>drop_index(index_or_name)</code></li>
-<li><code>drop_indexes()</code></li>
-<li><code>list_indexes()</code> → generator</li>
-<li><code>index_information()</code> → dict</li>
-<li><code>find_one_and_update(filter, update, ...)</code> → doc or None</li>
-<li><code>find_one_and_replace(filter, replacement, ...)</code> → doc or None</li>
-<li><code>find_one_and_delete(filter, ...)</code> → doc or None</li>
-<li><code>drop()</code> — drop collection</li>
-<li><code>rename(new_name)</code> — rename collection</li>
-<li><code>with_options(codec_options, read_preference, write_concern, read_concern)</code></li>
-</ul>
-<h2 id="known-quirks">Known quirks<a class="headerlink" href="#known-quirks" title="Permanent link">&para;</a></h2>
-<ul>
-<li><code>aggregate()</code> returns <code>list</code> not <code>CommandCursor</code></li>
-<li><code>watch()</code> not implemented (raises NotImplementedError)</li>
-<li><code>find_raw_batches()</code> / <code>aggregate_raw_batches()</code> not implemented</li>
-<li><code>collation</code> raises NotImplementedError on most ops</li>
-<li><code>session</code> mostly no-op (basic ClientSession exists)</li>
-</ul>
+<p><strong>13 upstream PRs</strong> already replicated and tested.</p>
+<p><strong>Current gap vs MongoDB 7:</strong> ~9 window operators still missing (<code>$top</code>, <code>$bottom</code>, <code>$derivative</code>, etc).</p>
+<p><strong>Next steps:</strong>
+1. Release v5.0.0 on PyPI (breaking: Python 3.9 and PyMongo 3 dropped)
+2. Merge incrementally to upstream mongomock
+3. Community feedback welcome</p>
+<p><strong>GitHub:</strong> https://github.com/engFelipeMonteiro/mongomock-ng</p>
+<p>Would love your feedback — especially if you use mongomock in production and have feature requests or compatibility concerns.</p>
+<p>🔗 Related discussion: https://github.com/mongomock/mongomock/issues/948</p>
 
 
 

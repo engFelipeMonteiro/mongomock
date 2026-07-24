@@ -2,46 +2,54 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://engFelipeMonteiro.github.io/mongomock-ng/</loc>
-         <lastmod>2026-07-23</lastmod>
+         <lastmod>2026-07-24</lastmod>
     </url>
     <url>
          <loc>https://engFelipeMonteiro.github.io/mongomock-ng/AGGREGATION/</loc>
-         <lastmod>2026-07-23</lastmod>
+         <lastmod>2026-07-24</lastmod>
     </url>
     <url>
          <loc>https://engFelipeMonteiro.github.io/mongomock-ng/API/</loc>
-         <lastmod>2026-07-23</lastmod>
+         <lastmod>2026-07-24</lastmod>
     </url>
     <url>
          <loc>https://engFelipeMonteiro.github.io/mongomock-ng/CHANGELOG/</loc>
-         <lastmod>2026-07-23</lastmod>
+         <lastmod>2026-07-24</lastmod>
     </url>
     <url>
          <loc>https://engFelipeMonteiro.github.io/mongomock-ng/LIMITATIONS/</loc>
-         <lastmod>2026-07-23</lastmod>
+         <lastmod>2026-07-24</lastmod>
     </url>
     <url>
          <loc>https://engFelipeMonteiro.github.io/mongomock-ng/compatibility/</loc>
-         <lastmod>2026-07-23</lastmod>
+         <lastmod>2026-07-24</lastmod>
     </url>
     <url>
          <loc>https://engFelipeMonteiro.github.io/mongomock-ng/contributing/</loc>
-         <lastmod>2026-07-23</lastmod>
+         <lastmod>2026-07-24</lastmod>
     </url>
     <url>
          <loc>https://engFelipeMonteiro.github.io/mongomock-ng/geospatial/</loc>
-         <lastmod>2026-07-23</lastmod>
+         <lastmod>2026-07-24</lastmod>
+    </url>
+    <url>
+         <loc>https://engFelipeMonteiro.github.io/mongomock-ng/github-reply-948/</loc>
+         <lastmod>2026-07-24</lastmod>
     </url>
     <url>
          <loc>https://engFelipeMonteiro.github.io/mongomock-ng/installation/</loc>
-         <lastmod>2026-07-23</lastmod>
+         <lastmod>2026-07-24</lastmod>
+    </url>
+    <url>
+         <loc>https://engFelipeMonteiro.github.io/mongomock-ng/linkedin-post/</loc>
+         <lastmod>2026-07-24</lastmod>
     </url>
     <url>
          <loc>https://engFelipeMonteiro.github.io/mongomock-ng/profiler/</loc>
-         <lastmod>2026-07-23</lastmod>
+         <lastmod>2026-07-24</lastmod>
     </url>
     <url>
          <loc>https://engFelipeMonteiro.github.io/mongomock-ng/sessions/</loc>
-         <lastmod>2026-07-23</lastmod>
+         <lastmod>2026-07-24</lastmod>
     </url>
 </urlset>
