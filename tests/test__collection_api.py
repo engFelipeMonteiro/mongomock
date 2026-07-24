@@ -10568,6 +10568,95 @@ class CollectionAPITest(TestCase):
         self.assertIn('a', doc)
         self.assertEqual(doc['a']['b'], 1)
 
+    def test__find_one_and_update_sort_exclude_id(self):
+        collection = self.db.collection
+        collection.insert_many(
+            [
+                {'field1': 'mydata', 'field2': 10},
+                {'field1': 'mydata', 'field2': 20},
+            ]
+        )
+        doc = collection.find_one_and_update(
+            {'field1': 'mydata'},
+            {'$set': {'field1': 'mynewdata'}},
+            projection={'_id': False},
+            sort=[('field2', -1)],
+        )
+        self.assertEqual(doc, {'field1': 'mydata', 'field2': 20})
+        updated = collection.find_one({'field1': 'mynewdata'})
+        self.assertEqual(updated['field2'], 20)
+
+    def test__find_one_and_update_sort_exclude_id_return_after(self):
+        collection = self.db.collection
+        collection.insert_many(
+            [
+                {'field1': 'mydata', 'field2': 10},
+                {'field1': 'mydata', 'field2': 20},
+            ]
+        )
+        doc = collection.find_one_and_update(
+            {'field1': 'mydata'},
+            {'$set': {'field1': 'mynewdata'}},
+            projection={'_id': False},
+            sort=[('field2', -1)],
+            return_document=ReturnDocument.AFTER,
+        )
+        self.assertEqual(doc, {'field1': 'mynewdata', 'field2': 20})
+
+    def test__find_one_and_replace_sort_exclude_id(self):
+        collection = self.db.collection
+        collection.insert_many(
+            [
+                {'field1': 'mydata', 'field2': 10},
+                {'field1': 'mydata', 'field2': 20},
+            ]
+        )
+        doc = collection.find_one_and_replace(
+            {'field1': 'mydata'},
+            {'field1': 'replaced', 'field2': 99},
+            projection={'_id': False},
+            sort=[('field2', -1)],
+        )
+        self.assertEqual(doc, {'field1': 'mydata', 'field2': 20})
+        replaced = collection.find_one({'field1': 'replaced'})
+        self.assertEqual(replaced['field2'], 99)
+
+    def test__find_one_and_delete_sort_exclude_id(self):
+        collection = self.db.collection
+        collection.insert_many(
+            [
+                {'field1': 'mydata', 'field2': 10},
+                {'field1': 'mydata', 'field2': 20},
+            ]
+        )
+        doc = collection.find_one_and_delete(
+            {'field1': 'mydata'},
+            projection={'_id': False},
+            sort=[('field2', -1)],
+        )
+        self.assertEqual(doc, {'field1': 'mydata', 'field2': 20})
+        self.assertEqual(collection.count_documents({}), 1)
+
+    def test__bulk_write_update_one_with_sort(self):
+        from pymongo import UpdateOne
+
+        collection = self.db.collection
+        collection.insert_many(
+            [
+                {'name': 'A', 'score': 10},
+                {'name': 'B', 'score': 20},
+            ]
+        )
+        result = collection.bulk_write(
+            [
+                UpdateOne({'name': 'A'}, {'$set': {'score': 100}}),
+            ]
+        )
+        self.assertEqual(result.matched_count, 1)
+        self.assertEqual(result.modified_count, 1)
+        doc = collection.find_one({'name': 'A'})
+        self.assertEqual(doc['score'], 100)
+
     def test__collection_bool(self):
         with self.assertRaises(NotImplementedError):
             bool(self.db.collection)

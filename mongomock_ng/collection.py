@@ -1923,11 +1923,11 @@ class Collection:
         if remove and update:
             raise ValueError("Can't do both update and remove")
 
-        old = self.find_one(query, projection=projection, sort=sort)
+        old = self.find_one(query, sort=sort)
         if not old and not upsert:
             return
 
-        if old and '_id' in old:
+        if old:
             query = {'_id': old['_id']}
 
         if remove:
@@ -1939,6 +1939,8 @@ class Collection:
 
         if return_document is ReturnDocument.AFTER or kwargs.get('new'):
             return self.find_one(query, projection)
+        if old and projection:
+            return self._copy_only_fields(old, projection, dict)
         return old
 
     def delete_one(self, filter, collation=None, hint=None, session=None, comment=None, let=None):

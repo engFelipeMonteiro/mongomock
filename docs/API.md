@@ -7,7 +7,7 @@
 - `client.get_database(name)` — returns Database mock
 - `client.list_database_names()` — list DB names
 - `client.drop_database(name)` — drop DB
-- `client.close()` — no-op (for test compatibility)
+- `client.close()` — clears all data and caches; raises `InvalidOperation` if used after close
 
 ## Database
 
