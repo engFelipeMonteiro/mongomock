@@ -3,6 +3,7 @@ import itertools
 import mongomock_ng
 from mongomock_ng import codec_options as mongomock_codec_options
 from mongomock_ng import ConfigurationError
+from mongomock_ng import InvalidOperation
 from mongomock_ng import read_preferences
 from mongomock_ng.database import Database
 from mongomock_ng.session import ClientSession
@@ -62,6 +63,7 @@ class MongoClient:
         self._store = _store or ServerStore()
         self._id = next(self._CONNECTION_ID)
         self._document_class = document_class
+        self._closed = False
         if read_preference is not None:
             read_preferences.ensure_read_preference_type('read_preference', read_preference)
         self._read_preference = read_preference or _READ_PREFERENCE_PRIMARY
@@ -102,8 +104,14 @@ class MongoClient:
     def __hash__(self):
         return hash(self.address)
 
-    def close(self):
-        pass
+    def close(self) -> None:
+        self._database_accesses.clear()
+        self._store._databases.clear()
+        self._closed = True
+
+    def _check_closed(self) -> None:
+        if self._closed:
+            raise InvalidOperation('Cannot use MongoClient after close')
 
     @property
     def is_mongos(self):
@@ -126,6 +134,7 @@ class MongoClient:
         return self._codec_options
 
     def server_info(self):
+        self._check_closed()
         return {
             'version': self._server_version,
             'sysInfo': 'Mock',
@@ -137,9 +146,12 @@ class MongoClient:
         }
 
     def list_database_names(self):
+        self._check_closed()
         return self._store.list_created_database_names()
 
     def drop_database(self, name_or_db):
+        self._check_closed()
+
         def drop_collections_for_db(_db):
             db_store = self._store[_db.name]
             for col_name in db_store.list_created_collection_names():
@@ -162,6 +174,7 @@ class MongoClient:
         write_concern=None,
         read_concern=None,
     ):
+        self._check_closed()
         if name is None:
             db = self.get_default_database(
                 codec_options=codec_options,
@@ -196,10 +209,12 @@ class MongoClient:
 
         In our case as we mock the actual server, we should always return True.
         """
+        self._check_closed()
         return True
 
     def start_session(self, causal_consistency=True, default_transaction_options=None):
         """Start a logical session."""
+        self._check_closed()
         options = SessionOptions(
             causal_consistency=causal_consistency,
             default_transaction_options=default_transaction_options,

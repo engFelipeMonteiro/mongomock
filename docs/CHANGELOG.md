@@ -5,6 +5,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [7.11.0] - 2026-07-23
+### Fixed
+- `MongoClient.close()` now clears all cached databases/collections and data stores, freeing memory (#94)
+- `MongoClient` raises `InvalidOperation` on any operation after `close()` (matches pymongo 4.0+ behavior)
+- `$toLong` now correctly treats naive datetime as UTC (matches MongoDB behavior)
+
+### ⚠️ Breaking Change Warning
+**`MongoClient.close()` behavior change may affect unit tests**
+
+The new `close()` implementation clears internal state and raises `InvalidOperation` on subsequent operations. This matches pymongo 4.0+ behavior but may break existing tests that:
+- Reuse a `MongoClient` instance after calling `close()`
+- Don't properly manage client lifecycle in test fixtures
+- Use context managers (`with MongoClient()`) and expect state to persist
+
+**Migration**: Ensure tests create fresh `MongoClient` instances or avoid calling `close()` in test teardown unless the client is no longer needed.
+
+
 ## [7.10.0] - 2026-07-23
 ### Fixed
 - `CodecOptions.to_pymongo()`: now forwards all 7 params (document_class, tz_aware, uuid_representation, unicode_decode_error_handler, tzinfo, type_registry, datetime_conversion) (#70)
