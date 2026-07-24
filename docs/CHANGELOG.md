@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [7.10.1] - 2026-07-23
+## [7.11.0] - 2026-07-23
 ### Fixed
 - `MongoClient.close()` now clears all cached databases/collections and data stores, freeing memory (#94)
 - `MongoClient` raises `InvalidOperation` on any operation after `close()` (matches pymongo 4.0+ behavior)
