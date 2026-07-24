@@ -47,6 +47,69 @@ class MongoClientApiTest(unittest.TestCase):
         with self.assertRaises(TypeError):
             mongomock.MongoClient(tz_aware='True')
 
+    def test__codec_options_to_pymongo_forwards_all_params(self):
+        from collections import OrderedDict
+
+        from mongomock_ng.codec_options import CodecOptions as MockCodecOptions
+
+        opts = MockCodecOptions(
+            document_class=OrderedDict,
+            tz_aware=True,
+            uuid_representation=3,
+            unicode_decode_error_handler='ignore',
+        )
+        result = opts.to_pymongo()
+        self.assertEqual(OrderedDict, result.document_class)
+        self.assertTrue(result.tz_aware)
+        self.assertEqual(3, result.uuid_representation)
+        self.assertEqual('ignore', result.unicode_decode_error_handler)
+
+    def test__codec_options_document_class_cast(self):
+        from collections import OrderedDict
+
+        from mongomock_ng.codec_options import CodecOptions as MockCodecOptions
+
+        client = mongomock.MongoClient()
+        client.db.collection.with_options(
+            codec_options=MockCodecOptions(document_class=OrderedDict)
+        ).insert_one({'key': 'value'})
+        result = client.db.collection.with_options(
+            codec_options=MockCodecOptions(document_class=OrderedDict)
+        ).find_one()
+        self.assertIsInstance(result, OrderedDict)
+
+    def test__codec_options_custom_type_registry(self):
+        from mongomock_ng.codec_options import CodecOptions as MockCodecOptions
+
+        class CustomType:
+            pass
+
+        class CustomTypeCodec(codec_options.TypeCodec):
+            @property
+            def python_type(self):
+                return CustomType
+
+            @property
+            def bson_type(self):
+                return int
+
+            def transform_python(self, value):
+                return 42
+
+            def transform_bson(self, value):
+                return CustomType()
+
+        registry = codec_options.TypeRegistry([CustomTypeCodec()])
+        opts = MockCodecOptions(type_registry=registry)
+        result = opts.to_pymongo()
+        self.assertIsNotNone(result)
+
+    def test__codec_options_uuid_representation_string(self):
+        client = mongomock.MongoClient(uuidRepresentation='standard')
+        opts = client.codec_options
+        result = opts.to_pymongo()
+        self.assertEqual(4, result.uuid_representation)
+
     def test__parse_url(self):
         client = mongomock.MongoClient('mongodb://localhost:27017/')
         self.assertEqual(('localhost', 27017), client.address)
@@ -151,65 +214,43 @@ class MongoClientApiTest(unittest.TestCase):
         with mock.patch('mongomock.SERVER_VERSION', '3.6'):
             self.assertEqual(server_info, client.server_info())
 
-    def test__codec_options_to_pymongo_forwards_all_params(self):
-        from collections import OrderedDict
-
-        from mongomock_ng.codec_options import CodecOptions as MockCodecOptions
-
-        opts = MockCodecOptions(
-            document_class=OrderedDict,
-            tz_aware=True,
-            uuid_representation=3,
-            unicode_decode_error_handler='ignore',
-        )
-        result = opts.to_pymongo()
-        self.assertEqual(OrderedDict, result.document_class)
-        self.assertTrue(result.tz_aware)
-        self.assertEqual(3, result.uuid_representation)
-        self.assertEqual('ignore', result.unicode_decode_error_handler)
-
-    def test__codec_options_document_class_cast(self):
-        from collections import OrderedDict
-
-        from mongomock_ng.codec_options import CodecOptions as MockCodecOptions
-
+    def test_close_clears_data(self):
         client = mongomock.MongoClient()
-        client.db.collection.with_options(
-            codec_options=MockCodecOptions(document_class=OrderedDict)
-        ).insert_one({'key': 'value'})
-        result = client.db.collection.with_options(
-            codec_options=MockCodecOptions(document_class=OrderedDict)
-        ).find_one()
-        self.assertIsInstance(result, OrderedDict)
+        client.db.col.insert_one({'x': 1})
+        self.assertEqual(['db'], client.list_database_names())
+        client.close()
+        self.assertEqual([], client._store.list_created_database_names())
+        self.assertEqual({}, client._database_accesses)
 
-    def test__codec_options_custom_type_registry(self):
-        from mongomock_ng.codec_options import CodecOptions as MockCodecOptions
+    def test_close_raises_on_subsequent_use(self):
+        client = mongomock.MongoClient()
+        client.close()
+        with self.assertRaises(mongomock.InvalidOperation):
+            client.get_database('test')
+        with self.assertRaises(mongomock.InvalidOperation):
+            client.list_database_names()
+        with self.assertRaises(mongomock.InvalidOperation):
+            client.drop_database('test')
+        with self.assertRaises(mongomock.InvalidOperation):
+            client.server_info()
+        with self.assertRaises(mongomock.InvalidOperation):
+            client.alive()
+        with self.assertRaises(mongomock.InvalidOperation):
+            client.start_session()
 
-        class CustomType:
-            pass
+    def test_close_via_context_manager(self):
+        with mongomock.MongoClient() as client:
+            client.db.col.insert_one({'x': 1})
+        with self.assertRaises(mongomock.InvalidOperation):
+            client.list_database_names()
 
-        class CustomTypeCodec(codec_options.TypeCodec):
-            @property
-            def python_type(self):
-                return CustomType
-
-            @property
-            def bson_type(self):
-                return int
-
-            def transform_python(self, value):
-                return 42
-
-            def transform_bson(self, value):
-                return CustomType()
-
-        registry = codec_options.TypeRegistry([CustomTypeCodec()])
-        opts = MockCodecOptions(type_registry=registry)
-        result = opts.to_pymongo()
-        self.assertIsNotNone(result)
-
-    def test__codec_options_uuid_representation_string(self):
-        client = mongomock.MongoClient(uuidRepresentation='standard')
-        opts = client.codec_options
-        result = opts.to_pymongo()
-        self.assertEqual(4, result.uuid_representation)
+    def test_close_frees_memory(self):
+        client = mongomock.MongoClient()
+        db = client.db
+        col = db.col
+        col.insert_one({'x': 1})
+        self.assertIn('db', client._database_accesses)
+        self.assertIn('col', db._collection_accesses)
+        client.close()
+        self.assertNotIn('db', client._database_accesses)
+        self.assertEqual({}, client._store._databases)

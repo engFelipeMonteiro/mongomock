@@ -1366,6 +1366,8 @@ class _Parser:
         if parsed is NOTHING:
             return None
         if isinstance(parsed, datetime.datetime):
+            if parsed.tzinfo is None:
+                parsed = parsed.replace(tzinfo=datetime.timezone.utc)
             return int(parsed.timestamp() * 1000)
         if decimal_support:
             if isinstance(parsed, decimal128.Decimal128):
