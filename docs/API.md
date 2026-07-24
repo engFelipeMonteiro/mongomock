@@ -3,6 +3,7 @@
 ## MongoClient
 
 - `MongoClient(host=None, port=None, **kwargs)` — creates in-memory client
+- Supports `uuidRepresentation` param ('standard', 'pythonLegacy', 'javaLegacy', 'csharpLegacy')
 - `client.get_database(name)` — returns Database mock
 - `client.list_database_names()` — list DB names
 - `client.drop_database(name)` — drop DB
