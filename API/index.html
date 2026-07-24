@@ -963,7 +963,7 @@
 <li><code>client.get_database(name)</code> — returns Database mock</li>
 <li><code>client.list_database_names()</code> — list DB names</li>
 <li><code>client.drop_database(name)</code> — drop DB</li>
-<li><code>client.close()</code> — no-op (for test compatibility)</li>
+<li><code>client.close()</code> — clears all data and caches; raises <code>InvalidOperation</code> if used after close</li>
 </ul>
 <h2 id="database">Database<a class="headerlink" href="#database" title="Permanent link">&para;</a></h2>
 <ul>
