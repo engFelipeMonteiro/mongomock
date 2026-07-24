@@ -2550,8 +2550,7 @@ class CollectionAPITest(TestCase):
         _CodecOptions = collections.namedtuple(
             'CodecOptions', ['document_class', 'tz_aware', 'uuid_representation']
         )
-        with self.assertRaises(NotImplementedError):
-            self.db.collection.with_options(codec_options=_CodecOptions(None, True, 3))
+        self.db.collection.with_options(codec_options=_CodecOptions(None, True, 3))
 
     def test__with_options_wrong_type(self):
         with self.assertRaises(TypeError):

@@ -121,6 +121,15 @@ def _profiler_get_sort():
     return getattr(_profiler_ctx, 'sort', None)
 
 
+def _cast_document_class(doc, document_class):
+    if doc is None or document_class is dict or isinstance(doc, document_class):
+        return doc
+    try:
+        return document_class(doc)
+    except Exception:
+        return doc
+
+
 _KwargOption = collections.namedtuple('_KwargOption', ['typename', 'default', 'attrs'])
 
 _WITH_OPTIONS_KWARGS = {
@@ -162,9 +171,9 @@ def _bson_encode(document, check_keys, codec_options):
         if isinstance(codec_options, mongomock_codec_options.CodecOptions):
             codec_options = codec_options.to_pymongo()
         if isinstance(codec_options, CodecOptions):
-            BSON.encode(document, check_keys=check_keys, codec_options=codec_options)
+            return BSON.encode(document, check_keys=check_keys, codec_options=codec_options)
     else:
-        BSON.encode(document, check_keys=check_keys)
+        return BSON.encode(document, check_keys=check_keys)
 
 
 def validate_is_mapping(option, value):
@@ -1850,7 +1859,8 @@ class Collection:
             filter = {'_id': filter}
 
         try:
-            return next(self.find(filter, *args, **kwargs))
+            doc = next(self.find(filter, *args, **kwargs))
+            return _cast_document_class(doc, self.codec_options.document_class)
         except StopIteration:
             return None
 
@@ -2415,7 +2425,7 @@ class Cursor:
         try:
             doc = self._compute_results(with_limit_and_skip=True)[self._emitted]
             self._emitted += 1
-            return doc
+            return _cast_document_class(doc, self.collection.codec_options.document_class)
         except IndexError as err:
             raise StopIteration from err
 
