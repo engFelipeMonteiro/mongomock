@@ -183,9 +183,9 @@ def gen_index_name(keys: list[tuple[str, int]]) -> str:
 class hashdict(dict):  # noqa: N801
     """hashable dict implementation, suitable for use as a key into other dicts.
 
-    >>> h1 = hashdict({'apples': 1, 'bananas':2})
+    >>> h1 = hashdict({'apples': 1, 'bananas': 2})
     >>> h2 = hashdict({'bananas': 3, 'mangoes': 5})
-    >>> h1+h2
+    >>> h1 + h2
     hashdict(apples=1, bananas=3, mangoes=5)
     >>> d1 = {}
     >>> d1[h1] = 'salad'

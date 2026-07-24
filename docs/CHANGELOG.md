@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## [7.9.3] - 2026-07-23
+### Added
+- Test coverage improvements across update operators, aggregation, and collection edge cases
+- CI split into mock-only and MongoDB test jobs with separate codecov uploads
+
 ### Fixed
 - `CodecOptions.to_pymongo()`: now forwards all 7 params (document_class, tz_aware, uuid_representation, unicode_decode_error_handler, tzinfo, type_registry, datetime_conversion) (#70)
 - `CodecOptions`: removed NotImplementedError guards for custom type_registry, tzinfo, unicode_decode_error_handler, document_class (#109)
